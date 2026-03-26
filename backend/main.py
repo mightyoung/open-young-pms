@@ -3,10 +3,11 @@
 from contextlib import asynccontextmanager
 from datetime import datetime
 
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
+from api.dependencies import exception_handler, RequestIDMiddleware
 from api.services.fastapi_code_generator.database import init_db
 from api.services.fastapi_code_generator.routers import (
     auth_router,
@@ -36,7 +37,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS
+# Middleware
+app.add_middleware(RequestIDMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -44,14 +46,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_exception_handler(Exception, exception_handler)
 
-
-@app.exception_handler(Exception)
-async def global_exception(request: Request, exc: Exception):
-    return JSONResponse(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"detail": str(exc), "timestamp": datetime.utcnow().isoformat()},
-    )
+# Static files (uploads)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["认证"])
