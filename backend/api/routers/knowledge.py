@@ -2,9 +2,7 @@
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from typing import Optional
-from sqlalchemy.orm import Session
-from api.database import get_db
-from api.models.base import User
+from api.services.fastapi_code_generator.models import User
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.response import ApiResponse
 import uuid
