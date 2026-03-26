@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from api.dependencies import exception_handler, RequestIDMiddleware
+from api.routers.upload import router as upload_router
 from api.services.fastapi_code_generator.database import init_db
 from api.services.fastapi_code_generator.routers import (
     auth_router,
@@ -52,6 +53,7 @@ app.add_exception_handler(Exception, exception_handler)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 
+app.include_router(upload_router, prefix="/api/v1", tags=["文件上传"])
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["认证"])
 app.include_router(users_router, prefix="/api/v1/users", tags=["用户管理"])
 app.include_router(projects_router, prefix="/api/v1/projects", tags=["项目管理"])
