@@ -1,0 +1,246 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-main: #0a0a0e;
+  --bg-card: #1a1a22;
+  --bg-container: #13131a;
+  --accent: #6366f1;
+  --accent-light: #818cf8;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(99, 102, 241, 0.3);
+  --text: #e4e4e7;
+  --text-sec: #a1a1aa;
+  --text-muted: #52525b;
+  --cubic-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-main);
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* ===========================
+   Global Interaction Transitions
+   =========================== */
+button,
+a,
+input,
+textarea,
+.ant-btn,
+.ant-input,
+.ant-card,
+.ant-modal-content,
+.ant-dropdown-menu,
+.ant-select-selector {
+  transition: all 0.2s var(--cubic-smooth);
+}
+
+/* Ant Design Card hover lift */
+.ant-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+}
+
+.ant-card {
+  transition: all 0.25s var(--cubic-smooth);
+}
+
+/* Ant Design input focus glow */
+.ant-input:focus,
+.ant-input-focused,
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused,
+.ant-select-focused .ant-select-selector {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+}
+
+/* Ant Design modal enter/exit */
+.ant-modal-mask {
+  transition: opacity 0.25s ease !important;
+}
+
+.ant-modal-centered .ant-modal {
+  animation: modal-enter 0.3s var(--cubic-smooth) forwards;
+}
+
+/* ===========================
+   Scrollbar Styling
+   =========================== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ===========================
+   Glass Card
+   =========================== */
+.glass-card {
+  background: rgba(26, 26, 34, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+  transition: all 0.25s var(--cubic-smooth);
+}
+
+/* ===========================
+   Gradient Text
+   =========================== */
+.gradient-text {
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===========================
+   Keyframe Animations
+   =========================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes modal-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+/* ===========================
+   Kanban Column Drop Zone
+   =========================== */
+.kanban-drop-active {
+  background: rgba(99, 102, 241, 0.06) !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+
+/* ===========================
+   Task Card Action Button
+   =========================== */
+.task-card-action {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.task-card-wrapper:hover .task-card-action {
+  opacity: 1;
+}
+
+/* ===========================
+   Sidebar Menu Hover Bar
+   =========================== */
+.sidebar-menu-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-menu-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: var(--accent);
+  border-radius: 0 4px 4px 0;
+  transition: width 0.3s var(--cubic-smooth);
+}
+
+.sidebar-menu-item:hover::before,
+.sidebar-menu-item.active::before {
+  width: 3px;
+}
