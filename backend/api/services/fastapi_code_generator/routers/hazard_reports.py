@@ -17,11 +17,12 @@ from api.services.fastapi_code_generator.models import (
     RectificationPhoto, Notification,
     User, Project,
 )
+from api.response import ApiResponse, PaginatedResponse, BusinessException
+from api.exceptions import ERR_NOT_FOUND
 from api.services.fastapi_code_generator.schemas import (
     HazardReportCreate, HazardReportResponse,
     HazardAssignRequest, HazardConfirmRequest, HazardPushRequest,
     HazardTransferRequest, RectificationSubmitRequest,
-    PaginatedResponse,
 )
 
 router = APIRouter()
@@ -76,7 +77,11 @@ async def list_hazard_reports(
     current_user: User = Depends(get_current_user),
 ):
     """查询隐患列表（支持分页和过滤）。GET /api/v1/hazards"""
-    query = select(HazardReport).options(selectinload(HazardReport.rectifications))
+    query = (
+        select(HazardReport)
+        .options(selectinload(HazardReport.rectifications))
+        .where(HazardReport.is_draft == False)
+    )
     if status:
         query = query.where(HazardReport.status == status)
     if hazard_type:
@@ -92,13 +97,7 @@ async def list_hazard_reports(
     rows = (await db.execute(query)).scalars().all()
     items = [HazardReportResponse.model_validate(r) for r in rows]
     
-    return PaginatedResponse(
-        items=items,
-        total=total,
-        page=page,
-        page_size=page_size,
-        pages=(total + page_size - 1) // page_size,
-    )
+    return PaginatedResponse.ok(items, total, page, page_size)
 
 
 @router.get("/{report_id}", response_model=HazardReportResponse)
@@ -444,3 +443,69 @@ async def hazard_stats_summary(
         type_counts[type_val] = count
     total = sum(status_counts.values())
     return {"total": total, "by_status": status_counts, "by_type": type_counts}
+
+
+# ── 草稿 ────────────────────────────────────────────────────
+
+@router.get("/drafts", response_model=PaginatedResponse)
+async def list_drafts(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """获取当前用户的草稿列表。GET /api/v1/hazards/drafts"""
+    query = (
+        select(HazardReport)
+        .where(HazardReport.reporter_id == str(current_user.id))
+        .where(HazardReport.is_draft == True)
+        .order_by(HazardReport.auto_saved_at.desc())
+    )
+    rows = (await db.execute(query)).scalars().all()
+    items = [HazardReportResponse.model_validate(r) for r in rows]
+    return PaginatedResponse.ok(items, len(items))
+
+
+@router.post("/drafts", response_model=HazardReportResponse, status_code=status.HTTP_201_CREATED)
+async def save_draft(
+    data: HazardReportCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """保存随手拍草稿。POST /api/v1/hazards/drafts"""
+    draft = HazardReport(
+        reporter_id=str(current_user.id),
+        is_draft=True,
+        auto_saved_at=datetime.utcnow(),
+        title=data.title[:300] if data.title else "草稿",
+        description=data.description or "",
+        hazard_type=data.hazard_type,
+        urgency=data.urgency or "normal",
+        location=data.location or "",
+        photos=data.photos or [],
+        status="pending",
+    )
+    db.add(draft)
+    await db.commit()
+    await db.refresh(draft)
+    return draft
+
+
+@router.delete("/drafts/{draft_id}")
+async def delete_draft(
+    draft_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """删除草稿。DELETE /api/v1/hazards/drafts/{id}"""
+    result = await db.execute(
+        select(HazardReport).where(
+            HazardReport.id == str(draft_id),
+            HazardReport.reporter_id == str(current_user.id),
+            HazardReport.is_draft == True,
+        )
+    )
+    draft = result.scalar_one_or_none()
+    if not draft:
+        raise BusinessException(ERR_NOT_FOUND, "草稿不存在")
+    await db.delete(draft)
+    await db.commit()
+    return ApiResponse.ok()

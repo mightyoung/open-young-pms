@@ -199,6 +199,8 @@ class HazardReport(Base):
     reject_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_draft: Mapped[bool] = mapped_column(default=False)  # 草稿标记
+    auto_saved_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)  # 自动保存时间
 
     __table_args__ = (
         Index("ix_hazard_status", "status"),
