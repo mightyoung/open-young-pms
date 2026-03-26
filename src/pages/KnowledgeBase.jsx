@@ -83,8 +83,8 @@ export default function KnowledgeBase() {
             {searchTypes.map(t => (
               <Tag
                 key={t.key}
-                color={(!category && t.key === 'all') || category === t.key ? '#6366f1' : colors.bg.card}
-                style={{ cursor: 'pointer', borderColor: (!category && t.key === 'all') || category === t.key ? '#6366f1' : colors.bg.elevated, color: (!category && t.key === 'all') || category === t.key ? 'white' : colors.text.muted }}
+                color={(!category && t.key === 'all') || category === t.key ? colors.accent : colors.bg.card}
+                style={{ cursor: 'pointer', borderColor: (!category && t.key === 'all') || category === t.key ? colors.accent : colors.bg.elevated, color: (!category && t.key === 'all') || category === t.key ? 'white' : colors.text.muted }}
                 onClick={() => setCategory(t.key === 'all' ? null : t.key)}
               >
                 {t.label}
@@ -105,13 +105,13 @@ export default function KnowledgeBase() {
               <List.Item
                 style={{ borderBottom: '1px solid #27272a', padding: '16px 0' }}
                 actions={[
-                  <Button key="view" type="link" style={{ color: '#6366f1' }}>查看</Button>,
+                  <Button key="view" type="link" style={{ color: colors.accent }}>查看</Button>,
                   <Button key="edit" type="link" style={{ color: colors.text.muted }}>编辑</Button>,
                 ]}
               >
                 <List.Item.Meta
                   avatar={<div style={{ width: 40, height: 40, background: colors.bg.card, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <FileTextOutlined style={{ color: '#6366f1', fontSize: 20 }} />
+                    <FileTextOutlined style={{ color: colors.accent, fontSize: 20 }} />
                   </div>}
                   title={<Text style={{ color: colors.text.primary }}>{doc.title}</Text>}
                   description={

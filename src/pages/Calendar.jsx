@@ -64,14 +64,14 @@ function CalendarView({ events = [] }) {
           return (
             <div key={day}
               style={{
-                border: `1px solid ${isToday(day) ? '#6366f1' : colors.bg.card}`,
+                border: `1px solid ${isToday(day) ? colors.accent : colors.bg.card}`,
                 borderRadius: 6,
                 padding: '4px 6px',
                 minHeight: 52,
                 background: isToday(day) ? '#6366f110' : colors.bg.page,
                 cursor: dayEvents.length > 0 ? 'pointer' : 'default',
               }}>
-              <Text style={{ color: isToday(day) ? '#6366f1' : colors.text.primary, fontSize: 13, fontWeight: isToday(day) ? 700 : 400 }}>
+              <Text style={{ color: isToday(day) ? colors.accent : colors.text.primary, fontSize: 13, fontWeight: isToday(day) ? 700 : 400 }}>
                 {day}
               </Text>
               <div style={{ marginTop: 2 }}>

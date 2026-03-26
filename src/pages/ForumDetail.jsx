@@ -70,7 +70,7 @@ export default function ForumDetail() {
       <Card style={{ background: colors.bg.page, border: '1px solid #27272a', marginBottom: 16 }}>
         {/* 头部 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-          <Avatar style={{ background: '#6366f1' }}>{post.author_name?.[0] || 'U'}</Avatar>
+          <Avatar style={{ background: colors.accent }}>{post.author_name?.[0] || 'U'}</Avatar>
           <div>
             <Text style={{ color: colors.text.primary, fontWeight: 600, display: 'block' }}>{post.author_name || '匿名用户'}</Text>
             <Text style={{ color: colors.text.muted, fontSize: 12 }}>{post.created_at ? new Date(post.created_at).toLocaleString() : ''}</Text>
@@ -82,7 +82,7 @@ export default function ForumDetail() {
         <Title level={4} style={{ color: colors.text.primary, marginBottom: 12 }}>{post.title}</Title>
 
         {/* 内容 */}
-        <div style={{ color: '#d4d4d8', lineHeight: 1.8, whiteSpace: 'pre-wrap', marginBottom: 16 }}>
+        <div style={{ color: colors.text.secondary, lineHeight: 1.8, whiteSpace: 'pre-wrap', marginBottom: 16 }}>
           {post.content}
         </div>
 
@@ -113,7 +113,7 @@ export default function ForumDetail() {
       )}
 
       {replies.map(reply => (
-        <Card key={reply.id} style={{ background: '#1f1f23', border: '1px solid #27272a', marginBottom: 12 }}>
+        <Card key={reply.id} style={{ background: colors.bg.base, border: '1px solid #27272a', marginBottom: 12 }}>
           <div style={{ display: 'flex', gap: 10 }}>
             <Avatar style={{ background: colors.accent, flexShrink: 0 }}>{reply.author_name?.[0] || 'U'}</Avatar>
             <div style={{ flex: 1 }}>
@@ -121,7 +121,7 @@ export default function ForumDetail() {
                 <Text style={{ color: colors.text.primary, fontWeight: 500 }}>{reply.author_name || '匿名'}</Text>
                 <Text style={{ color: colors.text.disabled, fontSize: 11 }}>{reply.created_at ? new Date(reply.created_at).toLocaleString() : ''}</Text>
               </div>
-              <div style={{ color: '#d4d4d8', lineHeight: 1.6 }}>{reply.content}</div>
+              <div style={{ color: colors.text.secondary, lineHeight: 1.6 }}>{reply.content}</div>
             </div>
           </div>
         </Card>

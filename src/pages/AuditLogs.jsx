@@ -71,7 +71,7 @@ export default function AuditLogs() {
       </Card>
 
       <Drawer title="日志详情" open={!!detail} onClose={() => setDetail(null)} width={500}
-        styles={{ body: { background: '#1c1c1e', color: colors.text.primary } }}>
+        styles={{ body: { background: colors.bg.base, color: colors.text.primary } }}>
         {detail && (
           <Descriptions column={1} size="small" bordered
             styles={{ label: { color: colors.text.muted, width: 120 }, content: { color: colors.text.primary } }}>

@@ -76,7 +76,7 @@ export default function Risks() {
             <Card size="small" style={{ background: colors.bg.page, border: '1px solid #27272a', textAlign: 'center' }}>
               <Statistic title={<Text style={{ color: colors.text.muted }}>{d.label}</Text>}
                 value={stats[d.k] || 0}
-                valueStyle={{ color: d.k === 'high' ? colors.danger : d.k === 'medium' ? '#f97316' : colors.success, fontSize: 24 }} />
+                valueStyle={{ color: d.k === 'high' ? colors.danger : d.k === 'medium' ? colors.warning : colors.success, fontSize: 24 }} />
             </Card>
           </Col>
         ))}

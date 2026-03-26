@@ -34,7 +34,7 @@ export default function DataDictionary() {
   useEffect(() => { load() }, [keyword])
 
   const columns = [
-    { title: '编码', dataIndex: 'code', render: t => <Text style={{ color: '#6366f1', fontFamily: 'monospace', fontSize: 12 }}>{t}</Text> },
+    { title: '编码', dataIndex: 'code', render: t => <Text style={{ color: colors.accent, fontFamily: 'monospace', fontSize: 12 }}>{t}</Text> },
     { title: '名称', dataIndex: 'name', render: t => <Text style={{ color: colors.text.primary }}>{t}</Text> },
     { title: '分类', dataIndex: 'category', render: t => <Tag>{t || '-'}</Tag> },
     { title: '类型', dataIndex: 'data_type', render: t => <Tag color="blue">{t || 'string'}</Tag> },
