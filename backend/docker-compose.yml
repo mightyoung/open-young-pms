@@ -1,8 +1,9 @@
 version: '3.8'
 
 services:
+  # PostgreSQL 15 + pgvector 向量扩展
   db:
-    image: postgres:15-alpine
+    image: pgvector/pgvector:pg15
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: pms
@@ -16,19 +17,61 @@ services:
       timeout: 5s
       retries: 5
 
+  # Redis 7
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # rustfs — 本地 S3 兼容对象存储
+  # 说明：替换为你们内部的 rustfs Docker 镜像地址即可
+  # 示例（临时用 LocalStack 社区版替代，S3 API 完全兼容）：
+  rustfs:
+    image: localstack/localstack-community:latest
+    environment:
+      - SERVICES=s3
+      - PERSISTENCE=1
+      - HOST_TMP_FOLDER=/tmp/localstack
+    volumes:
+      - rustfs_data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "4566:4566"          # LocalStack 主端口
+      - "4510-4559:4510-4559"  # 服务端口范围
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  # 后端服务
   backend:
     build: .
     ports:
       - "8001:8001"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/pms
       USE_SQLITE: "false"
+      # Redis（后续阶段启用）
+      # REDIS_URL: redis://redis:6379/0
+      # rustfs / LocalStack S3 端点（后续阶段启用）
+      # S3_ENDPOINT: http://rustfs:4566
+      # S3_BUCKET: pms-media
     volumes:
       - ./uploads:/app/uploads
       - ./data:/app/data
 
+  # 前端开发服务
   frontend:
     image: node:20-alpine
     working_dir: /app
@@ -42,3 +85,4 @@ services:
 
 volumes:
   pgdata:
+  rustfs_data:
