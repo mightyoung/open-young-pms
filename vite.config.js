@@ -13,4 +13,17 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-antd': ['antd', '@ant-design/icons'],
+          'vendor-charts': ['recharts'],
+          'vendor-framer': ['framer-motion'],
+        }
+      }
+    },
+    chunkSizeWarningLimit: 600,
+  },
 })

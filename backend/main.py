@@ -10,6 +10,8 @@ from fastapi.staticfiles import StaticFiles
 from api.dependencies import exception_handler, RequestIDMiddleware
 from api.routers.upload import router as upload_router
 from api.routers.roles import router as roles_router
+from api.routers.data_service import router as data_service_router
+from api.routers.knowledge import router as knowledge_router
 from api.services.fastapi_code_generator.database import init_db
 from api.services.fastapi_code_generator.routers import (
     auth_router,
@@ -64,6 +66,8 @@ app.include_router(hazard_reports_router, prefix="/api/v1/hazards", tags=["随�
 app.include_router(inspections_router, prefix="/api/v1/inspections", tags=["扫码巡检"])
 app.include_router(reports_router, prefix="/api/v1/reports", tags=["报告管理"])
 app.include_router(notifications_router, prefix="/api/v1/notifications", tags=["消息通知"])
+app.include_router(data_service_router, prefix="/api/v1", tags=["数据服务"])
+app.include_router(knowledge_router, prefix="/api/v1", tags=["知识库"])
 
 
 @app.get("/health", tags=["健康检查"])

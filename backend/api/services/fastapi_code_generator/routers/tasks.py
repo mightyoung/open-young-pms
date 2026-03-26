@@ -12,6 +12,7 @@ from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import Task, TaskComment, User
 from api.services.fastapi_code_generator.schemas import TaskCreate, TaskUpdate, TaskResponse
+from api.response import ApiResponse
 
 router = APIRouter()
 
@@ -42,7 +43,7 @@ async def list_tasks_by_phase(
         .order_by(Task.created_at)
     )
     rows = result.scalars().all()
-    return {"items": [TaskResponse.model_validate(r) for r in rows]}
+    return ApiResponse.ok({"items": [TaskResponse.model_validate(r) for r in rows]})
 
 
 @router.patch("/{task_id}")

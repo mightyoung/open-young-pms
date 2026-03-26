@@ -54,7 +54,7 @@ export default function Budget() {
         <div>
           <Text style={{ color: colors.success }}>{v?.toLocaleString()} 元</Text>
           <Progress percent={r.budget > 0 ? Math.round(v / r.budget * 100) : 0} size="small"
-            strokeColor=colors.success showInfo={false} style={{ marginTop: 4 }} />
+            strokeColor={colors.success} showInfo={false} style={{ marginTop: 4 }} />
         </div>
       )
     },

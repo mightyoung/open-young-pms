@@ -1,13 +1,68 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { Suspense, lazy, useState, useEffect, useMemo } from 'react';
 import { ConfigProvider, Layout, Menu, Avatar, Badge, Tabs, Tag, Button, Modal, Input, Progress, Tooltip, List, Row, Col, Typography, Divider } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChartComponent, BarChartComponent, DonutChartComponent } from './components/Charts';
 import Team from './components/Team';
 import Documents from './components/Documents';
 import { LogoIcon } from './components/Icons';
-import { LayoutDashboard, Kanban, Users, FileText, Bell, Plus, Search, ChevronRight, Clock, CheckCircle2, MessageSquare, Paperclip, Star, MoreHorizontal, Filter, RefreshCw, Calendar, X, Send } from 'lucide-react';
+import { LayoutDashboard, Kanban, Users, FileText, Bell, Plus, Search, ChevronRight, Clock, CheckCircle2, MessageSquare, Paperclip, Star, MoreHorizontal, Filter, RefreshCw, Calendar, X, Send, Settings, BarChart3, FileBarChart, MessageCircle, Shield, Database, BookOpen, ClipboardList, Megaphone, Briefcase, UsersRound, GitBranch, LayoutList, PieChart, Activity, Flag } from 'lucide-react';
+
+// 首屏页面 — 同步加载
 import Hazards from './pages/Hazards';
 import Login from './pages/Login';
+
+// 非首屏页面 — 懒加载
+const AIChat = lazy(() => import('./pages/AIChat'));
+const ApprovalCenter = lazy(() => import('./pages/ApprovalCenter'));
+const AuditLogs = lazy(() => import('./pages/AuditLogs'));
+const Budget = lazy(() => import('./pages/Budget'));
+const CalendarPage = lazy(() => import('./pages/Calendar'));
+const Contracts = lazy(() => import('./pages/Contracts'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const DataDictionary = lazy(() => import('./pages/DataDictionary'));
+const DataGovernance = lazy(() => import('./pages/DataGovernance'));
+const DraftBox = lazy(() => import('./pages/DraftBox'));
+const Export = lazy(() => import('./pages/Export'));
+const Forum = lazy(() => import('./pages/Forum'));
+const ForumDetail = lazy(() => import('./pages/ForumDetail'));
+const Gantt = lazy(() => import('./pages/Gantt'));
+const HazardManagement = lazy(() => import('./pages/HazardManagement'));
+const HazardReport = lazy(() => import('./pages/HazardReport'));
+const HazardRules = lazy(() => import('./pages/HazardRules'));
+const HazardStats = lazy(() => import('./pages/HazardStats'));
+const KnowledgeBase = lazy(() => import('./pages/KnowledgeBase'));
+const NotificationSettings = lazy(() => import('./pages/NotificationSettings'));
+const Notifications = lazy(() => import('./pages/Notifications'));
+const Organization = lazy(() => import('./pages/Organization'));
+const Quality = lazy(() => import('./pages/Quality'));
+const ReportStats = lazy(() => import('./pages/ReportStats'));
+const ReportWrite = lazy(() => import('./pages/ReportWrite'));
+const Reports = lazy(() => import('./pages/Reports'));
+const Resources = lazy(() => import('./pages/Resources'));
+const Risks = lazy(() => import('./pages/Risks'));
+const UsersPage = lazy(() => import('./pages/Users'));
+
+// 懒加载包装组件
+function LazyPage({ children }) {
+  return (
+    <Suspense fallback={
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        height: '60vh', color: '#71717a', fontSize: 14, flexDirection: 'column', gap: 12
+      }}>
+        <div style={{
+          width: 32, height: 32, border: '3px solid rgba(99,102,241,0.2)',
+          borderTop: '3px solid #6366f1', borderRadius: '50%',
+          animation: 'spin 0.8s linear infinite'
+        }} />
+        加载中...
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    }>
+      {children}
+    </Suspense>
+  );
+}
 
 const { Sider, Header, Content } = Layout;
 const { Text, Title } = Typography;
@@ -419,6 +474,33 @@ export default function App() {
     { key: 'hazards', icon: <CheckCircle2 size={18} />, label: '随手拍' },
     { key: 'team', icon: <Users size={18} />, label: '团队' },
     { key: 'docs', icon: <FileText size={18} />, label: '文档' },
+    { key: 'approval', icon: <CheckCircle2 size={18} />, label: '审批中心' },
+    { key: 'report-write', icon: <FileText size={18} />, label: '报告填写' },
+    { key: 'notifications', icon: <Bell size={18} />, label: '通知中心' },
+    { key: 'forum', icon: <MessageSquare size={18} />, label: '论坛' },
+    { key: 'organization', icon: <Briefcase size={18} />, label: '组织管理' },
+    { key: 'users', icon: <UsersRound size={18} />, label: '用户管理' },
+    { key: 'gantt', icon: <GitBranch size={18} />, label: '甘特图' },
+    { key: 'draftbox', icon: <ClipboardList size={18} />, label: '草稿箱' },
+    { key: 'reports', icon: <FileBarChart size={18} />, label: '报表中心' },
+    { key: 'ai', icon: <MessageCircle size={18} />, label: 'AI 对话' },
+    { key: 'audit', icon: <Shield size={18} />, label: '审计日志' },
+    { key: 'calendar', icon: <Calendar size={18} />, label: '日程管理' },
+    { key: 'budget', icon: <BarChart3 size={18} />, label: '预算管理' },
+    { key: 'contracts', icon: <FileText size={18} />, label: '合同管理' },
+    { key: 'data-dict', icon: <Database size={18} />, label: '数据字典' },
+    { key: 'data-gov', icon: <Shield size={18} />, label: '数据治理' },
+    { key: 'export', icon: <FileBarChart size={18} />, label: '导出管理' },
+    { key: 'forum-detail', icon: <MessageSquare size={18} />, label: '论坛详情' },
+    { key: 'hazard-mgmt', icon: <CheckCircle2 size={18} />, label: '隐患管理' },
+    { key: 'hazard-rules', icon: <Settings size={18} />, label: '隐患规则' },
+    { key: 'hazard-stats', icon: <BarChart3 size={18} />, label: '隐患统计' },
+    { key: 'knowledge', icon: <BookOpen size={18} />, label: '知识库' },
+    { key: 'notif-settings', icon: <Settings size={18} />, label: '通知设置' },
+    { key: 'quality', icon: <Flag size={18} />, label: '质量管理' },
+    { key: 'report-stats', icon: <PieChart size={18} />, label: '报表统计' },
+    { key: 'resources', icon: <Database size={18} />, label: '资源管理' },
+    { key: 'risks', icon: <Activity size={18} />, label: '风险管理' },
   ];
 
   const statCards = [
@@ -585,6 +667,60 @@ export default function App() {
                   <Documents />
                 </motion.div>
               )}
+
+              {current === 'approval' && <motion.div key="approval" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><ApprovalCenter /></LazyPage></motion.div>}
+
+              {current === 'report-write' && <motion.div key="report-write" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><ReportWrite /></LazyPage></motion.div>}
+
+              {current === 'notifications' && <motion.div key="notifications" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Notifications /></LazyPage></motion.div>}
+
+              {current === 'forum' && <motion.div key="forum" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Forum /></LazyPage></motion.div>}
+
+              {current === 'organization' && <motion.div key="organization" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Organization /></LazyPage></motion.div>}
+
+              {current === 'users' && <motion.div key="users" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><UsersPage /></LazyPage></motion.div>}
+
+              {current === 'gantt' && <motion.div key="gantt" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Gantt /></LazyPage></motion.div>}
+
+              {current === 'draftbox' && <motion.div key="draftbox" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><DraftBox /></LazyPage></motion.div>}
+
+              {current === 'reports' && <motion.div key="reports" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Reports /></LazyPage></motion.div>}
+
+              {current === 'ai' && <motion.div key="ai" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><AIChat /></LazyPage></motion.div>}
+
+              {current === 'audit' && <motion.div key="audit" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><AuditLogs /></LazyPage></motion.div>}
+
+              {current === 'calendar' && <motion.div key="calendar" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><CalendarPage /></LazyPage></motion.div>}
+
+              {current === 'budget' && <motion.div key="budget" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Budget /></LazyPage></motion.div>}
+
+              {current === 'contracts' && <motion.div key="contracts" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Contracts /></LazyPage></motion.div>}
+
+              {current === 'data-dict' && <motion.div key="data-dict" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><DataDictionary /></LazyPage></motion.div>}
+
+              {current === 'data-gov' && <motion.div key="data-gov" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><DataGovernance /></LazyPage></motion.div>}
+
+              {current === 'export' && <motion.div key="export" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Export /></LazyPage></motion.div>}
+
+              {current === 'forum-detail' && <motion.div key="forum-detail" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><ForumDetail /></LazyPage></motion.div>}
+
+              {current === 'hazard-mgmt' && <motion.div key="hazard-mgmt" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><HazardManagement /></LazyPage></motion.div>}
+
+              {current === 'hazard-rules' && <motion.div key="hazard-rules" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><HazardRules /></LazyPage></motion.div>}
+
+              {current === 'hazard-stats' && <motion.div key="hazard-stats" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><HazardStats /></LazyPage></motion.div>}
+
+              {current === 'knowledge' && <motion.div key="knowledge" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><KnowledgeBase /></LazyPage></motion.div>}
+
+              {current === 'notif-settings' && <motion.div key="notif-settings" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><NotificationSettings /></LazyPage></motion.div>}
+
+              {current === 'quality' && <motion.div key="quality" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Quality /></LazyPage></motion.div>}
+
+              {current === 'report-stats' && <motion.div key="report-stats" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><ReportStats /></LazyPage></motion.div>}
+
+              {current === 'resources' && <motion.div key="resources" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Resources /></LazyPage></motion.div>}
+
+              {current === 'risks' && <motion.div key="risks" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Risks /></LazyPage></motion.div>}
             </AnimatePresence>
           </Content>
         </Layout>

@@ -331,3 +331,45 @@ async def mask_test_data(entity: str, field: str, value: str, current_user=Depen
         masked = "***"
     
     return ApiResponse.ok({"original": value, "masked": masked, "mask_type": mask_type})
+
+
+# ── 前端兼容别名 ──────────────────────────────────────────────
+@router.get("/dict")
+async def get_dict_alias(current_user=Depends(get_current_user)):
+    """数据字典 — 前端 /data/dict 兼容别名"""
+    return await get_data_dictionary(current_user)
+
+
+# ── 质量规则（POST — 任务验证要求）─────────────────────────────
+class QualityRulesRequest(BaseModel):
+    entity_type: Optional[str] = None
+
+
+@router.post("/quality-rules")
+async def post_quality_rules(body: QualityRulesRequest = None, current_user=Depends(get_current_user)):
+    """质量规则列表（POST兼容）"""
+    entity_type = body.entity_type if body else None
+    if entity_type:
+        return ApiResponse.ok({"entity": entity_type, "rules": DATA_QUALITY_RULES.get(entity_type, [])})
+    return ApiResponse.ok({"entities": {k: v for k, v in DATA_QUALITY_RULES.items()}})
+
+
+# ── 血缘关系（POST — 任务验证要求）─────────────────────────────
+class LineageRequest(BaseModel):
+    table_name: Optional[str] = None
+
+
+@router.post("/lineage")
+async def post_lineage(body: LineageRequest, current_user=Depends(get_current_user)):
+    """血缘关系（POST兼容）"""
+    entity = body.table_name
+    if not entity:
+        return ApiResponse.error("D0003", "table_name 不能为空")
+    upstream = [l for l in DATA_LINEAGE if l["target"] == entity]
+    downstream = [l for l in DATA_LINEAGE if l["source"] == entity]
+    return ApiResponse.ok({
+        "entity": entity,
+        "display_name": MASTER_DATA_METADATA.get(entity, {}).get("display_name", entity),
+        "upstream": upstream,
+        "downstream": downstream,
+    })
