@@ -26,7 +26,7 @@ const theme = {
     colorPrimary: D.accent, colorBgBase: D.bg, colorBgContainer: D.surface,
     colorBgElevated: D.elevated, colorBorder: D.border, colorText: D.text,
     colorTextSecondary: D.textSec, colorTextTertiary: D.textMuted,
-    borderRadius: 14,
+    borderRadius: 8,
     fontFamily: "'Inter', -apple-system, sans-serif",
   },
 };
@@ -173,7 +173,7 @@ function StatCard({ title, value, suffix, icon, color, trend, delay = 0 }) {
               </div>
             )}
           </div>
-          <div style={{ width: 46, height: 46, borderRadius: 14, background: `${color}15`, border: `1px solid ${color}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', color, flexShrink: 0 }}>
+          <div style={{ width: 46, height: 46, borderRadius: 8, background: `${color}15`, border: `1px solid ${color}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', color, flexShrink: 0 }}>
             {icon}
           </div>
         </div>
@@ -191,7 +191,7 @@ function TaskCard({ task, onClick, delay = 0 }) {
       onClick={onClick}
       style={{
         background: D.card, border: `1px solid ${hovered ? D.accent + '50' : D.border}`,
-        borderRadius: 14, padding: '14px 16px', marginBottom: 8, cursor: 'pointer',
+        borderRadius: 8, padding: '14px 16px', marginBottom: 8, cursor: 'pointer',
         position: 'relative', overflow: 'hidden',
         transform: hovered ? 'translateY(-2px)' : 'none',
         boxShadow: hovered ? `0 12px 40px ${D.accent}20` : 'none',
@@ -242,7 +242,7 @@ function KanbanColumn({ column, tasks, onTaskClick }) {
           <Button type="text" size="small" icon={<Plus size={14} />} style={{ color: D.textMuted, borderRadius: 8, width: 28, height: 28 }} />
         </Tooltip>
       </div>
-      <div style={{ background: 'rgba(255,255,255,0.015)', borderRadius: 14, padding: '10px 8px', minHeight: 320, border: `1px dashed rgba(255,255,255,0.04)` }}>
+      <div style={{ background: 'rgba(255,255,255,0.015)', borderRadius: 8, padding: '10px 8px', minHeight: 320, border: `1px dashed rgba(255,255,255,0.04)` }}>
         <AnimatePresence mode="popLayout">
           {tasks.map((task, i) => (
             <motion.div key={task.id} layout initial={{ opacity: 0, y: 12, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }} transition={{ duration: 0.35, delay: i * 0.04 }}>
@@ -525,7 +525,7 @@ export default function App() {
                         <Col xs={24} sm={12} key={task.id}>
                           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
                             onClick={() => { setSelectedTask(task); setTaskModalOpen(true); }}
-                            style={{ background: D.card, border: `1px solid ${D.border}`, borderRadius: 14, padding: '14px 16px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'border-color 0.2s' }}>
+                            style={{ background: D.card, border: `1px solid ${D.border}`, borderRadius: 8, padding: '14px 16px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'border-color 0.2s' }}>
                             <div>
                               <Text style={{ fontSize: 13, fontWeight: 600, color: D.text, display: 'block', marginBottom: 6 }}>{task.title}</Text>
                               <div style={{ display: 'flex', gap: 6 }}>
