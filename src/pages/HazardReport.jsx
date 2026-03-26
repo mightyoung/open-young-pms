@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { colors } from '../styles/theme'
 import { message, Upload } from 'antd'
 import { Upload as UploadIcon, MapPin, X, Camera, Save, Send, AlertTriangle } from 'lucide-react'
 import { api } from '../api'
@@ -9,26 +10,26 @@ const D = {
   card: '#1a1a22',
   elevated: '#22222c',
   border: 'rgba(255,255,255,0.06)',
-  accent: '#6366f1',
-  accent2: '#818cf8',
-  success: '#22c55e',
-  warning: '#f59e0b',
-  danger: '#ef4444',
-  text: '#e4e4e7',
-  textSec: '#a1a1aa',
-  textMuted: '#52525b',
+  accent: colors.accent,
+  accent2: colors.accentHover,
+  success: colors.success,
+  warning: colors.warning,
+  danger: colors.danger,
+  text: colors.text.primary,
+  textSec: colors.text.secondary,
+  textMuted: colors.text.disabled,
 }
 
 const HAZARD_TYPES = [
-  { value: 'safety', label: '安全生产', color: '#ef4444' },
-  { value: 'quality', label: '质量缺陷', color: '#f59e0b' },
-  { value: 'environment', label: '环境问题', color: '#22c55e' },
+  { value: 'safety', label: '安全生产', color: colors.danger },
+  { value: 'quality', label: '质量缺陷', color: colors.warning },
+  { value: 'environment', label: '环境问题', color: colors.success },
 ]
 
 const URGENCY_OPTIONS = [
-  { value: 'urgent', label: '紧急', color: '#ef4444' },
-  { value: 'important', label: '重要', color: '#f59e0b' },
-  { value: 'normal', label: '一般', color: '#22c55e' },
+  { value: 'urgent', label: '紧急', color: colors.danger },
+  { value: 'important', label: '重要', color: colors.warning },
+  { value: 'normal', label: '一般', color: colors.success },
 ]
 
 const EMPTY_FORM = {
@@ -211,12 +212,12 @@ export default function HazardReport({ onSuccess, onCancel }) {
     <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 0 40px' }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <h2 style={{ color: D.text, margin: 0, fontSize: 18, fontWeight: 600 }}>
+        <h2 style={{ color: colors.text.primary, margin: 0, fontSize: 18, fontWeight: 600 }}>
           上报隐患
         </h2>
         <button
           onClick={onCancel}
-          style={{ background: 'none', border: 'none', color: D.textSec, cursor: 'pointer', fontSize: 20 }}
+          style={{ background: 'none', border: 'none', color: colors.text.secondary, cursor: 'pointer', fontSize: 20 }}
         >
           <X size={20} />
         </button>
@@ -231,12 +232,12 @@ export default function HazardReport({ onSuccess, onCancel }) {
           onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
           maxLength={300}
           style={{
-            width: '100%', background: D.surface, border: `1px solid ${D.border}`,
-            borderRadius: 8, padding: '10px 12px', color: D.text, fontSize: 14,
+            width: '100%', background: colors.bg.page, border: `1px solid ${colors.bg.border}`,
+            borderRadius: 8, padding: '10px 12px', color: colors.text.primary, fontSize: 14,
             outline: 'none', boxSizing: 'border-box',
           }}
         />
-        <div style={{ color: D.textMuted, fontSize: 12, marginTop: 4, textAlign: 'right' }}>
+        <div style={{ color: colors.text.muted, fontSize: 12, marginTop: 4, textAlign: 'right' }}>
           {form.title.length}/300
         </div>
       </FieldCard>
@@ -252,8 +253,8 @@ export default function HazardReport({ onSuccess, onCancel }) {
                 style={{
                   flex: 1, padding: '8px 0', borderRadius: 8, border: 'none', cursor: 'pointer',
                   fontSize: 13, fontWeight: 500,
-                  background: form.hazard_type === t.value ? t.color + '20' : D.surface,
-                  color: form.hazard_type === t.value ? t.color : D.textSec,
+                  background: form.hazard_type === t.value ? t.color + '20' : colors.bg.page,
+                  color: form.hazard_type === t.value ? t.color : colors.text.secondary,
                   borderBottom: form.hazard_type === t.value ? `2px solid ${t.color}` : `2px solid transparent`,
                 }}
               >
@@ -272,8 +273,8 @@ export default function HazardReport({ onSuccess, onCancel }) {
                 style={{
                   flex: 1, padding: '8px 0', borderRadius: 8, border: 'none', cursor: 'pointer',
                   fontSize: 13, fontWeight: 500,
-                  background: form.urgency === u.value ? u.color + '20' : D.surface,
-                  color: form.urgency === u.value ? u.color : D.textSec,
+                  background: form.urgency === u.value ? u.color + '20' : colors.bg.page,
+                  color: form.urgency === u.value ? u.color : colors.text.secondary,
                   borderBottom: form.urgency === u.value ? `2px solid ${u.color}` : `2px solid transparent`,
                 }}
               >
@@ -292,8 +293,8 @@ export default function HazardReport({ onSuccess, onCancel }) {
           onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
           rows={4}
           style={{
-            width: '100%', background: D.surface, border: `1px solid ${D.border}`,
-            borderRadius: 8, padding: '10px 12px', color: D.text, fontSize: 14,
+            width: '100%', background: colors.bg.page, border: `1px solid ${colors.bg.border}`,
+            borderRadius: 8, padding: '10px 12px', color: colors.text.primary, fontSize: 14,
             outline: 'none', resize: 'vertical', fontFamily: 'inherit', boxSizing: 'border-box',
           }}
         />
@@ -308,8 +309,8 @@ export default function HazardReport({ onSuccess, onCancel }) {
             value={form.location}
             onChange={e => setForm(f => ({ ...f, location: e.target.value }))}
             style={{
-              flex: 1, background: D.surface, border: `1px solid ${D.border}`,
-              borderRadius: 8, padding: '10px 12px', color: D.text, fontSize: 14,
+              flex: 1, background: colors.bg.page, border: `1px solid ${colors.bg.border}`,
+              borderRadius: 8, padding: '10px 12px', color: colors.text.primary, fontSize: 14,
               outline: 'none', boxSizing: 'border-box',
             }}
           />
@@ -320,8 +321,8 @@ export default function HazardReport({ onSuccess, onCancel }) {
               display: 'flex', alignItems: 'center', gap: 6,
               padding: '10px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
               fontSize: 13, whiteSpace: 'nowrap',
-              background: gpsStatus === 'done' ? D.success + '20' : D.surface,
-              color: gpsStatus === 'done' ? D.success : D.textSec,
+              background: gpsStatus === 'done' ? colors.success + '20' : colors.bg.page,
+              color: gpsStatus === 'done' ? colors.success : colors.text.secondary,
             }}
           >
             <MapPin size={14} />
@@ -329,7 +330,7 @@ export default function HazardReport({ onSuccess, onCancel }) {
           </button>
         </div>
         {form.latitude && form.longitude && (
-          <div style={{ color: D.textMuted, fontSize: 12, marginTop: 4 }}>
+          <div style={{ color: colors.text.muted, fontSize: 12, marginTop: 4 }}>
             坐标：{form.latitude.toFixed(6)}, {form.longitude.toFixed(6)}
           </div>
         )}
@@ -353,7 +354,7 @@ export default function HazardReport({ onSuccess, onCancel }) {
                   style={{
                     position: 'absolute', top: -6, right: -6,
                     width: 20, height: 20, borderRadius: '50%',
-                    background: D.danger, border: 'none', cursor: 'pointer',
+                    background: colors.danger, border: 'none', cursor: 'pointer',
                     color: '#fff', fontSize: 12, lineHeight: '20px', textAlign: 'center',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}
@@ -377,13 +378,13 @@ export default function HazardReport({ onSuccess, onCancel }) {
             />
             <div style={{
               width: '100%', height: 80, borderRadius: 8,
-              border: `1px dashed ${D.border}`,
+              border: `1px dashed ${colors.bg.border}`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              gap: 8, color: D.textMuted, fontSize: 13,
-              background: D.surface,
+              gap: 8, color: colors.text.muted, fontSize: 13,
+              background: colors.bg.page,
             }}>
               {uploading ? (
-                <span style={{ color: D.accent }}>上传中...</span>
+                <span style={{ color: colors.accent }}>上传中...</span>
               ) : (
                 <>
                   <Camera size={18} />
@@ -400,8 +401,8 @@ export default function HazardReport({ onSuccess, onCancel }) {
         <button
           onClick={handleSaveDraft}
           style={{
-            flex: 1, padding: '12px', borderRadius: 8, border: `1px solid ${D.border}`,
-            background: D.surface, color: D.textSec, cursor: 'pointer', fontSize: 14,
+            flex: 1, padding: '12px', borderRadius: 8, border: `1px solid ${colors.bg.border}`,
+            background: colors.bg.page, color: colors.text.secondary, cursor: 'pointer', fontSize: 14,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
           }}
         >
@@ -413,7 +414,7 @@ export default function HazardReport({ onSuccess, onCancel }) {
           disabled={submitting}
           style={{
             flex: 2, padding: '12px', borderRadius: 8, border: 'none',
-            background: D.accent, color: '#fff', cursor: 'pointer', fontSize: 14,
+            background: colors.accent, color: '#fff', cursor: 'pointer', fontSize: 14,
             fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
             opacity: submitting ? 0.7 : 1,
           }}
@@ -424,12 +425,12 @@ export default function HazardReport({ onSuccess, onCancel }) {
       </div>
 
       {/* 提示 */}
-      <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 8, background: D.surface, border: `1px solid ${D.border}` }}>
-        <div style={{ color: D.warning, fontSize: 13, fontWeight: 500, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 8, background: colors.bg.page, border: `1px solid ${colors.bg.border}` }}>
+        <div style={{ color: colors.warning, fontSize: 13, fontWeight: 500, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
           <AlertTriangle size={14} />
           温馨提示
         </div>
-        <ul style={{ color: D.textMuted, fontSize: 12, margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
+        <ul style={{ color: colors.text.muted, fontSize: 12, margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
           <li>标题尽量详细（10字以上），便于快速识别</li>
           <li>上传现场照片可大幅提升处理效率</li>
           <li>开启 GPS 可精确定位问题位置</li>
@@ -444,9 +445,9 @@ export default function HazardReport({ onSuccess, onCancel }) {
 function FieldCard({ label, required, children }) {
   return (
     <div style={{ marginBottom: 16 }}>
-      <div style={{ color: D.textSec, fontSize: 13, fontWeight: 500, marginBottom: 8 }}>
+      <div style={{ color: colors.text.secondary, fontSize: 13, fontWeight: 500, marginBottom: 8 }}>
         {label}
-        {required && <span style={{ color: D.danger, marginLeft: 4 }}>*</span>}
+        {required && <span style={{ color: colors.danger, marginLeft: 4 }}>*</span>}
       </div>
       {children}
     </div>

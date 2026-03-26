@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { colors } from '../styles/theme'
 import { Card, Table, Tag, Button, Tabs, Progress, Badge, Space, Modal, Form, Input, Select, Statistic, Row, Col, List, Avatar, Tooltip, Drawer, Descriptions, Alert, Divider, Typography, message } from 'antd'
 import { DatabaseOutlined, SafetyCertificateOutlined, NodeIndexOutlined, KeyOutlined, LockOutlined, CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, RobotOutlined, SearchOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons'
 import { api } from '../api'
@@ -8,11 +9,11 @@ const { TabPane } = Tabs
 
 // ── 配色 ───────────────────────────────────────────────────
 const C = {
-  success: '#22c55e', warning: '#f59e0b', error: '#ef4444', info: '#3b82f6',
-  bg: '#09090b', card: '#18181b', border: '#27272a', text: '#e4e4e7', muted: '#71717a',
+  success: colors.success, warning: colors.warning, error: colors.danger, info: colors.accent,
+  bg: colors.bg.base, card: colors.bg.page, border: colors.bg.card, text: colors.text.primary, muted: colors.text.muted,
 }
 
-const LEVEL_COLOR = { critical: '#ef4444', warning: '#f59e0b', info: '#3b82f6' }
+const LEVEL_COLOR = { critical: colors.danger, warning: colors.warning, info: colors.accent }
 
 // ── 工具函数 ───────────────────────────────────────────────
 const scoreColor = (s) => {

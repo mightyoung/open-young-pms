@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react'
+import { colors } from '../styles/theme'
 import { Card, Row, Col, Statistic, Spin, Empty } from 'antd'
 import { SafetyOutlined, CheckCircleOutlined, FileTextOutlined, DashboardOutlined } from '@ant-design/icons'
 import { api } from '../api'
 
 const D = {
-  bg: '#09090b',
-  surface: '#18181b',
-  card: '#27272a',
-  elevated: '#3f3f46',
-  border: '#3f3f46',
-  accent: '#3b82f6',
-  success: '#22c55e',
-  warning: '#f59e0b',
-  danger: '#ef4444',
-  text: '#e4e4e7',
-  textSec: '#71717a',
-  textMuted: '#52525b',
+  bg: colors.bg.base,
+  surface: colors.bg.page,
+  card: colors.bg.card,
+  elevated: colors.bg.elevated,
+  border: colors.bg.elevated,
+  accent: colors.accent,
+  success: colors.success,
+  warning: colors.warning,
+  danger: colors.danger,
+  text: colors.text.primary,
+  textSec: colors.text.muted,
+  textMuted: colors.text.disabled,
 }
 
 export default function Dashboard() {
@@ -61,12 +62,12 @@ export default function Dashboard() {
   const maxCount = Math.max(...hazardTrend.map(d => d.count), 1)
 
   return (
-    <div style={{ padding: 24, background: D.bg, minHeight: '100vh' }}>
+    <div style={{ padding: 24, background: colors.bg.base, minHeight: '100vh' }}>
       {/* 标题 */}
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
-        <DashboardOutlined style={{ color: D.accent, fontSize: 20, marginRight: 8 }} />
-        <h2 style={{ color: D.text, margin: 0 }}>监测驾驶舱</h2>
-        <span style={{ marginLeft: 'auto', color: D.textSec, fontSize: 12 }}>
+        <DashboardOutlined style={{ color: colors.accent, fontSize: 20, marginRight: 8 }} />
+        <h2 style={{ color: colors.text.primary, margin: 0 }}>监测驾驶舱</h2>
+        <span style={{ marginLeft: 'auto', color: colors.text.secondary, fontSize: 12 }}>
           更新于 {summary.generated_at ? new Date(summary.generated_at).toLocaleString('zh-CN') : '—'}
         </span>
       </div>
@@ -74,43 +75,43 @@ export default function Dashboard() {
       {/* KPI 卡片 */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} lg={6}>
-          <Card style={{ background: D.card, border: `1px solid ${D.border}` }}>
+          <Card style={{ background: colors.bg.card, border: `1px solid ${colors.bg.border}` }}>
             <Statistic
-              title={<span style={{ color: D.textSec }}>随手拍总数</span>}
+              title={<span style={{ color: colors.text.secondary }}>随手拍总数</span>}
               value={hazard.total || 0}
-              prefix={<SafetyOutlined style={{ color: D.accent }} />}
-              valueStyle={{ color: D.text }}
+              prefix={<SafetyOutlined style={{ color: colors.accent }} />}
+              valueStyle={{ color: colors.text.primary }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card style={{ background: D.card, border: `1px solid ${D.border}` }}>
+          <Card style={{ background: colors.bg.card, border: `1px solid ${colors.bg.border}` }}>
             <Statistic
-              title={<span style={{ color: D.textSec }}>整改率</span>}
+              title={<span style={{ color: colors.text.secondary }}>整改率</span>}
               value={hazard.closure_rate || 0}
               suffix="%"
-              prefix={<CheckCircleOutlined style={{ color: D.success }} />}
-              valueStyle={{ color: D.success }}
+              prefix={<CheckCircleOutlined style={{ color: colors.success }} />}
+              valueStyle={{ color: colors.success }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card style={{ background: D.card, border: `1px solid ${D.border}` }}>
+          <Card style={{ background: colors.bg.card, border: `1px solid ${colors.bg.border}` }}>
             <Statistic
-              title={<span style={{ color: D.textSec }}>任务完成率</span>}
+              title={<span style={{ color: colors.text.secondary }}>任务完成率</span>}
               value={task.completion_rate || 0}
               suffix="%"
-              valueStyle={{ color: D.text }}
+              valueStyle={{ color: colors.text.primary }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card style={{ background: D.card, border: `1px solid ${D.border}` }}>
+          <Card style={{ background: colors.bg.card, border: `1px solid ${colors.bg.border}` }}>
             <Statistic
-              title={<span style={{ color: D.textSec }}>报告数</span>}
+              title={<span style={{ color: colors.text.secondary }}>报告数</span>}
               value={summary.report?.total || 0}
-              prefix={<FileTextOutlined style={{ color: D.warning }} />}
-              valueStyle={{ color: D.text }}
+              prefix={<FileTextOutlined style={{ color: colors.warning }} />}
+              valueStyle={{ color: colors.text.primary }}
             />
           </Card>
         </Col>
@@ -120,9 +121,9 @@ export default function Dashboard() {
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col span={24}>
           <Card
-            title={<span style={{ color: D.text }}>随手拍趋势（近30天）</span>}
-            style={{ background: D.card, border: `1px solid ${D.border}` }}
-            headStyle={{ borderBottom: `1px solid ${D.border}` }}
+            title={<span style={{ color: colors.text.primary }}>随手拍趋势（近30天）</span>}
+            style={{ background: colors.bg.card, border: `1px solid ${colors.bg.border}` }}
+            headStyle={{ borderBottom: `1px solid ${colors.bg.border}` }}
           >
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: 120, overflowX: 'auto' }}>
               {hazardTrend.map((d, i) => (
@@ -132,13 +133,13 @@ export default function Dashboard() {
                     style={{
                       width: '100%',
                       height: `${Math.max((d.count / maxCount) * 100, d.count > 0 ? 4 : 0)}%`,
-                      background: d.count > 0 ? D.accent : D.elevated,
+                      background: d.count > 0 ? colors.accent : colors.bg.elevated,
                       borderRadius: '3px 3px 0 0',
                       transition: 'height 0.3s',
                       minHeight: d.count > 0 ? 4 : 0,
                     }}
                   />
-                  <span style={{ fontSize: 9, color: D.textMuted, marginTop: 4, whiteSpace: 'nowrap' }}>
+                  <span style={{ fontSize: 9, color: colors.text.muted, marginTop: 4, whiteSpace: 'nowrap' }}>
                     {i % 5 === 0 ? d.date : ''}
                   </span>
                 </div>
@@ -152,25 +153,25 @@ export default function Dashboard() {
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={12}>
           <Card
-            title={<span style={{ color: D.text }}>随手拍类型分布</span>}
-            style={{ background: D.card, border: `1px solid ${D.border}` }}
-            headStyle={{ borderBottom: `1px solid ${D.border}` }}
+            title={<span style={{ color: colors.text.primary }}>随手拍类型分布</span>}
+            style={{ background: colors.bg.card, border: `1px solid ${colors.bg.border}` }}
+            headStyle={{ borderBottom: `1px solid ${colors.bg.border}` }}
           >
             {hazardByType.length === 0 ? (
-              <div style={{ color: D.textSec, textAlign: 'center', padding: 20 }}>暂无数据</div>
+              <div style={{ color: colors.text.secondary, textAlign: 'center', padding: 20 }}>暂无数据</div>
             ) : (
               hazardByType.map((item, i) => (
                 <div key={i} style={{ marginBottom: 12 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <span style={{ color: D.text }}>{item.name}</span>
-                    <span style={{ color: D.textSec }}>{item.value}条 · {item.rate}%</span>
+                    <span style={{ color: colors.text.primary }}>{item.name}</span>
+                    <span style={{ color: colors.text.secondary }}>{item.value}条 · {item.rate}%</span>
                   </div>
-                  <div style={{ background: D.surface, borderRadius: 4, height: 8, overflow: 'hidden' }}>
+                  <div style={{ background: colors.bg.page, borderRadius: 4, height: 8, overflow: 'hidden' }}>
                     <div
                       style={{
                         width: `${item.rate}%`,
                         height: '100%',
-                        background: [D.accent, D.success, D.warning, D.danger][i % 4],
+                        background: [colors.accent, colors.success, colors.warning, colors.danger][i % 4],
                         borderRadius: 4,
                         transition: 'width 0.5s',
                       }}
@@ -184,20 +185,20 @@ export default function Dashboard() {
 
         <Col xs={24} lg={12}>
           <Card
-            title={<span style={{ color: D.text }}>随手拍状态分布</span>}
-            style={{ background: D.card, border: `1px solid ${D.border}` }}
-            headStyle={{ borderBottom: `1px solid ${D.border}` }}
+            title={<span style={{ color: colors.text.primary }}>随手拍状态分布</span>}
+            style={{ background: colors.bg.card, border: `1px solid ${colors.bg.border}` }}
+            headStyle={{ borderBottom: `1px solid ${colors.bg.border}` }}
           >
             {hazardByStatus.length === 0 ? (
-              <div style={{ color: D.textSec, textAlign: 'center', padding: 20 }}>暂无数据</div>
+              <div style={{ color: colors.text.secondary, textAlign: 'center', padding: 20 }}>暂无数据</div>
             ) : (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {hazardByStatus.map((item, i) => {
-                  const colors = [D.accent, D.warning, D.success, D.danger, D.textSec]
+                  const colors = [colors.accent, colors.warning, colors.success, colors.danger, colors.text.secondary]
                   return (
                     <div key={i} style={{
-                      background: D.surface,
-                      border: `1px solid ${D.border}`,
+                      background: colors.bg.page,
+                      border: `1px solid ${colors.bg.border}`,
                       borderRadius: 8,
                       padding: '8px 16px',
                       minWidth: 100,
@@ -206,8 +207,8 @@ export default function Dashboard() {
                       <div style={{ color: colors[i % colors.length], fontSize: 20, fontWeight: 700 }}>
                         {item.value}
                       </div>
-                      <div style={{ color: D.textSec, fontSize: 12, marginTop: 2 }}>{item.name}</div>
-                      <div style={{ color: D.textMuted, fontSize: 11 }}>{item.rate}%</div>
+                      <div style={{ color: colors.text.secondary, fontSize: 12, marginTop: 2 }}>{item.name}</div>
+                      <div style={{ color: colors.text.muted, fontSize: 11 }}>{item.rate}%</div>
                     </div>
                   )
                 })}

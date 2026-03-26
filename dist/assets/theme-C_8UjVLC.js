@@ -1,1 +1,0 @@
-const e={bg:{base:"#09090b",page:"#18181b",card:"#27272a",elevated:"#3f3f46"},accent:"#6366f1",success:"#22c55e",warning:"#eab308",danger:"#ef4444",text:{primary:"#e4e4e7",secondary:"#a1a1aa",muted:"#71717a",disabled:"#52525b"}};export{e as c};

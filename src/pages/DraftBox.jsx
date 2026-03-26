@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { colors } from '../styles/theme'
 import { Card, List, Empty, Popconfirm, message, Button, Tag, Spin } from 'antd'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { api } from '../api'
@@ -48,8 +49,8 @@ export default function DraftBox() {
   return (
     <div style={{ padding: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
-        <h2 style={{ color: '#e4e4e7', margin: 0 }}>草稿箱</h2>
-        <span style={{ color: '#71717a' }}>{drafts.length} 个草稿</span>
+        <h2 style={{ color: colors.text.primary, margin: 0 }}>草稿箱</h2>
+        <span style={{ color: colors.text.muted }}>{drafts.length} 个草稿</span>
       </div>
 
       {loading ? (
@@ -73,12 +74,12 @@ export default function DraftBox() {
                 <List.Item.Meta
                   title={
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ color: '#e4e4e7' }}>{item.title || '未填写标题'}</span>
+                      <span style={{ color: colors.text.primary }}>{item.title || '未填写标题'}</span>
                       <Tag color={cfg.color}>{cfg.label}</Tag>
                     </div>
                   }
                   description={
-                    <div style={{ color: '#71717a', fontSize: 12 }}>
+                    <div style={{ color: colors.text.muted, fontSize: 12 }}>
                       <span>{item.location || '未填写位置'}</span>
                       <span style={{ float: 'right' }}>保存于 {formatTime(item.auto_saved_at || item.created_at)}</span>
                     </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { colors } from '../styles/theme'
 import { Card, Table, Tag, Button, Empty, Spin } from 'antd'
 import { FileTextOutlined, PlusOutlined } from '@ant-design/icons'
 import { api } from '../api'
@@ -45,13 +46,13 @@ export default function Reports() {
   }
 
   const columns = [
-    { title: '报告编号', dataIndex: 'report_no', key: 'report_no', render: t => <span style={{ color: '#e4e4e7' }}>{t}</span> },
+    { title: '报告编号', dataIndex: 'report_no', key: 'report_no', render: t => <span style={{ color: colors.text.primary }}>{t}</span> },
     { title: '类型', dataIndex: 'report_type', key: 'report_type', render: t => <Tag>{TYPE_MAP[t] || t}</Tag> },
     { title: '状态', dataIndex: 'status', key: 'status', render: s => {
       const cfg = STATUS_MAP[s] || STATUS_MAP.draft
       return <Tag color={cfg.color}>{cfg.label}</Tag>
     }},
-    { title: '提交时间', dataIndex: 'submitted_at', key: 'submitted_at', render: t => <span style={{ color: '#71717a' }}>{t ? new Date(t).toLocaleString() : '-'}</span> },
+    { title: '提交时间', dataIndex: 'submitted_at', key: 'submitted_at', render: t => <span style={{ color: colors.text.muted }}>{t ? new Date(t).toLocaleString() : '-'}</span> },
     { title: '操作', key: 'action', render: (_, r) => r.status === 'draft' && (
       <Button size="small" type="primary" onClick={() => handleSubmit(r.id)}>提交</Button>
     )},
@@ -60,9 +61,9 @@ export default function Reports() {
   return (
     <div style={{ padding: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-        <h2 style={{ color: '#e4e4e7', margin: 0 }}><FileTextOutlined style={{ marginRight: 8 }} />报告管理</h2>
+        <h2 style={{ color: colors.text.primary, margin: 0 }}><FileTextOutlined style={{ marginRight: 8 }} />报告管理</h2>
       </div>
-      <Card style={{ background: '#27272a', border: '1px solid #3f3f46' }}>
+      <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46' }}>
         {loading ? <div style={{ textAlign: 'center', padding: 60 }}><Spin /></div> :
          data.length === 0 ? <Empty description="暂无报告" style={{ marginTop: 60 }} /> : (
           <Table dataSource={data} columns={columns} rowKey="id" loading={loading}

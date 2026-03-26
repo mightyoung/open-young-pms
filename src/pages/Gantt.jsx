@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { colors } from '../styles/theme'
 import { Card, Timeline, Tag, Empty, Spin, Button, Modal, Form, Input, message } from 'antd'
 import { PlusOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { api } from '../api'
@@ -51,22 +52,22 @@ export default function Gantt() {
   return (
     <div style={{ padding: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-        <h2 style={{ color: '#e4e4e7', margin: 0 }}>甘特图</h2>
+        <h2 style={{ color: colors.text.primary, margin: 0 }}>甘特图</h2>
         <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>新建任务</Button>
       </div>
 
       {loading ? <div style={{ textAlign: 'center', padding: 60 }}><Spin /></div> :
        tasks.length === 0 ? <Empty description="暂无任务，请创建" style={{ marginTop: 80 }} /> : (
-        <Card style={{ background: '#27272a', border: '1px solid #3f3f46' }}>
+        <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46' }}>
           <Timeline
             items={tasks.map(task => ({
               color: STATUS_MAP[task.status] || 'gray',
               children: (
                 <div>
-                  <div style={{ color: '#e4e4e7', fontWeight: 600 }}>{task.summary || task.title}</div>
+                  <div style={{ color: colors.text.primary, fontWeight: 600 }}>{task.summary || task.title}</div>
                   <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
                     <Tag color={PRIORITY_MAP[task.priority]?.color}>{PRIORITY_MAP[task.priority]?.label || '普通'}</Tag>
-                    <span style={{ color: '#71717a', fontSize: 12 }}>
+                    <span style={{ color: colors.text.muted, fontSize: 12 }}>
                       <ClockCircleOutlined style={{ marginRight: 4 }} />
                       {timeRange(task)}
                     </span>

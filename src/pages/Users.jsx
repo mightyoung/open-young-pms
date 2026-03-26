@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { colors } from '../styles/theme'
 import { Card, Table, Input, Button, message, Space, Tag } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 import { api } from '../api'
@@ -29,16 +30,16 @@ export default function Users() {
   useEffect(() => { loadUsers() }, [])
 
   const columns = [
-    { title: '用户名', dataIndex: 'username', key: 'username', render: t => <span style={{ color: '#e4e4e7' }}>{t}</span> },
-    { title: '姓名', dataIndex: 'full_name', key: 'full_name', render: t => <span style={{ color: '#a1a1aa' }}>{t || '-'}</span> },
-    { title: '邮箱', dataIndex: 'email', key: 'email', render: t => <span style={{ color: '#71717a' }}>{t || '-'}</span> },
-    { title: '手机', dataIndex: 'phone', key: 'phone', render: t => <span style={{ color: '#71717a' }}>{t || '-'}</span> },
+    { title: '用户名', dataIndex: 'username', key: 'username', render: t => <span style={{ color: colors.text.primary }}>{t}</span> },
+    { title: '姓名', dataIndex: 'full_name', key: 'full_name', render: t => <span style={{ color: colors.text.secondary }}>{t || '-'}</span> },
+    { title: '邮箱', dataIndex: 'email', key: 'email', render: t => <span style={{ color: colors.text.muted }}>{t || '-'}</span> },
+    { title: '手机', dataIndex: 'phone', key: 'phone', render: t => <span style={{ color: colors.text.muted }}>{t || '-'}</span> },
   ]
 
   return (
     <div style={{ padding: 24 }}>
-      <h2 style={{ color: '#e4e4e7', marginBottom: 16 }}>用户管理</h2>
-      <Card style={{ background: '#27272a', border: '1px solid #3f3f46' }}>
+      <h2 style={{ color: colors.text.primary, marginBottom: 16 }}>用户管理</h2>
+      <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46' }}>
         <Space style={{ marginBottom: 16 }}>
           <Input
             placeholder="搜索用户名/姓名/邮箱"

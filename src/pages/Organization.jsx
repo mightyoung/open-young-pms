@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { colors } from '../styles/theme'
 import { Card, Tree, Button, Modal, Form, Input, message, Spin, Popconfirm } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { api } from '../api'
@@ -76,11 +77,11 @@ export default function Organization() {
       if (item.children) {
         return (
           <Tree.TreeNode key={item.key} title={
-            <span style={{ color: '#e4e4e7' }}>
+            <span style={{ color: colors.text.primary }}>
               {item.title}
               <EditOutlined style={{ marginLeft: 8, fontSize: 12 }} onClick={() => handleEdit(item)} />
               <Popconfirm title="确定删除？" onConfirm={() => handleDelete(item)}>
-                <DeleteOutlined style={{ marginLeft: 8, fontSize: 12, color: '#ef4444' }} />
+                <DeleteOutlined style={{ marginLeft: 8, fontSize: 12, color: colors.danger }} />
               </Popconfirm>
             </span>
           }>
@@ -90,7 +91,7 @@ export default function Organization() {
       }
       return (
         <Tree.TreeNode key={item.key} title={
-          <span style={{ color: '#a1a1aa' }}>
+          <span style={{ color: colors.text.secondary }}>
             {item.title}
             <EditOutlined style={{ marginLeft: 8, fontSize: 12 }} onClick={() => handleEdit(item)} />
           </span>
@@ -101,12 +102,12 @@ export default function Organization() {
   return (
     <div style={{ padding: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-        <h2 style={{ color: '#e4e4e7', margin: 0 }}>组织架构</h2>
+        <h2 style={{ color: colors.text.primary, margin: 0 }}>组织架构</h2>
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>添加部门</Button>
       </div>
-      <Card style={{ background: '#27272a', border: '1px solid #3f3f46' }}>
+      <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46' }}>
         {loading ? <div style={{ textAlign: 'center', padding: 60 }}><Spin /></div> : (
-          <DirectoryTree treeData={treeData} expandAll style={{ color: '#e4e4e7' }} />
+          <DirectoryTree treeData={treeData} expandAll style={{ color: colors.text.primary }} />
         )}
       </Card>
 

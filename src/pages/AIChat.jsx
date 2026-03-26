@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { colors } from '../styles/theme'
 import { Card, Input, Button, Avatar, Spin, List } from 'antd'
 import { RobotOutlined, UserOutlined, SendOutlined, BulbOutlined } from '@ant-design/icons'
 import { api } from '../api'
@@ -54,14 +55,14 @@ export default function AIChat() {
 
   return (
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px)' }}>
-      <h2 style={{ color: '#e4e4e7', marginBottom: 16 }}>
+      <h2 style={{ color: colors.text.primary, marginBottom: 16 }}>
         <RobotOutlined style={{ marginRight: 8 }} />AI 智能助手
       </h2>
 
       {/* 快捷问题 */}
       {messages.length === 0 && (
         <div style={{ marginBottom: 16 }}>
-          <div style={{ color: '#71717a', fontSize: 13, marginBottom: 8 }}>快捷问题：</div>
+          <div style={{ color: colors.text.muted, fontSize: 13, marginBottom: 8 }}>快捷问题：</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {quickActions.map((q, i) => (
               <Button key={i} size="small" icon={<BulbOutlined />} onClick={() => {
@@ -80,17 +81,17 @@ export default function AIChat() {
       )}
 
       {/* 消息列表 */}
-      <Card style={{ flex: 1, background: '#18181b', border: '1px solid #3f3f46', overflow: 'auto', marginBottom: 16 }}>
+      <Card style={{ flex: 1, background: colors.bg.page, border: '1px solid #3f3f46', overflow: 'auto', marginBottom: 16 }}>
         <List
           dataSource={messages}
           renderItem={msg => (
             <List.Item style={{ border: 'none', padding: '8px 0', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, maxWidth: '80%', flexDirection: msg.role === 'user' ? 'row-reverse' : 'row' }}>
                 <Avatar icon={msg.role === 'user' ? <UserOutlined /> : <RobotOutlined />} />
-                <div style={{ background: msg.role === 'user' ? '#3b82f6' : '#27272a', color: msg.role === 'user' ? '#fff' : '#e4e4e7', borderRadius: 12, padding: '10px 14px', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+                <div style={{ background: msg.role === 'user' ? colors.accent : colors.bg.card, color: msg.role === 'user' ? '#fff' : colors.text.primary, borderRadius: 12, padding: '10px 14px', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
                   {msg.content}
                   {msg.sources?.length > 0 && (
-                    <div style={{ fontSize: 11, color: '#71717a', marginTop: 6 }}>
+                    <div style={{ fontSize: 11, color: colors.text.muted, marginTop: 6 }}>
                       📚 参考：{msg.sources.join(', ')}
                     </div>
                   )}
@@ -111,7 +112,7 @@ export default function AIChat() {
           onPressEnter={e => { if (!e.shiftKey) { e.preventDefault(); send() } }}
           placeholder="输入问题，按 Enter 发送，Shift+Enter 换行..."
           autoSize={{ minRows: 1, maxRows: 4 }}
-          style={{ flex: 1, background: '#27272a', border: '1px solid #3f3f46', color: '#e4e4e7' }}
+          style={{ flex: 1, background: colors.bg.card, border: '1px solid #3f3f46', color: colors.text.primary }}
         />
         <Button type="primary" icon={<SendOutlined />} onClick={send} loading={loading}>发送</Button>
       </div>

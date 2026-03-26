@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { colors } from '../styles/theme'
 import { Card, Form, Input, Select, Button, message, Steps, Modal, List, Avatar, Typography } from 'antd'
 import { FileTextOutlined, CheckOutlined, FolderOutlined } from '@ant-design/icons'
 import { api } from '../api'
@@ -86,7 +87,7 @@ export default function ReportWrite() {
 
   return (
     <div style={{ padding: 24, maxWidth: 800, margin: '0 auto' }}>
-      <h2 style={{ color: '#e4e4e7', marginBottom: 24 }}>
+      <h2 style={{ color: colors.text.primary, marginBottom: 24 }}>
         <FileTextOutlined style={{ marginRight: 8 }} />撰写报告
       </h2>
 
@@ -100,7 +101,7 @@ export default function ReportWrite() {
         style={{ marginBottom: 24 }}
       />
 
-      <Card style={{ background: '#27272a', border: '1px solid #3f3f46' }}>
+      <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46' }}>
         <Form form={form} layout="vertical" size="large"
           initialValues={{
             report_type: 'daily',
@@ -145,7 +146,7 @@ export default function ReportWrite() {
                       size="small"
                       icon={<FolderOutlined />}
                       onClick={() => setProjectModalOpen(true)}
-                      style={{ color: '#3b82f6', width: '100%', textAlign: 'left' }}
+                      style={{ color: colors.accent, width: '100%', textAlign: 'left' }}
                     >
                       项目库中选择...
                     </Button>
@@ -157,15 +158,15 @@ export default function ReportWrite() {
 
           {selectedProject && (
             <div style={{
-              padding: '10px 14px', background: '#1c1c1e', borderRadius: 8,
+              padding: '10px 14px', background: colors.bg.card, borderRadius: 8,
               border: '1px solid #3b82f630', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 12
             }}>
-              <Avatar icon={<FolderOutlined />} style={{ background: '#3b82f6' }} />
+              <Avatar icon={<FolderOutlined />} style={{ background: colors.accent }} />
               <div>
-                <Text style={{ color: '#e4e4e7', display: 'block', fontWeight: 600 }}>
+                <Text style={{ color: colors.text.primary, display: 'block', fontWeight: 600 }}>
                   {selectedProject.project_name || selectedProject.name}
                 </Text>
-                <Text style={{ color: '#71717a', fontSize: 12 }}>
+                <Text style={{ color: colors.text.muted, fontSize: 12 }}>
                   编号: {selectedProject.project_code || '—'} | 状态: {selectedProject.status || '—'}
                 </Text>
               </div>
@@ -226,19 +227,19 @@ export default function ReportWrite() {
 
       {/* 项目选择弹窗 */}
       <Modal
-        title={<Text style={{ color: '#e4e4e7' }}>选择项目</Text>}
+        title={<Text style={{ color: colors.text.primary }}>选择项目</Text>}
         open={projectModalOpen}
         onCancel={() => setProjectModalOpen(false)}
         footer={null}
         width={600}
-        styles={{ body: { background: '#18181b', maxHeight: 500, overflow: 'auto' } }}
+        styles={{ body: { background: colors.bg.page, maxHeight: 500, overflow: 'auto' } }}
       >
         <Input
           placeholder="搜索项目名称或编号..."
-          prefix={<FolderOutlined style={{ color: '#71717a' }} />}
+          prefix={<FolderOutlined style={{ color: colors.text.muted }} />}
           value={projectKeyword}
           onChange={e => { setProjectKeyword(e.target.value); loadProjects(e.target.value) }}
-          style={{ marginBottom: 12, background: '#27272a', borderColor: '#3f3f46' }}
+          style={{ marginBottom: 12, background: colors.bg.card, borderColor: colors.bg.elevated }}
         />
         <List
           loading={projectLoading}
@@ -256,14 +257,14 @@ export default function ReportWrite() {
                 cursor: 'pointer', padding: '10px 12px',
                 borderRadius: 8, borderBottom: 'none',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = '#27272a'}
+              onMouseEnter={e => e.currentTarget.style.background = colors.bg.card}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
               <List.Item.Meta
-                avatar={<Avatar icon={<FolderOutlined />} style={{ background: '#3b82f620', color: '#3b82f6' }} />}
-                title={<Text style={{ color: '#e4e4e7' }}>{item.project_name || item.name}</Text>}
+                avatar={<Avatar icon={<FolderOutlined />} style={{ background: '#3b82f620', color: colors.accent }} />}
+                title={<Text style={{ color: colors.text.primary }}>{item.project_name || item.name}</Text>}
                 description={
-                  <Text style={{ color: '#71717a', fontSize: 12 }}>
+                  <Text style={{ color: colors.text.muted, fontSize: 12 }}>
                     编号: {item.project_code || '—'} · 状态: {item.status || '—'}
                   </Text>
                 }

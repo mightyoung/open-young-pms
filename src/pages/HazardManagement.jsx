@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { colors } from '../styles/theme'
 import { Card, Table, Tag, Button, Select, Space, Typography, Drawer, Descriptions, Timeline, Avatar, Statistic, Row, Col, Divider, Modal, message } from 'antd'
 import { ExclamationCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined, EyeOutlined } from '@ant-design/icons'
 import { api } from '../api'
@@ -67,14 +68,14 @@ export default function HazardManagement() {
   }
 
   const columns = [
-    { title: '隐患编号', dataIndex: 'hazard_no', key: 'hazard_no', render: t => <Text style={{ color: '#a1a1aa', fontSize: 12 }}>{t || '-'}</Text> },
+    { title: '隐患编号', dataIndex: 'hazard_no', key: 'hazard_no', render: t => <Text style={{ color: colors.text.secondary, fontSize: 12 }}>{t || '-'}</Text> },
     { title: '类型', dataIndex: 'type', key: 'type', render: t => <Tag color={TYPE_MAP[t]?.color}>{TYPE_MAP[t]?.label || t}</Tag> },
     { title: '紧急程度', dataIndex: 'urgency', key: 'urgency', render: u => <Tag color={URGENCY_MAP[u]?.color}>{URGENCY_MAP[u]?.label || u}</Tag> },
     { title: '状态', dataIndex: 'status', key: 'status', render: s => <Tag color={STATUS_MAP[s]?.color}>{STATUS_MAP[s]?.label || s}</Tag> },
-    { title: '描述', dataIndex: 'description', key: 'description', render: t => <Text style={{ color: '#e4e4e7', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t || '-'}</Text> },
-    { title: '位置', dataIndex: 'location', key: 'location', render: t => <Text style={{ color: '#71717a', fontSize: 12 }}>{t || '-'}</Text> },
-    { title: '上报人', dataIndex: 'reporter_name', key: 'reporter_name', render: t => <Text style={{ color: '#a1a1aa' }}>{t || '-'}</Text> },
-    { title: '上报时间', dataIndex: 'created_at', key: 'created_at', render: t => <Text style={{ color: '#71717a', fontSize: 12 }}>{t ? new Date(t).toLocaleString() : '-'}</Text> },
+    { title: '描述', dataIndex: 'description', key: 'description', render: t => <Text style={{ color: colors.text.primary, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t || '-'}</Text> },
+    { title: '位置', dataIndex: 'location', key: 'location', render: t => <Text style={{ color: colors.text.muted, fontSize: 12 }}>{t || '-'}</Text> },
+    { title: '上报人', dataIndex: 'reporter_name', key: 'reporter_name', render: t => <Text style={{ color: colors.text.secondary }}>{t || '-'}</Text> },
+    { title: '上报时间', dataIndex: 'created_at', key: 'created_at', render: t => <Text style={{ color: colors.text.muted, fontSize: 12 }}>{t ? new Date(t).toLocaleString() : '-'}</Text> },
     {
       title: '操作', key: 'action', render: (_, r) => (
         <Button type="link" icon={<EyeOutlined />} onClick={() => { setDetail(r); }}>详情</Button>
@@ -84,7 +85,7 @@ export default function HazardManagement() {
 
   return (
     <div style={{ padding: 24 }}>
-      <Title level={4} style={{ color: '#e4e4e7', marginBottom: 16 }}>
+      <Title level={4} style={{ color: colors.text.primary, marginBottom: 16 }}>
         <ExclamationCircleOutlined style={{ marginRight: 8 }} />隐患管理
       </Title>
 
@@ -92,11 +93,11 @@ export default function HazardManagement() {
       <Row gutter={16} style={{ marginBottom: 16 }}>
         {Object.entries(STATUS_MAP).slice(0, 4).map(([k, v]) => (
           <Col span={6} key={k}>
-            <Card size="small" style={{ background: '#18181b', border: '1px solid #27272a', textAlign: 'center' }}>
+            <Card size="small" style={{ background: colors.bg.page, border: '1px solid #27272a', textAlign: 'center' }}>
               <Statistic
-                title={<Text style={{ color: '#71717a' }}>{v.label}</Text>}
+                title={<Text style={{ color: colors.text.muted }}>{v.label}</Text>}
                 value={data.filter(d => d.status === k).length}
-                valueStyle={{ color: v.color === 'default' ? '#71717a' : v.color, fontSize: 24 }}
+                valueStyle={{ color: v.color === 'default' ? colors.text.muted : v.color, fontSize: 24 }}
               />
             </Card>
           </Col>
@@ -104,9 +105,9 @@ export default function HazardManagement() {
       </Row>
 
       {/* 筛选 */}
-      <Card size="small" style={{ background: '#18181b', border: '1px solid #27272a', marginBottom: 16 }}>
+      <Card size="small" style={{ background: colors.bg.page, border: '1px solid #27272a', marginBottom: 16 }}>
         <Space wrap>
-          <Text style={{ color: '#71717a' }}>筛选：</Text>
+          <Text style={{ color: colors.text.muted }}>筛选：</Text>
           <Select allowClear placeholder="类型" style={{ width: 120 }} onChange={v => setFilters(f => ({ ...f, type: v }))}>
             {Object.entries(TYPE_MAP).map(([k, v]) => <Select.Option key={k} value={k}>{v.label}</Select.Option>)}
           </Select>
@@ -120,7 +121,7 @@ export default function HazardManagement() {
         </Space>
       </Card>
 
-      <Card style={{ background: '#18181b', border: '1px solid #27272a' }}>
+      <Card style={{ background: colors.bg.page, border: '1px solid #27272a' }}>
         <Table dataSource={data} columns={columns} rowKey="id" loading={loading} pagination={{
           current: page, pageSize: 20, total,
           onChange: p => setPage(p),
@@ -129,22 +130,22 @@ export default function HazardManagement() {
       </Card>
 
       {/* 详情抽屉 */}
-      <Drawer title={<Text style={{ color: '#e4e4e7' }}>隐患详情</Text>} width={600} open={!!detail} onClose={() => setDetail(null)}
-        styles={{ body: { background: '#18181b', color: '#e4e4e7', padding: 24 } }}>
+      <Drawer title={<Text style={{ color: colors.text.primary }}>隐患详情</Text>} width={600} open={!!detail} onClose={() => setDetail(null)}
+        styles={{ body: { background: colors.bg.page, color: colors.text.primary, padding: 24 } }}>
         {detail && (
           <div>
-            <Descriptions column={1} size="small" style={{ color: '#a1a1aa' }}>
-              <Descriptions.Item label={<Text style={{ color: '#71717a' }}>编号</Text>}>{detail.hazard_no || '-'}</Descriptions.Item>
-              <Descriptions.Item label={<Text style={{ color: '#71717a' }}>类型</Text>}><Tag color={TYPE_MAP[detail.type]?.color}>{TYPE_MAP[detail.type]?.label || detail.type}</Tag></Descriptions.Item>
-              <Descriptions.Item label={<Text style={{ color: '#71717a' }}>紧急程度</Text>}><Tag color={URGENCY_MAP[detail.urgency]?.color}>{URGENCY_MAP[detail.urgency]?.label || detail.urgency}</Tag></Descriptions.Item>
-              <Descriptions.Item label={<Text style={{ color: '#71717a' }}>状态</Text>}><Tag color={STATUS_MAP[detail.status]?.color}>{STATUS_MAP[detail.status]?.label || detail.status}</Tag></Descriptions.Item>
-              <Descriptions.Item label={<Text style={{ color: '#71717a' }}>位置</Text>}>{detail.location || '-'}</Descriptions.Item>
-              <Descriptions.Item label={<Text style={{ color: '#71717a' }}>描述</Text>}>{detail.description || '-'}</Descriptions.Item>
-              <Descriptions.Item label={<Text style={{ color: '#71717a' }}>上报人</Text>}>{detail.reporter_name || '-'}</Descriptions.Item>
-              <Descriptions.Item label={<Text style={{ color: '#71717a' }}>上报时间</Text>}>{detail.created_at ? new Date(detail.created_at).toLocaleString() : '-'}</Descriptions.Item>
+            <Descriptions column={1} size="small" style={{ color: colors.text.secondary }}>
+              <Descriptions.Item label={<Text style={{ color: colors.text.muted }}>编号</Text>}>{detail.hazard_no || '-'}</Descriptions.Item>
+              <Descriptions.Item label={<Text style={{ color: colors.text.muted }}>类型</Text>}><Tag color={TYPE_MAP[detail.type]?.color}>{TYPE_MAP[detail.type]?.label || detail.type}</Tag></Descriptions.Item>
+              <Descriptions.Item label={<Text style={{ color: colors.text.muted }}>紧急程度</Text>}><Tag color={URGENCY_MAP[detail.urgency]?.color}>{URGENCY_MAP[detail.urgency]?.label || detail.urgency}</Tag></Descriptions.Item>
+              <Descriptions.Item label={<Text style={{ color: colors.text.muted }}>状态</Text>}><Tag color={STATUS_MAP[detail.status]?.color}>{STATUS_MAP[detail.status]?.label || detail.status}</Tag></Descriptions.Item>
+              <Descriptions.Item label={<Text style={{ color: colors.text.muted }}>位置</Text>}>{detail.location || '-'}</Descriptions.Item>
+              <Descriptions.Item label={<Text style={{ color: colors.text.muted }}>描述</Text>}>{detail.description || '-'}</Descriptions.Item>
+              <Descriptions.Item label={<Text style={{ color: colors.text.muted }}>上报人</Text>}>{detail.reporter_name || '-'}</Descriptions.Item>
+              <Descriptions.Item label={<Text style={{ color: colors.text.muted }}>上报时间</Text>}>{detail.created_at ? new Date(detail.created_at).toLocaleString() : '-'}</Descriptions.Item>
             </Descriptions>
 
-            <Divider style={{ borderColor: '#27272a' }} />
+            <Divider style={{ borderColor: colors.bg.card }} />
 
             {detail.status === 'pending_verify' && (
               <Button type="primary" icon={<CheckCircleOutlined />} block onClick={() => handleVerify(detail.id)} style={{ marginBottom: 16 }}>
