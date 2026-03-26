@@ -18,9 +18,10 @@ python-jose[cryptography]==3.3.0  # JWT
 passlib[bcrypt]==1.7.4  # password hashing
 python-multipart==0.0.12  # form data parsing
 
-# File handling
+# File handling & image processing
 python-multipart==0.0.12
 aiofiles==24.1.0  # async file I/O
+pillow>=10.0  # image processing for thumbnails
 
 # CORS & Middleware
 httpx==0.27.2  # async HTTP client

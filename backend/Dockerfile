@@ -1,22 +1,20 @@
-# FastAPI Backend — Dockerfile
-FROM python:3.12-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install uv for fast package management
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
-
-# Copy requirements first for caching
+# Install dependencies
 COPY requirements.txt .
-RUN uv pip install --system --no-cache -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy source
+# Copy source code
 COPY . .
 
-# Non-root user
-RUN useradd -m appuser && chown -R appuser:appuser /app
-USER appuser
+# Create uploads and data directories
+RUN mkdir -p uploads data
 
-EXPOSE 8000
+EXPOSE 8001
 
-CMD ["uvicorn", "api.services.fastapi_code_generator.main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENV USE_SQLITE=false
+ENV DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/pms
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
