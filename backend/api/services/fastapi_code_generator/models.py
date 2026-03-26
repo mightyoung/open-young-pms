@@ -52,6 +52,7 @@ class Role(Base):
     name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)  # super_admin / company_admin / dept_leader / project_manager / site_staff
     label: Mapped[str] = mapped_column(String(100), nullable=False)
     permissions: Mapped[dict] = mapped_column(JSON, default=dict)
+    is_system: Mapped[bool] = mapped_column(Boolean, default=False)  # 系统内置角色不可删除
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     users: Mapped[list["User"]] = relationship(back_populates="role")
@@ -354,3 +355,15 @@ class Notification(Base):
     __table_args__ = (
         Index("ix_notification_user_unread", "user_id", "is_read"),
     )
+
+
+# ── Role & Permission ─────────────────────────────────────────
+
+class UserRole(Base):
+    __tablename__ = "user_roles"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[str] = mapped_column(GUID(), ForeignKey("users.id"), nullable=False)
+    role_id: Mapped[str] = mapped_column(GUID(), ForeignKey("roles.id"), nullable=False)
+    project_id: Mapped[Optional[uuid.UUID]] = mapped_column(GUID(), nullable=True)  # 项目维度权限
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
