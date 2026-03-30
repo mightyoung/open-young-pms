@@ -1,0 +1,475 @@
+/**
+ * PMS 亮色主题 - 基于 Stitch Azure Ethos 设计系统
+ * 生成时间: 2026-03-30
+ * 设计来源: Google Stitch AI (项目ID: 8004525097705286938)
+ */
+
+/* 导入 Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Stitch Azure Ethos 颜色系统 */
+  --color-primary: #115cb9;
+  --color-primary-container: #d7e2ff;
+  --color-primary-dim: #0050a7;
+  --color-on-primary: #f7f7ff;
+  --color-on-primary-container: #004fa6;
+  
+  --color-secondary: #5d5f65;
+  --color-secondary-container: #e2e2e9;
+  --color-on-secondary: #f9f8ff;
+  --color-on-secondary-container: #505157;
+  
+  --color-tertiary: #5e5c78;
+  --color-tertiary-container: #d5d1f2;
+  --color-on-tertiary: #fcf7ff;
+  
+  --color-background: #fcf8f9;
+  --color-surface: #fcf8f9;
+  --color-surface-bright: #fcf8f9;
+  --color-surface-dim: #dbd9dd;
+  --color-surface-container: #f0edef;
+  --color-surface-container-high: #eae7ea;
+  --color-surface-container-highest: #e4e2e5;
+  --color-surface-container-low: #f6f3f4;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-variant: #e4e2e5;
+  --color-surface-tint: #115cb9;
+  
+  --color-on-background: #323235;
+  --color-on-surface: #323235;
+  --color-on-surface-variant: #5f5f61;
+  
+  --color-outline: #7b7a7d;
+  --color-outline-variant: #b3b1b4;
+  
+  --color-error: #9f403d;
+  --color-error-container: #fe8983;
+  --color-on-error: #fff7f6;
+  --color-on-error-container: #752121;
+  
+  --color-inverse-on-surface: #9e9c9d;
+  --color-inverse-primary: #659dfe;
+  --color-inverse-surface: #0e0e0f;
+  
+  /* 角色颜色 */
+  --color-role-super-admin: #ff4d4f;
+  --color-role-company-leader: #1890ff;
+  --color-role-dept-leader: #722ed1;
+  --color-role-section-chief: #faad14;
+  --color-role-project-manager: #52c41a;
+  --color-role-field-staff: #13c2c2;
+  
+  /* 状态颜色 */
+  --color-status-active: #52c41a;
+  --color-status-planning: #1890ff;
+  --color-status-completed: #8c8c8c;
+  --color-status-pending: #faad14;
+  --color-status-in-progress: #1890ff;
+  --color-status-resolved: #52c41a;
+  --color-status-high: #ff4d4f;
+  --color-status-medium: #faad14;
+  --color-status-low: #52c41a;
+  --color-status-idle: #52c41a;
+  --color-status-in-use: #1890ff;
+  --color-status-maintenance: #faad14;
+  
+  /* 字体 */
+  --font-headline: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-label: 'Inter', sans-serif;
+  
+  /* 圆角 (ROUND_FOUR) */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+  
+  /* 阴影 */
+  --shadow-soft: 0 2px 8px rgba(14, 14, 15, 0.04);
+  --shadow-standard: 0 4px 16px rgba(14, 14, 15, 0.08);
+  --shadow-ambient: 0 20px 40px rgba(14, 14, 15, 0.05);
+  --shadow-lifted: 0 12px 40px rgba(17, 92, 185, 0.12);
+  
+  /* 过渡 */
+  --cubic-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 全局样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-background);
+  color: var(--color-on-background);
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* ===========================
+   卡片样式 - 基于 Stitch 设计系统
+   =========================== */
+.pms-card {
+  background: var(--color-surface-container-lowest);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.2s var(--cubic-smooth);
+  /* 无边框设计，通过背景色区分 */
+  border: none;
+}
+
+.pms-card:hover {
+  box-shadow: var(--shadow-lifted);
+  transform: translateY(-2px);
+}
+
+/* 卡片分组 */
+.pms-card-group {
+  background: var(--color-surface-container);
+  border-radius: var(--radius-xl);
+  padding: 8px;
+}
+
+/* ===========================
+   按钮样式
+   =========================== */
+.pms-btn-primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  font-family: var(--font-label);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s var(--cubic-smooth);
+}
+
+.pms-btn-primary:hover {
+  background: var(--color-primary-dim);
+  box-shadow: 0 4px 12px rgba(17, 92, 185, 0.25);
+}
+
+.pms-btn-secondary {
+  background: var(--color-secondary-container);
+  color: var(--color-on-secondary-container);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s var(--cubic-smooth);
+}
+
+.pms-btn-secondary:hover {
+  background: var(--color-secondary-dim, #d4d4db);
+}
+
+/* ===========================
+   输入框样式
+   =========================== */
+.pms-input {
+  background: var(--color-surface-container-high);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  color: var(--color-on-surface);
+  transition: all 0.2s var(--cubic-smooth);
+  width: 100%;
+}
+
+.pms-input:focus {
+  background: var(--color-surface-container-lowest);
+  outline: none;
+  border-bottom: 2px solid var(--color-primary);
+}
+
+/* ===========================
+   徽章/标签样式
+   =========================== */
+.pms-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.pms-badge-primary {
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+}
+
+.pms-badge-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.pms-badge-warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.pms-badge-error {
+  background: var(--color-error-container);
+  color: var(--color-on-error-container);
+}
+
+/* 角色徽章 */
+.pms-badge-role {
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+}
+
+.pms-badge-role.super_admin { background: var(--color-role-super-admin); }
+.pms-badge-role.company_leader { background: var(--color-role-company-leader); }
+.pms-badge-role.dept_leader { background: var(--color-role-dept-leader); }
+.pms-badge-role.section_chief { background: var(--color-role-section-chief); }
+.pms-badge-role.project_manager { background: var(--color-role-project-manager); }
+.pms-badge-role.field_staff { background: var(--color-role-field-staff); }
+
+/* ===========================
+   侧边栏样式
+   =========================== */
+.pms-sidebar {
+  background: #1a1a2e;
+  color: #ffffff;
+  width: 240px;
+  height: 100vh;
+  padding: 16px;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.pms-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s var(--cubic-smooth);
+  position: relative;
+}
+
+.pms-sidebar-item:hover,
+.pms-sidebar-item.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.pms-sidebar-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--color-primary);
+  border-radius: 0 3px 3px 0;
+}
+
+/* ===========================
+   主内容区域
+   =========================== */
+.pms-main {
+  margin-left: 240px;
+  min-height: 100vh;
+  background: var(--color-background);
+  padding: 24px;
+}
+
+/* ===========================
+   页面标题
+   =========================== */
+.pms-page-header {
+  margin-bottom: 24px;
+}
+
+.pms-page-title {
+  font-family: var(--font-headline);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-on-background);
+  letter-spacing: -0.02em;
+}
+
+/* ===========================
+   数据卡片
+   =========================== */
+.pms-metric-card {
+  background: var(--color-surface-container-lowest);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-soft);
+}
+
+.pms-metric-value {
+  font-family: var(--font-headline);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.pms-metric-label {
+  font-size: 14px;
+  color: var(--color-on-surface-variant);
+  margin-top: 4px;
+}
+
+/* ===========================
+   表格样式
+   =========================== */
+.pms-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface-container-lowest);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.pms-table th {
+  background: var(--color-surface-container);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-on-surface);
+  font-size: 13px;
+}
+
+.pms-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-outline-variant);
+}
+
+.pms-table tr:last-child td {
+  border-bottom: none;
+}
+
+.pms-table tr:hover td {
+  background: var(--color-surface-container-low);
+}
+
+/* ===========================
+   标签页样式
+   =========================== */
+.pms-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--color-surface-container);
+  padding: 4px;
+  border-radius: var(--radius-lg);
+}
+
+.pms-tab {
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  color: var(--color-on-surface-variant);
+  cursor: pointer;
+  transition: all 0.2s var(--cubic-smooth);
+}
+
+.pms-tab:hover {
+  color: var(--color-on-surface);
+}
+
+.pms-tab.active {
+  background: var(--color-surface-container-lowest);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-soft);
+}
+
+/* ===========================
+   进度条
+   =========================== */
+.pms-progress {
+  height: 6px;
+  background: var(--color-surface-container);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.pms-progress-bar {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.3s var(--cubic-smooth);
+}
+
+/* ===========================
+   滚动条
+   =========================== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-outline);
+}
+
+/* ===========================
+   动画
+   =========================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out forwards;
+}
+
+/* ===========================
+   Ant Design 覆盖
+   =========================== */
+.ant-btn-primary {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.ant-btn-primary:hover {
+  background: var(--color-primary-dim) !important;
+  border-color: var(--color-primary-dim) !important;
+}
+
+.ant-input:focus,
+.ant-input-focused {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(17, 92, 185, 0.1) !important;
+}

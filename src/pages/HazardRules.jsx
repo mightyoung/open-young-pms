@@ -44,13 +44,13 @@ export default function HazardRules() {
         </Title>
       </div>
 
-      <Card style={{ background: colors.bg.page, border: '1px solid #27272a', marginBottom: 16 }}>
+      <Card style={{ background: colors.bg.page, border: '1px solid #e5e7eb', marginBottom: 16 }}>
         <Text style={{ color: colors.text.muted, fontSize: 12 }}>
           💡 自动派发规则：当隐患满足触发条件时，自动指派给指定负责人，无需手动处理。
         </Text>
       </Card>
 
-      <Card style={{ background: colors.bg.page, border: '1px solid #27272a' }}>
+      <Card style={{ background: colors.bg.page, border: '1px solid #e5e7eb' }}>
         <Table dataSource={rules} columns={columns} rowKey="id" size="small" pagination={false}
           locale={{ emptyText: '暂无规则' }} />
       </Card>

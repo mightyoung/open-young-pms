@@ -95,9 +95,9 @@ export default function Forum() {
   ]
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24, background: '#f5f7fa', minHeight: '100vh' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-        <h2 style={{ color: '#e4e4e7', margin: 0 }}>论坛</h2>
+        <h2 style={{ color: '#1a1a2e', margin: 0 }}>论坛</h2>
         <Button type="primary" icon={<PlusOutlined />} onClick={() => setPostModalOpen(true)}>发帖</Button>
       </div>
 
@@ -114,7 +114,7 @@ export default function Forum() {
           dataSource={posts}
           renderItem={post => (
             <List.Item
-              style={{ background: '#27272a', border: '1px solid #3f3f46', borderRadius: 8, padding: 16, marginBottom: 8 }}
+              style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 8, padding: 16, marginBottom: 8 }}
               actions={[
                 <Button key="like" size="small" icon={<LikeOutlined />} onClick={() => handleLike(post.id)}>
                   {post.like_count || 0}
@@ -131,13 +131,13 @@ export default function Forum() {
                   <a
                     href={`?postId=${post.id}`}
                     onClick={e => { e.preventDefault(); sessionStorage.setItem('forum_post_id', post.id); window.dispatchEvent(new CustomEvent('__navigate', { detail: 'forumDetail' })) }}
-                    style={{ color: '#e4e4e7' }}
+                    style={{ color: '#115cb9' }}
                   >{post.title}</a>
                 </>}
                 description={
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
                     {(post.tags || []).map(tag => <Tag key={tag} color="blue">{tag}</Tag>)}
-                    <span style={{ color: '#71717a', fontSize: 12, marginLeft: 'auto' }}>{timeAgo(post.created_at)}</span>
+                    <span style={{ color: '#8c8c8c', fontSize: 12, marginLeft: 'auto' }}>{timeAgo(post.created_at)}</span>
                   </div>
                 }
               />
@@ -171,16 +171,16 @@ export default function Forum() {
       >
         {selectedPost && (
           <div style={{ marginTop: 16 }}>
-            <div style={{ color: '#a1a1aa', marginBottom: 16, lineHeight: 1.8 }}>{selectedPost.content}</div>
-            <hr style={{ border: 'none', borderTop: '1px solid #3f3f46', margin: '16px 0' }} />
-            <h4 style={{ color: '#e4e4e7' }}>回帖 ({selectedPost.replies?.length || 0})</h4>
+            <div style={{ color: '#5f5f61', marginBottom: 16, lineHeight: 1.8 }}>{selectedPost.content}</div>
+            <hr style={{ border: 'none', borderTop: '1px solid #e5e7eb', margin: '16px 0' }} />
+            <h4 style={{ color: '#1a1a2e' }}>回帖 ({selectedPost.replies?.length || 0})</h4>
             {(selectedPost.replies || []).map(reply => (
-              <div key={reply.id} style={{ background: '#1c1c1e', borderRadius: 6, padding: 12, marginBottom: 8 }}>
+              <div key={reply.id} style={{ background: '#f5f7fa', borderRadius: 6, padding: 12, marginBottom: 8 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <span style={{ color: '#71717a', fontSize: 12 }}>#{reply.floor_number}楼</span>
-                  <span style={{ color: '#71717a', fontSize: 12 }}>{timeAgo(reply.created_at)}</span>
+                  <span style={{ color: '#8c8c8c', fontSize: 12 }}>#{reply.floor_number}楼</span>
+                  <span style={{ color: '#8c8c8c', fontSize: 12 }}>{timeAgo(reply.created_at)}</span>
                 </div>
-                <div style={{ color: '#e4e4e7' }}>{reply.content}</div>
+                <div style={{ color: '#1a1a2e' }}>{reply.content}</div>
               </div>
             ))}
             <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>

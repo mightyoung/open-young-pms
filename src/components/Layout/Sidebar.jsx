@@ -117,7 +117,7 @@ export function Sidebar({ collapsed, activeMenu, setActiveMenu, user }) {
           width: 32,
           height: 32,
           borderRadius: 8,
-          background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+          background: 'linear-gradient(135deg, #115cb9, #115cb9)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -136,7 +136,7 @@ export function Sidebar({ collapsed, activeMenu, setActiveMenu, user }) {
             style={{
               fontSize: 18,
               fontWeight: 700,
-              background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+              background: 'linear-gradient(135deg, #115cb9, #115cb9)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               whiteSpace: 'nowrap',
@@ -185,7 +185,7 @@ export function Sidebar({ collapsed, activeMenu, setActiveMenu, user }) {
                     transform: 'translateY(-50%)',
                     width: 2,
                     height: 24,
-                    background: '#6366f1',
+                    background: '#115cb9',
                     borderRadius: 2,
                   }}
                 />
@@ -230,7 +230,7 @@ export function Sidebar({ collapsed, activeMenu, setActiveMenu, user }) {
           width: 36,
           height: 36,
           borderRadius: '50%',
-          background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+          background: 'linear-gradient(135deg, #115cb9, #115cb9)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

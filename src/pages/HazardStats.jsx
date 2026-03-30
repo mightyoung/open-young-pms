@@ -58,7 +58,7 @@ export default function HazardStats() {
       <Row gutter={[16, 16]}>
         {summaryData.map((d, i) => (
           <Col span={6} key={i}>
-            <Card style={{ background: colors.bg.page, border: '1px solid #27272a', textAlign: 'center' }}>
+            <Card style={{ background: colors.bg.page, border: '1px solid #e5e7eb', textAlign: 'center' }}>
               <div style={{ color: d.color, fontSize: 28, marginBottom: 8 }}>{d.icon}</div>
               <Statistic title={<Text style={{ color: colors.text.muted }}>{d.label}</Text>} value={d.value}
                 valueStyle={{ color: d.color, fontSize: 28 }} />
@@ -69,20 +69,20 @@ export default function HazardStats() {
 
       <Row gutter={16} style={{ marginTop: 16 }}>
         <Col span={16}>
-          <Card title={<Text style={{ color: colors.text.primary }}>30天隐患趋势</Text>} style={{ background: colors.bg.page, border: '1px solid #27272a' }}>
+          <Card title={<Text style={{ color: colors.text.primary }}>30天隐患趋势</Text>} style={{ background: colors.bg.page, border: '1px solid #e5e7eb' }}>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={trend}>
                 <CartesianGrid strokeDasharray="3 3" stroke={colors.bg.card} />
                 <XAxis dataKey="date" tick={{ fill: colors.text.muted, fontSize: 11 }} />
                 <YAxis tick={{ fill: colors.text.muted, fontSize: 11 }} />
-                <Tooltip contentStyle={{ background: colors.bg.card, border: '1px solid #3f3f46', color: colors.text.primary }} />
+                <Tooltip contentStyle={{ background: colors.bg.card, border: '1px solid #e5e7eb', color: colors.text.primary }} />
                 <Bar dataKey="count" fill={colors.danger} name="隐患数" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </Card>
         </Col>
         <Col span={8}>
-          <Card title={<Text style={{ color: colors.text.primary }}>类型分布</Text>} style={{ background: colors.bg.page, border: '1px solid #27272a', height: '100%' }}>
+          <Card title={<Text style={{ color: colors.text.primary }}>类型分布</Text>} style={{ background: colors.bg.page, border: '1px solid #e5e7eb', height: '100%' }}>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie data={byType} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, value }) => `${name} ${value}`}>
@@ -97,13 +97,13 @@ export default function HazardStats() {
 
       <Row gutter={16} style={{ marginTop: 16 }}>
         <Col span={12}>
-          <Card title={<Text style={{ color: colors.text.primary }}>状态分布</Text>} style={{ background: colors.bg.page, border: '1px solid #27272a' }}>
+          <Card title={<Text style={{ color: colors.text.primary }}>状态分布</Text>} style={{ background: colors.bg.page, border: '1px solid #e5e7eb' }}>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={byStatus} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke={colors.bg.card} />
                 <XAxis type="number" tick={{ fill: colors.text.muted, fontSize: 11 }} />
                 <YAxis dataKey="status" type="category" tick={{ fill: colors.text.muted, fontSize: 11 }} width={60} />
-                <Tooltip contentStyle={{ background: colors.bg.card, border: '1px solid #3f3f46', color: colors.text.primary }} />
+                <Tooltip contentStyle={{ background: colors.bg.card, border: '1px solid #e5e7eb', color: colors.text.primary }} />
                 <Bar dataKey="count" fill={colors.accent} name="数量" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>

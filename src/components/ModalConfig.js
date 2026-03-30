@@ -24,8 +24,8 @@ export function modalConfig(size = 'medium', title = '') {
       </span>
     ),
     styles: {
-      body: { background: '#18181b', padding: 20 },
-      header: { background: '#18181b', borderBottom: '1px solid #27272a' },
+      body: { background: '#ffffff', padding: 20 },
+      header: { background: '#ffffff', borderBottom: '1px solid #e5e7eb' },
       mask: { background: 'rgba(0,0,0,0.7)' },
     },
     destroyOnClose: true,

@@ -54,7 +54,7 @@ export default function AuditLogs() {
   return (
     <div style={{ padding: 24 }}>
       <h2 style={{ color: colors.text.primary, marginBottom: 16 }}><FileTextOutlined style={{ marginRight: 8 }} />审计日志</h2>
-      <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46', marginBottom: 16 }}>
+      <Card style={{ background: colors.bg.card, border: '1px solid #e5e7eb', marginBottom: 16 }}>
         <Space wrap>
           <Select placeholder="操作类型" allowClear style={{ width: 120 }}
             onChange={v => setAction(v)} options={Object.entries(ACTION_MAP).map(([k,v]) => ({value:k, label:v.label}))} />
@@ -63,7 +63,7 @@ export default function AuditLogs() {
           <Button icon={<SearchOutlined />} onClick={() => load(1)}>搜索</Button>
         </Space>
       </Card>
-      <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46' }}>
+      <Card style={{ background: colors.bg.card, border: '1px solid #e5e7eb' }}>
         {loading ? <SkeletonContent type='table' /> :
          data.length === 0 ? <EmptyState type="list" title="暂无日志" style={{ marginTop: 60 }} /> :
          <Table dataSource={data} columns={columns} rowKey="id" loading={loading}

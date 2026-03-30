@@ -95,26 +95,26 @@ export default function Budget() {
 
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col span={6}>
-          <Card style={{ background: colors.bg.page, border: '1px solid #27272a', textAlign: 'center' }}>
+          <Card style={{ background: colors.bg.page, border: '1px solid #e5e7eb', textAlign: 'center' }}>
             <Statistic title={<Text style={{ color: colors.text.muted }}>总预算</Text>} value={totalBudget}
               valueStyle={{ color: colors.accent, fontSize: 20 }} suffix="元" />
           </Card>
         </Col>
         <Col span={6}>
-          <Card style={{ background: colors.bg.page, border: '1px solid #27272a', textAlign: 'center' }}>
+          <Card style={{ background: colors.bg.page, border: '1px solid #e5e7eb', textAlign: 'center' }}>
             <Statistic title={<Text style={{ color: colors.text.muted }}>已执行</Text>} value={totalSpent}
               valueStyle={{ color: colors.success, fontSize: 20 }} suffix="元" />
           </Card>
         </Col>
         <Col span={6}>
-          <Card style={{ background: colors.bg.page, border: '1px solid #27272a', textAlign: 'center' }}>
+          <Card style={{ background: colors.bg.page, border: '1px solid #e5e7eb', textAlign: 'center' }}>
             <Statistic title={<Text style={{ color: colors.text.muted }}>执行率</Text>} value={executionRate}
               valueStyle={{ color: executionRate > 100 ? colors.danger : executionRate > 80 ? colors.warning : colors.success, fontSize: 20 }}
               suffix="%" prefix={executionRate > 100 ? <WarningOutlined /> : <CheckCircleOutlined />} />
           </Card>
         </Col>
         <Col span={6}>
-          <Card style={{ background: colors.bg.page, border: '1px solid #27272a', textAlign: 'center' }}>
+          <Card style={{ background: colors.bg.page, border: '1px solid #e5e7eb', textAlign: 'center' }}>
             <Statistic title={<Text style={{ color: colors.text.muted }}>剩余预算</Text>}
               value={Math.max(0, totalBudget - totalSpent)}
               valueStyle={{ color: colors.text.muted, fontSize: 20 }} suffix="元" />
@@ -122,7 +122,7 @@ export default function Budget() {
         </Col>
       </Row>
 
-      <Card style={{ background: colors.bg.page, border: '1px solid #27272a' }}>
+      <Card style={{ background: colors.bg.page, border: '1px solid #e5e7eb' }}>
         <Table dataSource={items} columns={columns} rowKey="category" size="small" pagination={false}
           locale={{ emptyText: '暂无预算数据' }} />
       </Card>

@@ -21,25 +21,29 @@ export const Sidebar = ({ collapsed, activeMenu, setActiveMenu }) => {
     <motion.aside
       initial={false}
       animate={{ width: collapsed ? 72 : 240 }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
       style={{
         height: '100vh',
-        background: 'rgba(19, 19, 26, 0.95)',
-        borderRight: '1px solid rgba(255,255,255,0.06)',
+        background: '#ffffff',
+        borderRight: '1px solid #e5e7eb',
         display: 'flex',
         flexDirection: 'column',
         position: 'fixed',
         left: 0,
         top: 0,
         zIndex: 100,
+        overflow: 'hidden',
       }}
     >
+      {/* Logo */}
       <div style={{
-        padding: collapsed ? '20px 16px' : '20px 24px',
+        padding: collapsed ? '0 16px' : '0 20px',
+        height: 64,
         display: 'flex',
         alignItems: 'center',
-        gap: 12,
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        gap: 10,
+        borderBottom: '1px solid #e5e7eb',
+        flexShrink: 0,
       }}>
         <LogoIcon size={32} />
         {!collapsed && (
@@ -48,11 +52,10 @@ export const Sidebar = ({ collapsed, activeMenu, setActiveMenu }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             style={{
-              fontSize: 20,
+              fontSize: 16,
               fontWeight: 700,
-              background: 'linear-gradient(135deg, #6366f1, #a855f7)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              color: '#1a1a2e',
+              whiteSpace: 'nowrap',
             }}
           >
             ProjectX
@@ -60,79 +63,88 @@ export const Sidebar = ({ collapsed, activeMenu, setActiveMenu }) => {
         )}
       </div>
 
-      <nav style={{ flex: 1, padding: '16px 8px' }}>
-        {menuItems.map(({ id, label, icon: Icon }) => (
-          <motion.button
-            key={id}
-            onClick={() => setActiveMenu(id)}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              padding: collapsed ? '12px' : '12px 16px',
-              marginBottom: 4,
-              border: 'none',
-              borderRadius: 10,
-              cursor: 'pointer',
-              position: 'relative',
-              background: activeMenu === id
-                ? 'linear-gradient(90deg, rgba(99, 102, 241, 0.15), transparent)'
-                : 'transparent',
-              color: activeMenu === id ? '#fff' : 'rgba(255,255,255,0.6)',
-              transition: 'all 0.2s ease',
-            }}
-          >
-            {activeMenu === id && (
-              <motion.div
-                layoutId="activeIndicator"
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  width: 2,
-                  height: 24,
-                  background: '#6366f1',
-                  borderRadius: 2,
-                }}
-              />
-            )}
-            <Icon size={20} />
-            {!collapsed && (
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                style={{ fontSize: 14, fontWeight: activeMenu === id ? 600 : 400 }}
-              >
-                {label}
-              </motion.span>
-            )}
-          </motion.button>
-        ))}
+      {/* 导航 */}
+      <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto', overflowX: 'hidden' }}>
+        {menuItems.map(({ id, label, icon: Icon }) => {
+          const isActive = activeMenu === id
+          return (
+            <motion.button
+              key={id}
+              onClick={() => setActiveMenu(id)}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                padding: collapsed ? '10px' : '10px 14px',
+                marginBottom: 2,
+                border: 'none',
+                borderRadius: 8,
+                cursor: 'pointer',
+                position: 'relative',
+                background: isActive ? '#eef3ff' : 'transparent',
+                color: isActive ? '#115cb9' : '#8c8c8c',
+                transition: 'all 150ms ease-out',
+                fontSize: 14,
+                fontWeight: isActive ? 600 : 500,
+                justifyContent: collapsed ? 'center' : 'flex-start',
+              }}
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="sidebar-active"
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    width: 3,
+                    height: 24,
+                    background: '#115cb9',
+                    borderRadius: '0 3px 3px 0',
+                  }}
+                />
+              )}
+              <Icon size={18} style={{ flexShrink: 0 }} />
+              {!collapsed && (
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  style={{ whiteSpace: 'nowrap' }}
+                >
+                  {label}
+                </motion.span>
+              )}
+            </motion.button>
+          )
+        })}
       </nav>
 
+      {/* 用户信息 */}
       <div style={{
         padding: collapsed ? '16px 12px' : '16px 20px',
-        borderTop: '1px solid rgba(255,255,255,0.06)',
+        borderTop: '1px solid #e5e7eb',
         display: 'flex',
         alignItems: 'center',
-        gap: 12,
+        gap: 10,
+        flexShrink: 0,
       }}>
         <div style={{
           width: 36,
           height: 36,
           borderRadius: '50%',
-          background: currentUser.color,
+          background: 'linear-gradient(135deg, #115cb9, #3377cc)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           fontWeight: 600,
           fontSize: 14,
+          color: '#fff',
           flexShrink: 0,
+          border: '2px solid #eef3ff',
         }}>
           {currentUser.avatar}
         </div>
@@ -143,10 +155,10 @@ export const Sidebar = ({ collapsed, activeMenu, setActiveMenu }) => {
             exit={{ opacity: 0 }}
             style={{ overflow: 'hidden' }}
           >
-            <div style={{ fontSize: 14, fontWeight: 500, color: '#fff' }}>
+            <div style={{ fontSize: 14, fontWeight: 500, color: '#1a1a2e' }}>
               {currentUser.name}
             </div>
-            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>
+            <div style={{ fontSize: 12, color: '#8c8c8c' }}>
               {currentUser.role}
             </div>
           </motion.div>

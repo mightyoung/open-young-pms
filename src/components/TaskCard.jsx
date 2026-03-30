@@ -5,7 +5,7 @@ import { MessageSquare, Paperclip, Clock, MoreHorizontal } from 'lucide-react'
 const priorityColors = {
   high: '#ef4444',
   medium: '#f59e0b',
-  low: '#a855f7',
+  low: '#115cb9',
 }
 
 const typeLabels = {
@@ -64,7 +64,7 @@ export const TaskCard = ({ task, onClick, delay = 0 }) => {
           padding: '2px 8px',
           borderRadius: 4,
           background: 'rgba(99, 102, 241, 0.15)',
-          color: '#6366f1',
+          color: '#115cb9',
         }}>
           {typeLabels[task.type]}
         </span>
@@ -104,7 +104,7 @@ export const TaskCard = ({ task, onClick, delay = 0 }) => {
               transition={{ duration: 0.8, ease: 'easeOut' }}
               style={{
                 height: '100%',
-                background: 'linear-gradient(90deg, #6366f1, #a855f7)',
+                background: 'linear-gradient(90deg, #115cb9, #115cb9)',
                 borderRadius: 2,
               }}
             />

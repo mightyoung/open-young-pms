@@ -11,7 +11,7 @@ export const LogoIcon = ({ size = 32 }) => (
   <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
     <defs>
       <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#6366f1" />
+        <stop offset="0%" stopColor="#115cb9" />
         <stop offset="100%" stopColor="#a855f7" />
       </linearGradient>
     </defs>

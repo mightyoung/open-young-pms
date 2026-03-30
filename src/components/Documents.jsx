@@ -12,10 +12,10 @@ import {
 const { Text } = Typography;
 
 const DESIGN = {
-  bg: '#0a0a0e', surface: '#13131a', card: '#1a1a22',
-  elevated: '#22222c', border: 'rgba(255,255,255,0.06)',
-  accent: '#6366f1', accentLight: '#818cf8',
-  text: '#e4e4e7', textSec: '#a1a1aa', textMuted: '#52525b',
+  bg: '#f5f7fa', surface: '#f5f7fa', card: '#ffffff',
+  elevated: '#ffffff', border: '#e5e7eb',
+  accent: '#115cb9', accentLight: '#3377cc',
+  text: '#1a1a2e', textSec: '#5f5f61', textMuted: '#8c8c8c',
 };
 
 const va = {
@@ -200,7 +200,7 @@ function renderMarkdown(content) {
             background: checked ? DESIGN.success : 'transparent',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            {checked && <span style={{ color: '#0a0a0e', fontSize: 10, fontWeight: 900 }}>✓</span>}
+            {checked && <span style={{ color: '#52c41a', fontSize: 10, fontWeight: 900 }}>✓</span>}
           </div>
           <span style={{ color: checked ? DESIGN.textMuted : DESIGN.textSec, textDecoration: checked ? 'line-through' : 'none' }}>
             {line.slice(6)}

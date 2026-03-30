@@ -14,7 +14,7 @@ import {
 } from 'recharts'
 
 const COLORS = {
-  accent: '#6366f1',
+  accent: '#115cb9',
   success: '#22c55e',
   warning: '#f59e0b',
   danger: '#ef4444',
@@ -28,7 +28,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <div style={{
-        background: '#1a1a22',
+        background: '#f5f7fa',
         border: '1px solid rgba(255,255,255,0.1)',
         borderRadius: 8,
         padding: '8px 12px',

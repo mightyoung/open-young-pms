@@ -1,19 +1,20 @@
+/**
+ * 通知中心页 - 基于 Stitch Azure Ethos 设计系统
+ * 更新时间: 2026-03-30
+ */
 import React, { useState, useEffect } from 'react'
-import EmptyState from '../components/EmptyState';
-import { colors } from '../styles/theme'
 import { Card, Tag, Button, Badge, Empty, Space } from 'antd'
-import { CheckOutlined, BellOutlined, EyeOutlined } from '@ant-design/icons'
+import { CheckOutlined, BellOutlined, FileTextOutlined, WarningOutlined, AuditOutlined, MessageOutlined } from '@ant-design/icons'
 import { api } from '../api'
-import ProTable from '../components/ProTable'
-import SkeletonContent from '../components/SkeletonContent'
+import { PageHeader, Tabs, EmptyState } from '../components/PMSComponents'
 
 const TYPE_MAP = {
-  task: { label: '任务', color: 'blue' },
-  issue: { label: '隐患', color: 'red' },
-  report: { label: '报告', color: 'orange' },
-  approval: { label: '审批', color: 'purple' },
-  system: { label: '系统', color: 'default' },
-  mention: { label: '@我', color: 'green' },
+  task: { label: '任务', icon: <FileTextOutlined />, bg: '#dbeafe', color: '#1e40af' },
+  issue: { label: '隐患', icon: <WarningOutlined />, bg: '#fee2e2', color: '#991b1b' },
+  report: { label: '报告', icon: <FileTextOutlined />, bg: '#fef3c7', color: '#92400e' },
+  approval: { label: '审批', icon: <AuditOutlined />, bg: '#d5d1f2', color: '#484661' },
+  system: { label: '系统', icon: <BellOutlined />, bg: '#f3f4f6', color: '#6b7280' },
+  mention: { label: '@我', icon: <MessageOutlined />, bg: '#dcfce7', color: '#166534' },
 }
 
 const timeAgo = (t) => {
@@ -66,94 +67,274 @@ export default function Notifications() {
     } catch (e) {}
   }
 
-  const tabItems = [
-    { key: 'all', label: <Badge count={unreadCount} size="small" offset={[6, -2]}><span>全部</span></Badge> },
-    { key: 'unread', label: '未读' },
-    { key: 'task', label: '任务' },
-    { key: 'issue', label: '隐患' },
-    { key: 'report', label: '报告' },
-    { key: 'approval', label: '审批' },
-  ]
-
+  // 筛选通知
   const filtered = tab === 'all' || tab === 'unread'
     ? notifications
     : notifications.filter(n => n.type === tab)
 
-  const baseColumns = [
-    {
-      title: '类型',
-      dataIndex: 'type',
-      key: 'type',
-      render: t => {
-        const cfg = TYPE_MAP[t] || TYPE_MAP.system
-        return <Tag color={cfg.color}>{cfg.label}</Tag>
-      },
-    },
-    {
-      title: '标题',
-      dataIndex: 'title',
-      key: 'title',
-      render: (t, r) => (
-        <span style={{ color: colors.text.primary, fontWeight: r.is_read ? 400 : 600 }}>{t}</span>
-      ),
-    },
-    {
-      title: '内容',
-      dataIndex: 'content',
-      key: 'content',
-      render: t => <span style={{ color: colors.text.muted, fontSize: 13 }}>{t}</span>,
-    },
-    {
-      title: '时间',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      render: t => <span style={{ color: colors.text.disabled, fontSize: 12 }}>{timeAgo(t)}</span>,
-    },
-    {
-      title: '状态',
-      dataIndex: 'is_read',
-      key: 'is_read',
-      render: v => v ? null : <Tag color="cyan">未读</Tag>,
-    },
-  ]
+  // 统计数据
+  const stats = {
+    total: notifications.length,
+    unread: unreadCount,
+    byType: Object.entries(TYPE_MAP).reduce((acc, [k]) => {
+      acc[k] = notifications.filter(n => n.type === k).length
+      return acc
+    }, {}),
+  }
 
   return (
-    <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-        <h2 style={{ color: colors.text.primary, margin: 0 }}>
-          <BellOutlined style={{ marginRight: 8 }} />消息中心
-          {unreadCount > 0 && <Badge count={unreadCount} style={{ marginLeft: 8 }} />}
-        </h2>
-        <Button icon={<CheckOutlined />} onClick={markAllRead} disabled={unreadCount === 0}>全部已读</Button>
-      </div>
+    <div style={styles.page}>
+      <PageHeader
+        title="消息中心"
+        subtitle={`${unreadCount > 0 ? `您有 ${unreadCount} 条未读消息` : '暂无未读消息'}`}
+        icon={<BellOutlined style={{ color: 'var(--color-primary)' }} />}
+      />
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-        {tabItems.map(t => (
-          <Button key={t.key} type={tab === t.key ? 'primary' : 'default'} onClick={() => setTab(t.key)}>
-            {typeof t.label === 'object' ? t.label.props.children : t.label}
-          </Button>
+      {/* 统计卡片 */}
+      <div style={styles.statsRow}>
+        <div style={styles.statCard} onClick={() => setTab('all')}>
+          <div style={styles.statValue}>{stats.total}</div>
+          <div style={styles.statLabel}>全部消息</div>
+        </div>
+        <div style={{ ...styles.statCard, borderLeft: '3px solid #fee2e2' }} onClick={() => setTab('unread')}>
+          <div style={{ ...styles.statValue, color: '#991b1b' }}>{stats.unread}</div>
+          <div style={styles.statLabel}>未读消息</div>
+        </div>
+        {Object.entries(TYPE_MAP).slice(0, 4).map(([k, v]) => (
+          <div key={k} style={styles.statCard} onClick={() => setTab(k)}>
+            <div style={{ ...styles.statValue, color: v.color }}>{stats.byType[k] || 0}</div>
+            <div style={styles.statLabel}>{v.label}</div>
+          </div>
         ))}
       </div>
 
-      <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46' }}>
-        {loading ? <SkeletonContent type='list' /> :
-         filtered.length === 0 ? <EmptyState type="list" title="暂无消息" style={{ marginTop: 60 }} /> : (
-          <ProTable
-            dataSource={filtered}
-            columns={baseColumns}
-            rowKey="id"
-            loading={loading}
-            pagination={{ pageSize: 20, showTotal: t => `共 ${t} 条` }}
-            extraActions={[
-              { key: 'read', label: '标为已读', icon: <EyeOutlined />, onClick: markRead, showIcon: false },
-            ]}
-            onRow={record => ({
-              onClick: () => markRead(record),
-              style: { cursor: 'pointer', background: record.is_read ? 'transparent' : 'rgba(59,130,246,0.08)', borderRadius: 8 },
-            })}
+      {/* 筛选栏 */}
+      <div style={styles.filterBar}>
+        <div style={styles.tabsWrapper}>
+          {['all', 'unread'].map(key => (
+            <button
+              key={key}
+              style={{
+                ...styles.tab,
+                ...(tab === key ? styles.tabActive : {}),
+              }}
+              onClick={() => setTab(key)}
+            >
+              {key === 'all' ? '全部' : '未读'}
+              {key === 'all' && unreadCount > 0 && (
+                <span style={styles.badge}>{unreadCount}</span>
+              )}
+            </button>
+          ))}
+        </div>
+        <Button 
+          icon={<CheckOutlined />} 
+          onClick={markAllRead} 
+          disabled={unreadCount === 0}
+          style={styles.markAllBtn}
+        >
+          全部已读
+        </Button>
+      </div>
+
+      {/* 消息列表 */}
+      <div style={styles.listCard}>
+        {loading ? (
+          <div style={styles.loading}>加载中...</div>
+        ) : filtered.length === 0 ? (
+          <EmptyState 
+            icon="🔔"
+            title="暂无消息"
+            description={tab === 'unread' ? '所有消息都已读' : '暂无消息记录'}
           />
+        ) : (
+          <div style={styles.list}>
+            {filtered.map(notif => (
+              <div 
+                key={notif.id} 
+                style={{
+                  ...styles.notifItem,
+                  background: notif.is_read ? 'transparent' : 'var(--color-primary-container)',
+                }}
+                onClick={() => markRead(notif)}
+              >
+                <div style={styles.notifIcon}>
+                  <span style={{ ...styles.iconWrapper, background: TYPE_MAP[notif.type]?.bg || '#f3f4f6', color: TYPE_MAP[notif.type]?.color || '#6b7280' }}>
+                    {TYPE_MAP[notif.type]?.icon || <BellOutlined />}
+                  </span>
+                </div>
+                <div style={styles.notifContent}>
+                  <div style={styles.notifHeader}>
+                    <Tag style={{ ...styles.typeTag, background: TYPE_MAP[notif.type]?.bg || '#f3f4f6', color: TYPE_MAP[notif.type]?.color || '#6b7280', border: 'none' }}>
+                      {TYPE_MAP[notif.type]?.label || notif.type}
+                    </Tag>
+                    <span style={styles.notifTime}>{timeAgo(notif.created_at)}</span>
+                  </div>
+                  <div style={{ ...styles.notifTitle, fontWeight: notif.is_read ? 400 : 600 }}>
+                    {notif.title}
+                  </div>
+                  <div style={styles.notifText}>{notif.content}</div>
+                </div>
+                {!notif.is_read && <div style={styles.unreadDot} />}
+              </div>
+            ))}
+          </div>
         )}
-      </Card>
+      </div>
     </div>
   )
+}
+
+const styles = {
+  page: {
+    padding: 24,
+    background: 'var(--color-background)',
+    minHeight: '100vh',
+  },
+  statsRow: {
+    display: 'flex',
+    gap: 12,
+    marginBottom: 20,
+    flexWrap: 'wrap',
+  },
+  statCard: {
+    background: 'var(--color-surface-container-lowest)',
+    borderRadius: 'var(--radius-lg)',
+    padding: '16px 20px',
+    boxShadow: 'var(--shadow-soft)',
+    cursor: 'pointer',
+    minWidth: 100,
+    borderLeft: '3px solid var(--color-primary)',
+    transition: 'all 0.2s',
+  },
+  statValue: {
+    fontSize: 24,
+    fontWeight: 700,
+    fontFamily: 'var(--font-headline)',
+    color: 'var(--color-on-surface)',
+  },
+  statLabel: {
+    fontSize: 13,
+    color: 'var(--color-on-surface-variant)',
+    marginTop: 4,
+  },
+  filterBar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  tabsWrapper: {
+    display: 'flex',
+    gap: 4,
+    background: 'var(--color-surface-container)',
+    padding: 4,
+    borderRadius: 'var(--radius-lg)',
+  },
+  tab: {
+    padding: '8px 16px',
+    borderRadius: 'var(--radius-md)',
+    border: 'none',
+    background: 'transparent',
+    color: 'var(--color-on-surface-variant)',
+    fontSize: 14,
+    fontWeight: 500,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+  },
+  tabActive: {
+    background: 'var(--color-surface-container-lowest)',
+    color: 'var(--color-primary)',
+    boxShadow: 'var(--shadow-soft)',
+  },
+  badge: {
+    background: '#991b1b',
+    color: 'white',
+    borderRadius: 'var(--radius-full)',
+    padding: '0 6px',
+    fontSize: 11,
+    fontWeight: 600,
+  },
+  markAllBtn: {
+    background: 'var(--color-surface-container-lowest)',
+    border: 'none',
+  },
+  listCard: {
+    background: 'var(--color-surface-container-lowest)',
+    borderRadius: 'var(--radius-lg)',
+    boxShadow: 'var(--shadow-soft)',
+  },
+  loading: {
+    textAlign: 'center',
+    padding: 48,
+    color: 'var(--color-on-surface-variant)',
+  },
+  list: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  notifItem: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 12,
+    padding: 16,
+    borderBottom: '1px solid var(--color-outline-variant)',
+    cursor: 'pointer',
+    transition: 'background 0.2s',
+    position: 'relative',
+  },
+  notifIcon: {
+    flexShrink: 0,
+  },
+  iconWrapper: {
+    width: 40,
+    height: 40,
+    borderRadius: 'var(--radius-md)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 18,
+  },
+  notifContent: {
+    flex: 1,
+    minWidth: 0,
+  },
+  notifHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  typeTag: {
+    fontSize: 12,
+    padding: '0 6px',
+  },
+  notifTime: {
+    fontSize: 12,
+    color: 'var(--color-on-surface-variant)',
+    marginLeft: 'auto',
+  },
+  notifTitle: {
+    fontSize: 14,
+    color: 'var(--color-on-surface)',
+    marginBottom: 2,
+  },
+  notifText: {
+    fontSize: 13,
+    color: 'var(--color-on-surface-variant)',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  unreadDot: {
+    position: 'absolute',
+    right: 16,
+    top: 24,
+    width: 8,
+    height: 8,
+    borderRadius: '50%',
+    background: 'var(--color-primary)',
+  },
 }

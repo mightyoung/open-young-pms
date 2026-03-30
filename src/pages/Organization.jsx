@@ -106,7 +106,7 @@ export default function Organization() {
         <h2 style={{ color: colors.text.primary, margin: 0 }}>组织架构</h2>
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>添加部门</Button>
       </div>
-      <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46' }}>
+      <Card style={{ background: colors.bg.card, border: '1px solid #e5e7eb' }}>
         {loading ? <SkeletonContent type='table' /> : (
           <DirectoryTree treeData={treeData} expandAll style={{ color: colors.text.primary }} />
         )}

@@ -69,7 +69,7 @@ export default function ForumDetail() {
       </Button>
 
       {/* 帖子主体 */}
-      <Card style={{ background: colors.bg.page, border: '1px solid #27272a', marginBottom: 16 }}>
+      <Card style={{ background: colors.bg.page, border: '1px solid #e5e7eb', marginBottom: 16 }}>
         {/* 头部 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
           <Avatar style={{ background: colors.accent }}>{post.author_name?.[0] || 'U'}</Avatar>
@@ -109,13 +109,13 @@ export default function ForumDetail() {
       <Title level={5} style={{ color: colors.text.primary, marginBottom: 12 }}>回复 ({replies.length})</Title>
 
       {replies.length === 0 && (
-        <Card style={{ background: colors.bg.page, border: '1px solid #27272a', marginBottom: 16 }}>
+        <Card style={{ background: colors.bg.page, border: '1px solid #e5e7eb', marginBottom: 16 }}>
           <Text style={{ color: colors.text.muted }}>暂无回复，来说点什么吧</Text>
         </Card>
       )}
 
       {replies.map(reply => (
-        <Card key={reply.id} style={{ background: colors.bg.base, border: '1px solid #27272a', marginBottom: 12 }}>
+        <Card key={reply.id} style={{ background: colors.bg.base, border: '1px solid #e5e7eb', marginBottom: 12 }}>
           <div style={{ display: 'flex', gap: 10 }}>
             <Avatar style={{ background: colors.accent, flexShrink: 0 }}>{reply.author_name?.[0] || 'U'}</Avatar>
             <div style={{ flex: 1 }}>
@@ -130,7 +130,7 @@ export default function ForumDetail() {
       ))}
 
       {/* 回复输入 */}
-      <Card style={{ background: colors.bg.page, border: '1px solid #27272a' }}>
+      <Card style={{ background: colors.bg.page, border: '1px solid #e5e7eb' }}>
         <Text style={{ color: colors.text.secondary, marginBottom: 8, display: 'block' }}>发表回复</Text>
         <Input.TextArea
           value={replyContent}

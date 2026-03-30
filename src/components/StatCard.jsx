@@ -60,7 +60,7 @@ export const StatCard = ({ title, value, trend, icon: Icon, delay = 0 }) => {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-          <Icon size={22} color="#6366f1" />
+          <Icon size={22} color="#115cb9" />
         </div>
       </div>
 

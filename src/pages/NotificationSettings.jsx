@@ -46,7 +46,7 @@ export default function NotificationSettings() {
         <BellOutlined style={{ marginRight: 8 }} />通知设置
       </Title>
 
-      <Card style={{ background: '#18181b', border: '1px solid #27272a', marginBottom: 16 }}>
+      <Card style={{ background: '#ffffff', border: '1px solid #e5e7eb', marginBottom: 16 }}>
         <Text style={{ color: '#a1a1aa', fontSize: 13 }}>通知渠道</Text>
         <div style={{ marginTop: 8 }}>
           <Select value={settings.channel} onChange={v => setSettings(s => ({ ...s, channel: v }))} style={{ width: 160 }}>
@@ -57,7 +57,7 @@ export default function NotificationSettings() {
         </div>
       </Card>
 
-      <Card style={{ background: '#18181b', border: '1px solid #27272a', marginBottom: 16 }}>
+      <Card style={{ background: '#ffffff', border: '1px solid #e5e7eb', marginBottom: 16 }}>
         <Text style={{ color: '#a1a1aa', fontSize: 13 }}>通知频率</Text>
         <div style={{ marginTop: 8 }}>
           <Select value={settings.frequency} onChange={v => setSettings(s => ({ ...s, frequency: v }))} style={{ width: 160 }}>
@@ -68,10 +68,10 @@ export default function NotificationSettings() {
         </div>
       </Card>
 
-      <Card style={{ background: '#18181b', border: '1px solid #27272a' }}>
+      <Card style={{ background: '#ffffff', border: '1px solid #e5e7eb' }}>
         <Text style={{ color: '#a1a1aa', fontSize: 13, marginBottom: 16, display: 'block' }}>通知类型</Text>
         {items.map(item => (
-          <div key={item.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid #27272a' }}>
+          <div key={item.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid #e5e7eb' }}>
             <div>
               <Text style={{ fontSize: 15 }}>{item.icon} {item.label}</Text>
               <div style={{ marginTop: 2 }}><Text style={{ color: '#71717a', fontSize: 12 }}>{item.desc}</Text></div>

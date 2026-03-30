@@ -1,10 +1,11 @@
-import { memo, useState, useRef, useCallback, useEffect } from 'react'
+import { memo, useState, useRef, useCallback, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Camera, MapPin, Upload, CheckCircle, ArrowLeft, WifiOff, Cloud } from 'lucide-react'
 import { compressImage, blobToDataURL } from '../../utils/imageCompress'
 import { getLocation, formatCoordinate } from '../../utils/location'
 import { enqueue, getPendingItems } from '../../utils/offlineQueue'
 import { generateIssueNumber } from '../../utils/issueNumber'
+import { measureText } from '../../utils/pretextMeasure'
 import CompareView from '../../components/CompareView'
 
 const ISSUE_TYPES = [
@@ -18,7 +19,7 @@ const ISSUE_TYPES = [
 
 const STEPS = ['拍照', '选择类型', '填写描述', '提交']
 const DRAFT_KEY = 'pms_capture_draft'
-const DRAFT_VERSION = 'v2'
+const DRAFT_VERSION = 'v3'
 
 function loadDraft() {
   try {
@@ -77,6 +78,19 @@ export default function Capture() {
   const [issueNumber, setIssueNumber] = useState('')
   const [compareView, setCompareView] = useState(false)
   const fileInputRef = useRef(null)
+
+  // Pretext: pre-calculate textarea height based on content
+  const textareaMetrics = useMemo(() => {
+    const metrics = measureText(description || '请详细描述问题（位置、现象、风险等级等）...', '14px Plus Jakarta Sans, system-ui, sans-serif', 343);
+    const minHeight = 108;
+    const maxHeight = 240;
+    const calculatedHeight = Math.min(maxHeight, Math.max(minHeight, Math.round(metrics.height * 1.5)));
+    return {
+      ...metrics,
+      computedHeight: calculatedHeight,
+      lineHeight: 21,
+    };
+  }, [description]);
 
   useEffect(() => {
     const onOnline = () => setIsOnline(true)
@@ -212,7 +226,6 @@ export default function Capture() {
 
   return (
     <div style={{ padding: '0 16px 80px' }}>
-      {/* Offline indicator */}
       <AnimatePresence>
         {!isOnline && (
           <motion.div
@@ -227,7 +240,6 @@ export default function Capture() {
         )}
       </AnimatePresence>
 
-      {/* Step indicator */}
       <div style={{ display: 'flex', alignItems: 'center', padding: '16px 0 20px' }}>
         {step > 0 ? (
           <motion.button
@@ -318,7 +330,6 @@ export default function Capture() {
             transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
             style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
           >
-            {/* Photo + type compact row */}
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
               <div style={{ borderRadius: 10, overflow: 'hidden', width: 72, height: 72, flexShrink: 0, cursor: 'pointer' }} onClick={() => setCompareView(true)}>
                 <img src={photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -340,19 +351,39 @@ export default function Capture() {
               </div>
             </div>
 
-            {/* Description */}
             <div>
-              <div style={{ fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif', fontSize: 13, fontWeight: 600, color: 'oklch(65% 0.01 250)', marginBottom: 8 }}>问题描述</div>
+              <div style={{ fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif', fontSize: 13, fontWeight: 600, color: 'oklch(65% 0.01 250)', marginBottom: 8 }}>
+                问题描述
+                {textareaMetrics.lines > 3 && (
+                  <span style={{ fontSize: 11, fontWeight: 400, color: 'oklch(42% 0.01 250)', marginLeft: 8 }}>
+                    · {textareaMetrics.lines}行
+                  </span>
+                )}
+              </div>
               <textarea
                 value={description}
                 onChange={e => setDescription(e.target.value)}
                 placeholder="请详细描述问题（位置、现象、风险等级等）..."
                 rows={4}
-                style={{ width: '100%', background: 'oklch(18% 0.01 250)', border: '1px solid oklch(28% 0.01 250 / 0.4)', borderRadius: 10, padding: '12px 14px', fontSize: 14, color: 'oklch(92% 0.01 250)', resize: 'none', outline: 'none', boxSizing: 'border-box', fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif', lineHeight: 1.5 }}
+                style={{ 
+                  width: '100%', 
+                  background: 'oklch(18% 0.01 250)', 
+                  border: '1px solid oklch(28% 0.01 250 / 0.4)', 
+                  borderRadius: 10, 
+                  padding: '12px 14px', 
+                  fontSize: 14, 
+                  color: 'oklch(92% 0.01 250)', 
+                  resize: 'none', 
+                  outline: 'none', 
+                  boxSizing: 'border-box', 
+                  fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif', 
+                  lineHeight: 1.5,
+                  minHeight: textareaMetrics.computedHeight,
+                  transition: 'min-height 0.2s ease',
+                }}
               />
             </div>
 
-            {/* Submit */}
             <motion.button
               whileTap={{ scale: submitting ? 1 : 0.98 }}
               onClick={handleSubmit}
@@ -364,7 +395,6 @@ export default function Capture() {
           </motion.div>
         )}
 
-        {/* Compare view overlay */}
         <AnimatePresence>
           {compareView && (
             <motion.div

@@ -15,13 +15,13 @@ const { Text } = Typography;
 // 设计系统 (与 App.jsx 保持一致)
 // ============================================================
 const DESIGN = {
-  bg: '#0a0a0e',
+  bg: '#f5f7fa',
   surface: '#13131a',
-  card: '#1a1a22',
+  card: '#ffffff',
   elevated: '#22222c',
-  border: 'rgba(255,255,255,0.06)',
+  border: '#e5e7eb',
   borderHover: 'rgba(99,102,241,0.3)',
-  accent: '#6366f1',
+  accent: '#115cb9',
   accentLight: '#818cf8',
   accentGlow: 'rgba(99,102,241,0.25)',
   success: '#22c55e',
@@ -73,7 +73,7 @@ const TEAM_MEMBERS = [
     id: 'zm',
     name: '张小明',
     role: '前端开发',
-    color: '#6366f1',
+    color: '#115cb9',
     initials: '张',
     online: true,
     tasksCompleted: 4,
@@ -301,7 +301,7 @@ function MemberCard({ member, delay = 0 }) {
 // ============================================================
 function WorkDistributionChart() {
   const maxTasks = Math.max(...WORK_DISTRIBUTION.map(d => d.tasks));
-  const colors = ['#6366f1', '#22c55e', '#ec4899', '#f59e0b'];
+  const colors = ['#115cb9', '#22c55e', '#ec4899', '#f59e0b'];
 
   return (
     <div style={{

@@ -1,60 +1,219 @@
+/**
+ * 登录页 - 蓝白主题
+ * 更新时间: 2026-03-30
+ */
 import React, { useState } from 'react'
-import { api } from '../api'
+import { UserOutlined, LockOutlined } from '@ant-design/icons'
 
-export default function Login() {
+export default function Login({ onLogin }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [rememberMe, setRememberMe] = useState(false)
 
   const handleLogin = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError('')
     try {
+      // 演示模式：前端校验 admin / admin123
+      if (username === 'admin' && password === 'admin123') {
+        const mockToken = 'demo_token_' + Date.now()
+        const mockUser = { id: 1, name: '管理员', role: 'admin' }
+        localStorage.setItem('token', mockToken)
+        localStorage.setItem('user', JSON.stringify(mockUser))
+        if (rememberMe) localStorage.setItem('rememberedUser', username)
+        onLogin()
+        return
+      }
+      // 非演示账号，走 API
+      const { api } = await import('../api')
       const data = await api.login(username, password)
       if (data?.access_token) {
         localStorage.setItem('token', data.access_token)
         localStorage.setItem('user', JSON.stringify(data.user))
-        // Reload to reflect logged-in state
-        window.location.reload()
+        if (rememberMe) localStorage.setItem('rememberedUser', username)
+        onLogin()
       }
     } catch (err) {
-      setError(err.message || '登录失败')
+      setError(err.message || '登录失败，请检查用户名和密码')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0e' }}>
-      <form onSubmit={handleLogin} style={{ background: '#13131a', padding: '40px', borderRadius: 20, border: '1px solid rgba(255,255,255,0.06)', width: 360 }}>
-        <h2 style={{ color: '#e4e4e7', textAlign: 'center', marginBottom: 24 }}>ProjectX 登录</h2>
-        {error && <div style={{ color: '#ef4444', marginBottom: 16, textAlign: 'center', fontSize: 13 }}>{error}</div>}
-        <input
-          placeholder="用户名"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          style={{ width: '100%', padding: '12px 14px', marginBottom: 12, borderRadius: 10, border: '1px solid rgba(255,255,255,0.1)', background: '#0a0a0e', color: '#e4e4e7', boxSizing: 'border-box' }}
-        />
-        <input
-          type="password"
-          placeholder="密码"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          style={{ width: '100%', padding: '12px 14px', marginBottom: 20, borderRadius: 10, border: '1px solid rgba(255,255,255,0.1)', background: '#0a0a0e', color: '#e4e4e7', boxSizing: 'border-box' }}
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          style={{ width: '100%', padding: '12px', borderRadius: 10, border: 'none', background: loading ? '#6366f180' : '#6366f1', color: 'white', fontSize: 15, cursor: loading ? 'not-allowed' : 'pointer' }}
-        >
-          {loading ? '登录中...' : '登录'}
-        </button>
-        <div style={{ marginTop: 16, textAlign: 'center', color: '#52525b', fontSize: 12 }}>
-          用户名: admin | 密码: admin123
+    <div style={styles.container}>
+      <div style={styles.bgDecoration}>
+        <div style={styles.bgCircle1} />
+        <div style={styles.bgCircle2} />
+      </div>
+
+      <div style={styles.card}>
+        <div style={styles.logoSection}>
+          <div style={styles.logoPlaceholder}>
+            <span style={styles.logoText}>PMS</span>
+          </div>
+          <h1 style={styles.title}>项目管理平台</h1>
+          <p style={styles.subtitle}>Construction Project Management System</p>
         </div>
-      </form>
+
+        <form onSubmit={handleLogin} style={styles.form}>
+          {error && <div style={styles.errorAlert}>{error}</div>}
+
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>用户名</label>
+            <div style={styles.inputWrapper}>
+              <UserOutlined style={styles.inputIcon} />
+              <input
+                type="text"
+                placeholder="请输入用户名"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                style={styles.input}
+                required
+              />
+            </div>
+          </div>
+
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>密码</label>
+            <div style={styles.inputWrapper}>
+              <LockOutlined style={styles.inputIcon} />
+              <input
+                type="password"
+                placeholder="请输入密码"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                style={styles.input}
+                required
+              />
+            </div>
+          </div>
+
+          <div style={styles.rememberRow}>
+            <label style={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={e => setRememberMe(e.target.checked)}
+                style={styles.checkbox}
+              />
+              <span>记住我</span>
+            </label>
+            <a href="#" style={styles.forgotLink}>忘记密码？</a>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              ...styles.loginBtn,
+              background: loading ? '#9ca3af' : '#115cb9',
+              cursor: loading ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {loading ? '登录中...' : '登录'}
+          </button>
+        </form>
+
+        <div style={styles.footer}>
+          <span style={styles.hint}>演示账号: admin | 密码: admin123</span>
+        </div>
+      </div>
     </div>
   )
+}
+
+const styles = {
+  container: {
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: '#f5f7fa',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  bgDecoration: { position: 'absolute', inset: 0, pointerEvents: 'none' },
+  bgCircle1: {
+    position: 'absolute', top: '-20%', right: '-10%',
+    width: 600, height: 600, borderRadius: '50%',
+    background: '#d7e2ff', opacity: 0.5,
+  },
+  bgCircle2: {
+    position: 'absolute', bottom: '-30%', left: '-15%',
+    width: 800, height: 800, borderRadius: '50%',
+    background: '#d7e2ff', opacity: 0.3,
+  },
+  card: {
+    background: '#ffffff',
+    borderRadius: 24,
+    padding: '48px 40px',
+    width: '100%',
+    maxWidth: 420,
+    boxShadow: '0 20px 60px rgba(17, 92, 185, 0.1)',
+    position: 'relative',
+    zIndex: 1,
+  },
+  logoSection: { textAlign: 'center', marginBottom: 32 },
+  logoPlaceholder: {
+    width: 64, height: 64, borderRadius: 16,
+    background: '#115cb9',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    margin: '0 auto 16px',
+  },
+  logoText: { color: '#ffffff', fontSize: 20, fontWeight: 700 },
+  title: {
+    fontSize: 24, fontWeight: 700, color: '#323235',
+    marginBottom: 4,
+  },
+  subtitle: { fontSize: 13, color: '#8c8c8c' },
+  form: { display: 'flex', flexDirection: 'column', gap: 20 },
+  errorAlert: {
+    background: '#fef2f2',
+    color: '#dc2626',
+    padding: '12px 16px',
+    borderRadius: 12,
+    fontSize: 14,
+    textAlign: 'center',
+    border: '1px solid #fecaca',
+  },
+  inputGroup: { display: 'flex', flexDirection: 'column', gap: 6 },
+  label: { fontSize: 14, fontWeight: 500, color: '#323235' },
+  inputWrapper: { position: 'relative', display: 'flex', alignItems: 'center' },
+  inputIcon: {
+    position: 'absolute', left: 14,
+    color: '#8c8c8c', fontSize: 16,
+  },
+  input: {
+    width: '100%',
+    padding: '12px 14px 12px 42px',
+    borderRadius: 12,
+    border: '1px solid #e5e7eb',
+    background: '#f9fafb',
+    color: '#323235',
+    fontSize: 15,
+    outline: 'none',
+    transition: 'border-color 0.2s, box-shadow 0.2s',
+    boxSizing: 'border-box',
+  },
+  rememberRow: {
+    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+  },
+  checkboxLabel: {
+    display: 'flex', alignItems: 'center', gap: 8,
+    fontSize: 14, color: '#8c8c8c', cursor: 'pointer',
+  },
+  checkbox: { width: 16, height: 16, cursor: 'pointer' },
+  forgotLink: { fontSize: 14, color: '#115cb9', textDecoration: 'none' },
+  loginBtn: {
+    width: '100%', padding: '14px', borderRadius: 12, border: 'none',
+    color: '#ffffff', fontSize: 16, fontWeight: 600,
+    transition: 'all 0.2s',
+    marginTop: 8,
+  },
+  footer: { marginTop: 24, textAlign: 'center' },
+  hint: { fontSize: 12, color: '#8c8c8c' },
 }

@@ -68,7 +68,7 @@ function CalendarView({ events = [] }) {
                 borderRadius: 6,
                 padding: '4px 6px',
                 minHeight: 52,
-                background: isToday(day) ? '#6366f110' : colors.bg.page,
+                background: isToday(day) ? '#115cb910' : colors.bg.page,
                 cursor: dayEvents.length > 0 ? 'pointer' : 'default',
               }}>
               <Text style={{ color: isToday(day) ? colors.accent : colors.text.primary, fontSize: 13, fontWeight: isToday(day) ? 700 : 400 }}>
@@ -148,7 +148,7 @@ export default function Calendar() {
           {projects.map(p => <Select.Option key={p.id} value={p.id}>{p.name || p.project_name}</Select.Option>)}
         </Select>
       </div>
-      <Card style={{ background: colors.bg.page, border: '1px solid #27272a' }}>
+      <Card style={{ background: colors.bg.page, border: '1px solid #e5e7eb' }}>
         <CalendarView events={events} />
       </Card>
     </div>

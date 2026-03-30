@@ -101,7 +101,7 @@ export default function ReportWrite() {
         style={{ marginBottom: 24 }}
       />
 
-      <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46' }}>
+      <Card style={{ background: colors.bg.card, border: '1px solid #e5e7eb' }}>
         <Form form={form} layout="vertical" size="large"
           initialValues={{
             report_type: 'daily',
@@ -140,7 +140,7 @@ export default function ReportWrite() {
               dropdownRender={menu => (
                 <>
                   {menu}
-                  <div style={{ padding: '8px 12px', borderTop: '1px solid #3f3f46' }}>
+                  <div style={{ padding: '8px 12px', borderTop: '1px solid #e5e7eb' }}>
                     <Button
                       type="text"
                       size="small"

@@ -1,34 +1,44 @@
-// src/styles/theme.js
-// PMS 设计 Token — 统一颜色系统和样式规范
+// PMS 设计 Token — 国企标准蓝白风
+// 主题色: #115cb9 | 全中文排版 | 专业稳重高效
 
 export const colors = {
-  // 背景层级（从深到浅）
+  // 背景层级
   bg: {
-    base: '#09090b',      // 最深背景
-    page: '#18181b',      // 页面背景
-    card: '#27272a',      // 卡片背景
-    elevated: '#3f3f46',  // 悬浮/hover
-    border: '#3f3f46',    // 边框
+    base: '#f5f7fa',      // 页面背景
+    page: '#f5f7fa',      // 卡片容器背景
+    card: '#ffffff',      // 卡片背景
+    elevated: '#ffffff',  // 悬浮元素
+    border: '#e5e7eb',    // 边框
   },
-  // 主色（靛蓝，比原来的 #3b82f6 更专业）
-  accent: '#6366f1',
-  accentHover: '#818cf8',
+  // 主色
+  accent: '#115cb9',
+  accentHover: '#3377cc',
+  accentLight: '#d7e2ff',
   // 语义色
-  success: '#22c55e',
-  successBg: '#22c55e15',
-  warning: '#eab308',
-  warningBg: '#eab30815',
-  danger: '#ef4444',
-  dangerBg: '#ef444415',
+  success: '#52c41a',
+  successBg: '#f6ffed',
+  warning: '#faad14',
+  warningBg: '#fffbe6',
+  danger: '#ff4d4f',
+  dangerBg: '#fff2f0',
   // 文字
   text: {
-    primary: '#e4e4e7',
-    secondary: '#a1a1aa',
-    muted: '#71717a',
-    disabled: '#52525b',
+    primary: '#1a1a2e',
+    secondary: '#5f5f61',
+    muted: '#8c8c8c',
+    disabled: '#bfbfbf',
   },
-  // 图表配色（按顺序循环使用）
-  chart: ['#6366f1', '#22c55e', '#eab308', '#ef4444', '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6'],
+  // 侧边栏
+  sidebar: {
+    bg: '#ffffff',
+    text: '#1a1a2e',
+    textMuted: '#8c8c8c',
+    active: '#eef3ff',
+    hover: '#f5f7fa',
+    activeText: '#115cb9',
+  },
+  // 图表配色
+  chart: ['#115cb9', '#52c41a', '#faad14', '#ff4d4f', '#1890ff', '#722ed1', '#ec4899', '#14b8a6'],
 }
 
 export const spacing = {
@@ -42,25 +52,18 @@ export const spacing = {
 
 export const radius = {
   sm: 4,
-  md: 6,
-  lg: 8,
-  xl: 12,
+  md: 8,
+  lg: 12,
+  xl: 16,
 }
 
 export const shadows = {
-  card: '0 2px 8px rgba(0,0,0,0.3)',
-  elevated: '0 4px 16px rgba(0,0,0,0.4)',
-  modal: '0 8px 32px rgba(0,0,0,0.6)',
+  card: '0 1px 2px rgba(0,0,0,0.04)',
+  elevated: '0 4px 12px rgba(0,0,0,0.08)',
+  modal: '0 8px 32px rgba(0,0,0,0.12)',
 }
 
-// 统一卡片样式
-export const cardStyle = {
-  background: colors.bg.card,
-  border: `1px solid ${colors.bg.border}`,
-  borderRadius: radius.lg,
-}
-
-// antd 组件暗色主题覆盖
+// antd 组件蓝白主题覆盖
 export const antdTheme = {
   token: {
     colorPrimary: colors.accent,
@@ -69,9 +72,8 @@ export const antdTheme = {
     colorBorder: colors.bg.border,
     colorText: colors.text.primary,
     colorTextSecondary: colors.text.secondary,
-    colorTextTertiary: colors.text.muted,
     borderRadius: radius.md,
-    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
   },
 }
 

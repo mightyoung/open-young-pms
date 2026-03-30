@@ -1,15 +1,16 @@
-import React, { Suspense, lazy, useState, useEffect, useMemo } from 'react';
+import React, { Suspense, lazy, useState, useEffect, useMemo, useCallback } from 'react';
+import { message } from 'antd';
 import { ConfigProvider, Layout, Menu, Avatar, Badge, Tabs, Tag, Button, Modal, Input, Progress, Tooltip, List, Row, Col, Typography, Divider } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChartComponent, BarChartComponent, DonutChartComponent } from './components/Charts';
 import Team from './components/Team';
 import Documents from './components/Documents';
 import { LogoIcon } from './components/Icons';
-import { LayoutDashboard, Kanban, Users, FileText, Bell, Plus, Search, ChevronRight, Clock, CheckCircle2, MessageSquare, Paperclip, Star, MoreHorizontal, Filter, RefreshCw, Calendar, X, Send, Settings, BarChart3, FileBarChart, MessageCircle, Shield, Database, BookOpen, ClipboardList, Megaphone, Briefcase, UsersRound, GitBranch, LayoutList, PieChart, Activity, Flag } from 'lucide-react';
+import { LayoutDashboard, Kanban, Users, FileText, Bell, Plus, Search, ChevronRight, Clock, CheckCircle2, MessageSquare, Paperclip, Star, MoreHorizontal, Filter, RefreshCw, Calendar, X, Send, Settings, BarChart3, FileBarChart, MessageCircle, Shield, Database, BookOpen, ClipboardList, Megaphone, Briefcase, UsersRound, GitBranch, LayoutList, PieChart, Activity, Flag, ChevronDown, Folder, FolderOpen, FolderKanban, AlertTriangle, ClipboardCheck, Truck, FileSearch, BarChart, UserCog, BellRing, Cog, TestTube, FlaskConical, Printer, LogOut, User, Key } from 'lucide-react';
 
 // 首屏页面 — 同步加载
 import Hazards from './pages/Hazards';
-import Login from './pages/Login';
+import LoginPage from './pages/Login';
 
 // 非首屏页面 — 懒加载
 const AIChat = lazy(() => import('./pages/AIChat'));
@@ -40,25 +41,34 @@ const ReportWrite = lazy(() => import('./pages/ReportWrite'));
 const Reports = lazy(() => import('./pages/Reports'));
 const Resources = lazy(() => import('./pages/Resources'));
 const Risks = lazy(() => import('./pages/Risks'));
+const Projects = lazy(() => import('./pages/Projects'));
 const UsersPage = lazy(() => import('./pages/Users'));
+const HazardReportV2 = lazy(() => import('./pages/HazardReportV2'));
+const TaskManagementV2 = lazy(() => import('./pages/TaskManagementV2'));
+const ReportManagementV2 = lazy(() => import('./pages/ReportManagementV2'));
+const DataGovernanceV2 = lazy(() => import('./pages/DataGovernanceV2'));
 
 // 懒加载包装组件
+function SkeletonBlock() {
+  return (
+    <div style={{ padding: 24, background: D.bg, minHeight: '100vh' }}>
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ height: 28, width: 180, background: D.border, borderRadius: 8, marginBottom: 8 }} />
+        <div style={{ height: 16, width: 280, background: D.border, borderRadius: 6, opacity: 0.5 }} />
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
+        {[1,2,3,4].map(i => (
+          <div key={i} style={{ height: 100, background: D.card, borderRadius: 12, border: '1px solid ' + D.border }} />
+        ))}
+      </div>
+      <div style={{ height: 300, background: D.card, borderRadius: 12, border: '1px solid ' + D.border }} />
+    </div>
+  );
+}
+
 function LazyPage({ children }) {
   return (
-    <Suspense fallback={
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        height: '60vh', color: '#71717a', fontSize: 14, flexDirection: 'column', gap: 12
-      }}>
-        <div style={{
-          width: 32, height: 32, border: '3px solid rgba(99,102,241,0.2)',
-          borderTop: '3px solid #6366f1', borderRadius: '50%',
-          animation: 'spin 0.8s linear infinite'
-        }} />
-        加载中...
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      </div>
-    }>
+    <Suspense fallback={<SkeletonBlock />}>
       {children}
     </Suspense>
   );
@@ -69,11 +79,20 @@ const { Text, Title } = Typography;
 const { TextArea } = Input;
 
 const D = {
-  bg: '#0a0a0e', surface: '#13131a', card: '#1a1a22', elevated: '#22222c',
-  border: 'rgba(255,255,255,0.06)',
-  accent: '#6366f1', accent2: '#818cf8',
-  success: '#22c55e', warning: '#f59e0b', danger: '#ef4444',
-  text: '#e4e4e7', textSec: '#a1a1aa', textMuted: '#52525b',
+  // 背景色 - 蓝白风格
+  bg: '#f5f7fa', surface: '#ffffff', card: '#ffffff', elevated: '#ffffff',
+  border: '#e5e7eb',
+  // 主色 - 蓝色
+  primary: '#115cb9', primaryLight: '#d7e2ff', primaryDark: '#0050a7',
+  // 强调色
+  accent: '#115cb9', accent2: '#1890ff',
+  // 状态色
+  success: '#52c41a', warning: '#faad14', danger: '#ff4d4f',
+  // 文字色
+  text: '#323235', textSec: '#5f5f61', textMuted: '#8c8c8c',
+  // 侧边栏 - 深蓝色
+  sidebar: '#ffffff', sidebarText: '#115cb9', sidebarTextMuted: '#8c8c8c',
+  sidebarActive: '#eef3ff', sidebarHover: '#f5f7fa',
 };
 
 const theme = {
@@ -93,10 +112,62 @@ const va = {
 };
 
 const USERS = [
-  { name: '张小明', role: '前端开发', color: '#6366f1', initials: '张' },
+  { name: '张小明', role: '前端开发', color: '#115cb9', initials: '张' },
   { name: '李华', role: '后端开发', color: '#22c55e', initials: '李' },
   { name: '王芳', role: 'UI设计', color: '#ec4899', initials: '王' },
   { name: '赵强', role: '测试', color: '#f59e0b', initials: '赵' },
+];
+
+
+
+// ============ 优化后的菜单结构（2026-03-30）============
+// 设计原则：扁平化、分组合理、常用优先、次要隐藏
+const MENU_STRUCTURE = [
+  // 第1组：核心入口
+  { key: 'group-core', icon: <LayoutDashboard size={16} />, label: '核心入口', children: [
+    { key: 'dashboard', label: '仪表盘', icon: <LayoutDashboard size={16} /> },
+    { key: 'kanban', label: '看板', icon: <Kanban size={16} /> },
+    { key: 'calendar', label: '日程管理', icon: <Calendar size={16} /> },
+  ]},
+  // 第2组：驾驶舱（三梯队）
+  { key: 'group-cockpit', icon: <BarChart3 size={16} />, label: '驾驶舱', children: [
+    { key: 'strategic-cockpit', label: '司令舱', icon: <BarChart3 size={16} /> },
+    { key: 'tactical-cockpit', label: '指挥台', icon: <BarChart size={16} /> },
+    { key: 'operational-cockpit', label: '作战台', icon: <Activity size={16} /> },
+  ]},
+  // 第3组：项目管理
+  { key: 'group-project', icon: <FolderKanban size={16} />, label: '项目管理', children: [
+    { key: 'projects', label: '项目列表', icon: <FolderKanban size={16} /> },
+    { key: 'hazards', label: '随手拍', icon: <AlertTriangle size={16} /> },
+    { key: 'hazard-report-v2', label: '随手拍 2.0', icon: <AlertTriangle size={16} /> },
+    { key: 'gantt', label: '甘特图', icon: <GitBranch size={16} /> },
+    { key: 'task-mgmt-v2', label: '任务管理 2.0', icon: <ClipboardList size={16} /> },
+  ]},
+  // 第4组：工作流
+  { key: 'group-workflow', icon: <ClipboardList size={16} />, label: '工作流', children: [
+    { key: 'report-write', label: '填写报告', icon: <FileText size={16} /> },
+    { key: 'reports', label: '报告中心', icon: <Folder size={16} /> },
+    { key: 'approval', label: '审批中心', icon: <CheckCircle2 size={16} /> },
+    { key: 'report-mgmt-v2', label: '报告管理 2.0', icon: <FileBarChart size={16} /> },
+  ]},
+  // 第5组：智能
+  { key: 'group-ai', icon: <MessageCircle size={16} />, label: '智能', children: [
+    { key: 'ai', label: 'AI 助手', icon: <MessageCircle size={16} /> },
+    { key: 'docs', label: '文档中心', icon: <FileText size={16} /> },
+    { key: 'knowledge', label: '知识库', icon: <BookOpen size={16} /> },
+  ]},
+  // 第6组：系统配置（收起）
+  { key: 'group-system', icon: <Cog size={16} />, label: '系统配置', children: [
+    { key: 'users', label: '用户管理', icon: <UserCog size={16} /> },
+    { key: 'organization', label: '组织管理', icon: <Users size={16} /> },
+    { key: 'quality', label: '质量管理', icon: <Flag size={16} /> },
+    { key: 'contracts', label: '合同管理', icon: <FileText size={16} /> },
+    { key: 'budget', label: '预算管理', icon: <BarChart3 size={16} /> },
+    { key: 'resources', label: '资源管理', icon: <Truck size={16} /> },
+    { key: 'data-gov', label: '数据治理', icon: <Database size={16} /> },
+    { key: 'data-gov-v2', label: '数据基座 2.0', icon: <Database size={16} /> },
+    { key: 'audit', label: '审计日志', icon: <Shield size={16} /> },
+  ]},
 ];
 
 const TASKS = {
@@ -125,20 +196,20 @@ const TASKS = {
 };
 
 const KANBAN_COLS = [
-  { key: 'backlog', label: '待办', color: '#71717a', glow: 'rgba(113,113,122,0.3)' },
-  { key: 'inprogress', label: '进行中', color: '#6366f1', glow: 'rgba(99,102,241,0.4)' },
-  { key: 'review', label: '评审', color: '#f59e0b', glow: 'rgba(245,158,11,0.4)' },
-  { key: 'done', label: '完成', color: '#22c55e', glow: 'rgba(34,197,94,0.4)' },
+  { key: 'backlog', label: '待办', color: '#8c8c8c', glow: 'rgba(140,140,140,0.3)' },
+  { key: 'inprogress', label: '进行中', color: '#115cb9', glow: 'rgba(17,92,185,0.4)' },
+  { key: 'review', label: '评审', color: '#faad14', glow: 'rgba(250,173,20,0.4)' },
+  { key: 'done', label: '完成', color: '#52c41a', glow: 'rgba(82,196,26,0.4)' },
 ];
 
 const PRIORITY = {
-  high: { label: '紧急', color: '#ef4444' },
-  medium: { label: '高', color: '#f59e0b' },
-  low: { label: '普通', color: '#6366f1' },
+  high: { label: '紧急', color: '#ff4d4f' },
+  medium: { label: '高', color: '#faad14' },
+  low: { label: '普通', color: '#115cb9' },
 };
 const TAGS = {
-  安全: '#ef4444', 认证: '#f59e0b', 前端: '#6366f1', 后端: '#22c55e',
-  UI: '#ec4899', 文档: '#06b6d4', 测试: '#8b5cf6', 架构: '#f97316', 功能: '#14b8a6', 工程: '#71717a',
+  安全: '#ff4d4f', 认证: '#faad14', 前端: '#115cb9', 后端: '#52c41a',
+  UI: '#ec4899', 文档: '#06b6d4', 测试: '#8b5cf6', 架构: '#f97316', 功能: '#14b8a6', 工程: '#8c8c8c',
 };
 
 const COMMENTS = [
@@ -180,23 +251,6 @@ function AvatarChip({ user, size = 28 }) {
 
 function TagBadge({ tag }) {
   const c = TAGS[tag] || D.textMuted;
-
-  // 全局导航 API（供子页面调用）
-  useEffect(() => {
-    const handler = (e) => {
-      if (e.detail && typeof e.detail === 'string') {
-        setCurrent(e.detail)
-      }
-    }
-    window.__setNav = setCurrent
-    window.__navigateTo = (key) => window.__setNav(key)
-    window.addEventListener('__navigate', handler)
-    return () => {
-      window.removeEventListener('__navigate', handler)
-    }
-  }, [])
-
-
   return (
     <span style={{ display: 'inline-flex', padding: '1px 8px', borderRadius: 8, fontSize: 11, fontWeight: 600, background: `${c}15`, color: c, border: `1px solid ${c}30` }}>
       {tag}
@@ -479,46 +533,81 @@ function DashboardCharts() {
 }
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => !!localStorage.getItem('token')
+  );
+
+  const handleLogin = () => setIsAuthenticated(true);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setIsAuthenticated(false);
+  };
+
+  if (!isAuthenticated) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
+  return <MainApp onLogout={handleLogout} />;
+}
+
+function MainApp({ onLogout }) {
   const [collapsed, setCollapsed] = useState(false);
+
+  // 全局键盘快捷键
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl/Cmd + K: 聚焦搜索
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        const searchInput = document.querySelector('input[placeholder*="搜索"]');
+        if (searchInput) searchInput.focus();
+      }
+      // Escape: 关闭当前模态框
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.ant-modal').forEach(m => {
+          const closeBtn = m.querySelector('.ant-modal-close');
+          if (closeBtn) closeBtn.click();
+        });
+      }
+      // Ctrl/Cmd + B: 折叠侧边栏
+      if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+        e.preventDefault();
+        setCollapsed(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
   const [current, setCurrent] = useState('dashboard');
+  const [openKeys, setOpenKeys] = useState(['group-workspace']);
   const [selectedTask, setSelectedTask] = useState(null);
   const [taskModalOpen, setTaskModalOpen] = useState(false);
   const [tasks, setTasks] = useState({ ...TASKS });
 
-  const menuItems = [
-    { key: 'dashboard', icon: <LayoutDashboard size={18} />, label: '仪表盘' },
-    { key: 'kanban', icon: <Kanban size={18} />, label: '看板' },
-    { key: 'hazards', icon: <CheckCircle2 size={18} />, label: '随手拍' },
-    { key: 'team', icon: <Users size={18} />, label: '团队' },
-    { key: 'docs', icon: <FileText size={18} />, label: '文档' },
-    { key: 'approval', icon: <CheckCircle2 size={18} />, label: '审批中心' },
-    { key: 'report-write', icon: <FileText size={18} />, label: '报告填写' },
-    { key: 'notifications', icon: <Bell size={18} />, label: '通知中心' },
-    { key: 'forum', icon: <MessageSquare size={18} />, label: '论坛' },
-    { key: 'organization', icon: <Briefcase size={18} />, label: '组织管理' },
-    { key: 'users', icon: <UsersRound size={18} />, label: '用户管理' },
-    { key: 'gantt', icon: <GitBranch size={18} />, label: '甘特图' },
-    { key: 'draftbox', icon: <ClipboardList size={18} />, label: '草稿箱' },
-    { key: 'reports', icon: <FileBarChart size={18} />, label: '报表中心' },
-    { key: 'ai', icon: <MessageCircle size={18} />, label: 'AI 对话' },
-    { key: 'audit', icon: <Shield size={18} />, label: '审计日志' },
-    { key: 'calendar', icon: <Calendar size={18} />, label: '日程管理' },
-    { key: 'budget', icon: <BarChart3 size={18} />, label: '预算管理' },
-    { key: 'contracts', icon: <FileText size={18} />, label: '合同管理' },
-    { key: 'data-dict', icon: <Database size={18} />, label: '数据字典' },
-    { key: 'data-gov', icon: <Shield size={18} />, label: '数据治理' },
-    { key: 'export', icon: <FileBarChart size={18} />, label: '导出管理' },
-    { key: 'forum-detail', icon: <MessageSquare size={18} />, label: '论坛详情' },
-    { key: 'hazard-mgmt', icon: <CheckCircle2 size={18} />, label: '隐患管理' },
-    { key: 'hazard-rules', icon: <Settings size={18} />, label: '隐患规则' },
-    { key: 'hazard-stats', icon: <BarChart3 size={18} />, label: '隐患统计' },
-    { key: 'knowledge', icon: <BookOpen size={18} />, label: '知识库' },
-    { key: 'notif-settings', icon: <Settings size={18} />, label: '通知设置' },
-    { key: 'quality', icon: <Flag size={18} />, label: '质量管理' },
-    { key: 'report-stats', icon: <PieChart size={18} />, label: '报表统计' },
-    { key: 'resources', icon: <Database size={18} />, label: '资源管理' },
-    { key: 'risks', icon: <Activity size={18} />, label: '风险管理' },
-  ];
+  // 全局导航 API
+  useEffect(() => {
+    window.__setNav = setCurrent;
+    window.__navigateTo = (key) => setCurrent(key);
+    const handler = (e) => {
+      if (e.detail && typeof e.detail === 'string') setCurrent(e.detail);
+    };
+    window.addEventListener('__navigate', handler);
+    return () => {
+      window.removeEventListener('__navigate', handler);
+      delete window.__setNav;
+      delete window.__navigateTo;
+    };
+  }, [setCurrent]);
+
+  // 菜单项从 MENU_STRUCTURE 构建
+  const menuItems = MENU_STRUCTURE.map(group => ({
+    key: group.key,
+    label: group.label,
+    icon: group.icon,
+    children: group.children,
+  }));
 
   const statCards = [
     { title: '总任务', value: 14, suffix: '个', color: D.accent, trend: 12, icon: <CheckCircle2 size={20} /> },
@@ -533,8 +622,16 @@ export default function App() {
     <ConfigProvider theme={theme}>
       <Layout style={{ minHeight: '100vh', background: D.bg }}>
         {/* 侧边栏 */}
-        <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed} width={240}
-          style={{ background: D.bg, borderRight: `1px solid ${D.border}`, position: 'fixed', height: '100vh', left: 0, top: 0, zIndex: 100 }}
+        <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed} width={260}
+          style={{ 
+            background: D.sidebar, 
+            position: 'fixed', 
+            height: '100vh', 
+            left: 0, 
+            top: 0, 
+            zIndex: 100,
+            overflow: 'hidden',
+          }}
           trigger={null}>
           {/* Logo */}
           <div style={{ height: 64, display: 'flex', alignItems: 'center', padding: collapsed ? '0 16px' : '0 20px', borderBottom: `1px solid ${D.border}`, gap: 10 }}>
@@ -544,23 +641,37 @@ export default function App() {
             </AnimatePresence>
           </div>
           {/* 菜单 */}
-          <Menu mode="inline" selectedKeys={[current]} onClick={({ key }) => setCurrent(key)} style={{ background: 'transparent', border: 'none', marginTop: 8 }}>
-            {menuItems.map(item => (
-              <Menu.Item key={item.key}
-                icon={<span style={{ color: current === item.key ? D.accent : D.textMuted }}>{item.icon}</span>}
-                style={{
-                  margin: '2px 8px', borderRadius: 10,
-                  background: current === item.key ? `linear-gradient(135deg, ${D.accent}15 0%, ${D.accent2}08 100%)` : 'transparent',
-                  color: current === item.key ? D.text : D.textSec,
-                  fontWeight: current === item.key ? 600 : 400,
-                  borderLeft: current === item.key ? `2px solid ${D.accent}` : '2px solid transparent',
-                }}>
-                {item.label}
-              </Menu.Item>
-            ))}
-          </Menu>
-          {/* 用户信息 */}
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: collapsed ? '16px 12px' : '16px 20px', borderTop: `1px solid ${D.border}` }}>
+          <Menu
+            mode="inline"
+            selectedKeys={[current]}
+            openKeys={openKeys}
+            onOpenChange={(keys) => setOpenKeys(keys)}
+            onClick={({ key }) => setCurrent(key)}
+            items={menuItems.flatMap(group => [
+              {
+                key: group.key + '-group',
+                type: 'group',
+                label: (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', color: D.sidebarTextMuted, fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                    {group.icon}
+                    <span style={{ marginLeft: 4 }}>{group.label}</span>
+                  </div>
+                ),
+              },
+              ...group.children.map(item => ({
+                key: item.key,
+                label: (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', color: current === item.key ? D.sidebarText : D.sidebarTextMuted }}>
+                    <span style={{ color: current === item.key ? D.accent : 'inherit' }}>{item.icon}</span>
+                    <span>{item.label}</span>
+                  </div>
+                ),
+              })),
+            ])}
+            style={{ background: 'transparent', border: 'none' }}
+          />
+          {/* 用户信息 + 登出 */}
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: collapsed ? '16px 12px' : '16px 20px', borderTop: `1px solid ${D.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <Avatar size={34} style={{ background: `linear-gradient(135deg, ${D.accent}, ${D.accent2})`, fontSize: 13, fontWeight: 700, border: `2px solid ${D.accent}40` }}>
                 项目
@@ -570,6 +681,9 @@ export default function App() {
                 <div style={{ fontSize: 11, color: D.textMuted }}>管理员</div>
               </div>}
             </div>
+            {!collapsed && <Tooltip title="退出登录">
+              <Button type="text" icon={<LogOut size={16} />} onClick={onLogout} style={{ color: D.textMuted, borderRadius: 8 }} />
+            </Tooltip>}
           </div>
         </Sider>
 
@@ -581,7 +695,8 @@ export default function App() {
               <Button type="text" icon={collapsed ? <ChevronRight size={18} /> : <Kanban size={18} />} onClick={() => setCollapsed(!collapsed)} style={{ color: D.textSec }} />
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: D.surface, border: `1px solid ${D.border}`, borderRadius: 10, padding: '8px 14px', width: 260 }}>
                 <Search size={14} color={D.textMuted} />
-                <Input placeholder="搜索任务、成员、文档..." bordered={false} style={{ background: 'transparent', color: D.text, fontSize: 13, padding: 0, flex: 1, margin: 0 }} />
+                <Input placeholder="搜索任务、成员、文档..." variant="borderless" style={{ background: 'transparent', color: D.text, fontSize: 13, padding: 0, flex: 1, margin: 0 }} />
+                <span className="kbd" style={{ marginLeft: 8, fontSize: 10 }}>⌘K</span>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -699,6 +814,8 @@ export default function App() {
 
               {current === 'gantt' && <motion.div key="gantt" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Gantt /></LazyPage></motion.div>}
 
+              {current === 'projects' && <motion.div key="projects" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Projects /></LazyPage></motion.div>}
+
               {current === 'draftbox' && <motion.div key="draftbox" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><DraftBox /></LazyPage></motion.div>}
 
               {current === 'reports' && <motion.div key="reports" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Reports /></LazyPage></motion.div>}
@@ -738,6 +855,14 @@ export default function App() {
               {current === 'resources' && <motion.div key="resources" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Resources /></LazyPage></motion.div>}
 
               {current === 'risks' && <motion.div key="risks" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><Risks /></LazyPage></motion.div>}
+
+              { current === 'hazard-report-v2' && <motion.div key="hazard-report-v2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><HazardReportV2 /></LazyPage></motion.div> }
+
+              { current === 'task-mgmt-v2' && <motion.div key="task-mgmt-v2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><TaskManagementV2 /></LazyPage></motion.div> }
+
+              { current === 'report-mgmt-v2' && <motion.div key="report-mgmt-v2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><ReportManagementV2 /></LazyPage></motion.div> }
+
+              { current === 'data-gov-v2' && <motion.div key="data-gov-v2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}><LazyPage><DataGovernanceV2 /></LazyPage></motion.div> }
             </AnimatePresence>
           </Content>
         </Layout>

@@ -5,11 +5,11 @@ import { Upload as UploadIcon, MapPin, X, Camera, Save, Send, AlertTriangle } fr
 import { api } from '../api'
 
 const D = {
-  bg: '#0a0a0e',
-  surface: '#13131a',
-  card: '#1a1a22',
-  elevated: '#22222c',
-  border: 'rgba(255,255,255,0.06)',
+  bg: '#f5f7fa',
+  surface: '#f5f7fa',
+  card: '#ffffff',
+  elevated: '#ffffff',
+  border: '#e5e7eb',
   accent: colors.accent,
   accent2: colors.accentHover,
   success: colors.success,

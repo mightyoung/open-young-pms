@@ -63,7 +63,7 @@ export default function ReportStats() {
       <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
         {statsData.map((d, i) => (
           <Col span={6} key={i}>
-            <Card style={{ background: colors.bg.page, border: '1px solid #27272a', textAlign: 'center' }}>
+            <Card style={{ background: colors.bg.page, border: '1px solid #e5e7eb', textAlign: 'center' }}>
               <div style={{ color: d.color, fontSize: 28, marginBottom: 8 }}>{d.icon}</div>
               <Statistic title={<Text style={{ color: colors.text.muted }}>{d.label}</Text>} value={d.value} valueStyle={{ color: d.color, fontSize: 28 }} />
             </Card>
@@ -73,7 +73,7 @@ export default function ReportStats() {
 
       <Row gutter={16}>
         <Col span={12}>
-          <Card title={<Text style={{ color: colors.text.primary }}>通过率</Text>} style={{ background: colors.bg.page, border: '1px solid #27272a' }}>
+          <Card title={<Text style={{ color: colors.text.primary }}>通过率</Text>} style={{ background: colors.bg.page, border: '1px solid #e5e7eb' }}>
             {summary.total > 0 ? (
               <Progress
                 percent={Math.round(((summary.approved || 0) / summary.total) * 100)}
@@ -85,7 +85,7 @@ export default function ReportStats() {
           </Card>
         </Col>
         <Col span={12}>
-          <Card title={<Text style={{ color: colors.text.primary }}>报告类型分布</Text>} style={{ background: colors.bg.page, border: '1px solid #27272a' }}>
+          <Card title={<Text style={{ color: colors.text.primary }}>报告类型分布</Text>} style={{ background: colors.bg.page, border: '1px solid #e5e7eb' }}>
             {typeData.length > 0 ? (
               <ResponsiveContainer width="100%" height={120}>
                 <BarChart data={typeData}>
@@ -101,7 +101,7 @@ export default function ReportStats() {
         </Col>
       </Row>
 
-      <Card title={<Text style={{ color: colors.text.primary }}>最近报告</Text>} style={{ background: colors.bg.page, border: '1px solid #27272a', marginTop: 16 }}>
+      <Card title={<Text style={{ color: colors.text.primary }}>最近报告</Text>} style={{ background: colors.bg.page, border: '1px solid #e5e7eb', marginTop: 16 }}>
         <Table dataSource={recent} columns={columns} rowKey="id" size="small" pagination={false} />
       </Card>
     </div>
