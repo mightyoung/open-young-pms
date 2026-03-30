@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import EmptyState from '../components/EmptyState';
 import { colors } from '../styles/theme'
-import { Card, Table, Tag, Button, Empty, Spin } from 'antd'
+import { Card, Table, Tag, Button, Empty } from 'antd'
 import { FileTextOutlined, PlusOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 
 const STATUS_MAP = {
   draft: { label: '草稿', color: 'default' },
@@ -64,8 +66,8 @@ export default function Reports() {
         <h2 style={{ color: colors.text.primary, margin: 0 }}><FileTextOutlined style={{ marginRight: 8 }} />报告管理</h2>
       </div>
       <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46' }}>
-        {loading ? <div style={{ textAlign: 'center', padding: 60 }}><Spin /></div> :
-         data.length === 0 ? <Empty description="暂无报告" style={{ marginTop: 60 }} /> : (
+        {loading ? <SkeletonContent type='table' /> :
+         data.length === 0 ? <EmptyState type="list" title="暂无报告" style={{ marginTop: 60 }} /> : (
           <Table dataSource={data} columns={columns} rowKey="id" loading={loading}
             pagination={{ total, pageSize: 20, showTotal: t => `共 ${t} 条` }}
           />

@@ -5,7 +5,7 @@ from api.services.fastapi_code_generator.routers.users import router as users_ro
 from api.services.fastapi_code_generator.routers.projects import router as projects_router
 from api.services.fastapi_code_generator.routers.tasks import router as tasks_router
 from api.services.fastapi_code_generator.routers.hazard_reports import router as hazard_reports_router
-from api.services.fastapi_code_generator.routers.inspections import router as inspections_router
+from api.services.fastapi_code_generator.routers.inspection import router as inspections_router
 from api.services.fastapi_code_generator.routers.reports import router as reports_router
 from api.services.fastapi_code_generator.routers.notifications import router as notifications_router
 

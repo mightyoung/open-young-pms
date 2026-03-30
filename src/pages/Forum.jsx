@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Card, List, Tag, Button, Input, Modal, Form, message, Spin, Empty } from 'antd'
+import EmptyState from '../components/EmptyState';
+import { Card, List, Tag, Button, Input, Modal, Form, message, Empty } from 'antd'
 import { PlusOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 
 const { TextArea } = Input
 
@@ -105,8 +107,8 @@ export default function Forum() {
         ))}
       </div>
 
-      {loading ? <div style={{ textAlign: 'center', padding: 60 }}><Spin /></div> : posts.length === 0 ? (
-        <Empty description="暂无帖子" style={{ marginTop: 80 }} />
+      {loading ? <SkeletonContent type='table' /> : posts.length === 0 ? (
+        <EmptyState type="list" title="暂无帖子" style={{ marginTop: 80 }} />
       ) : (
         <List
           dataSource={posts}
@@ -128,7 +130,7 @@ export default function Forum() {
                   {post.is_featured && <Tag color="gold" style={{ marginRight: 4 }}>精</Tag>}
                   <a
                     href={`?postId=${post.id}`}
-                    onClick={e => { e.preventDefault(); sessionStorage.setItem('forum_post_id', post.id); window.dispatchEvent(new CustomEvent('navigate', { detail: 'forumDetail' })) }}
+                    onClick={e => { e.preventDefault(); sessionStorage.setItem('forum_post_id', post.id); window.dispatchEvent(new CustomEvent('__navigate', { detail: 'forumDetail' })) }}
                     style={{ color: '#e4e4e7' }}
                   >{post.title}</a>
                 </>}

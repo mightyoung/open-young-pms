@@ -3,6 +3,7 @@ import { colors } from '../styles/theme'
 import { Card, Table, Tag, Button, Typography, Select, Form, Input, InputNumber, Modal, Space, message } from 'antd'
 import { FileTextOutlined, PlusOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 
 const { Title, Text } = Typography
 const TYPE_MAP = { supply: '供货合同', install: '安装合同', service: '服务合同', consulting: '咨询合同', other: '其他' }
@@ -48,6 +49,8 @@ export default function Contracts() {
     { title: '状态', dataIndex: 'status', render: s => <Tag color={STATUS_MAP[s]?.color}>{STATUS_MAP[s]?.label || s}</Tag> },
     { title: '签订日期', dataIndex: 'signed_date', render: t => <Text style={{ color: colors.text.muted, fontSize: 12 }}>{t || '-'}</Text> },
   ]
+
+  if (loading) return <div style={{ padding: 24 }}><SkeletonContent type='table' /></div>
 
   return (
     <div style={{ padding: 24 }}>

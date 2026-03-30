@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import EmptyState from '../components/EmptyState';
 import { colors } from '../styles/theme'
-import { Card, Typography, Button, Input, List, Space, Tag, Modal, Form, message, Empty, Spin } from 'antd'
+import { Card, Typography, Button, Input, List, Space, Tag, Modal, Form, message, Empty } from 'antd'
 import { BookOutlined, PlusOutlined, SearchOutlined, FileTextOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 
 const { Title, Text } = Typography
 
@@ -96,8 +98,8 @@ export default function KnowledgeBase() {
 
       {/* 文档列表 */}
       <Card style={{ background: colors.bg.page, border: '1px solid #27272a' }}>
-        {loading ? <div style={{ textAlign: 'center', padding: 40 }}><Spin /></div> : docs.length === 0 ? (
-          <Empty description="暂无文档" />
+        {loading ? <SkeletonContent type='list' /> : docs.length === 0 ? (
+          <EmptyState type="list" title="暂无文档" />
         ) : (
           <List
             dataSource={docs}

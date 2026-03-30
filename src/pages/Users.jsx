@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import SkeletonContent from "../components/SkeletonContent";
 import { colors } from '../styles/theme'
 import { Card, Table, Input, Button, message, Space, Tag } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'

@@ -82,10 +82,10 @@ async def start_approval(flow_id: str, entity_type: str, entity_id: str, variabl
 async def my_tasks(status: str = None, page: int = 1, page_size: int = 20,
                    db=Depends(get_db), current_user=Depends(get_current_user)):
     user_id = str(current_user.id)
-    task_query = select(ApprovalTask).where(ApprovalTask.approver_id == user_id)
+    task_query = select(ApprovalTask).where(ApprovalTask.assignee_id == user_id)
     if status and status != "all":
         task_query = task_query.where(ApprovalTask.status == status)
-    total = (await db.execute(select(func.count(ApprovalTask.id)).where(ApprovalTask.approver_id == user_id))).scalar() or 0
+    total = (await db.execute(select(func.count(ApprovalTask.id)).where(ApprovalTask.assignee_id == user_id))).scalar() or 0
     task_query = task_query.order_by(desc(ApprovalTask.created_at)).offset((page-1)*page_size).limit(page_size)
     rows = (await db.execute(task_query)).scalars().all()
     items = []

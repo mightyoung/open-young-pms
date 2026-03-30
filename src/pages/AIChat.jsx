@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import SkeletonContent from "../components/SkeletonContent";
 import { colors } from '../styles/theme'
 import { Card, Input, Button, Avatar, Spin, List } from 'antd'
 import { RobotOutlined, UserOutlined, SendOutlined, BulbOutlined } from '@ant-design/icons'

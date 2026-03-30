@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import SkeletonContent from "../components/SkeletonContent";
 import { colors } from '../styles/theme'
 import { Card, Table, Tag, Button, Select, Space, Typography, Drawer, Descriptions, Timeline, Avatar, Statistic, Row, Col, Divider, Modal, message } from 'antd'
 import { ExclamationCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined, EyeOutlined } from '@ant-design/icons'

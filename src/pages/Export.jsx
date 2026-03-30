@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import SkeletonContent from "../components/SkeletonContent";
 import { Card, Typography, Button, Table, message } from 'antd'
 import { DownloadOutlined } from '@ant-design/icons'
 import { api } from '../api'

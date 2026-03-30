@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import EmptyState from '../components/EmptyState';
 import { colors } from '../styles/theme'
-import { Card, Row, Col, Statistic, Spin, Empty } from 'antd'
+import { Card, Row, Col, Statistic, Empty } from 'antd'
+import SkeletonContent from '../components/SkeletonContent'
 import { SafetyOutlined, CheckCircleOutlined, FileTextOutlined, DashboardOutlined } from '@ant-design/icons'
 import { api } from '../api'
 
@@ -50,12 +52,12 @@ export default function Dashboard() {
   }, [])
 
   if (loading) return (
-    <div style={{ textAlign: 'center', padding: 80 }}>
-      <Spin size="large" />
+    <div style={{ padding: 24, background: colors.bg.base, minHeight: '100vh' }}>
+      <SkeletonContent type='dashboard' />
     </div>
   )
 
-  if (!summary) return <Empty description="暂无数据" style={{ marginTop: 80 }} />
+  if (!summary) return <EmptyState type="list" title="暂无数据" style={{ marginTop: 80 }} />
 
   const hazard = summary.hazard || {}
   const task = summary.task || {}

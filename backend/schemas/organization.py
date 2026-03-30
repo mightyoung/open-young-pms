@@ -1,0 +1,68 @@
+"""Organization Pydantic schemas."""
+
+from typing import Optional, ForwardRef
+from pydantic import BaseModel
+
+
+class DepartmentBase(BaseModel):
+    name: str
+    code: str
+    parent_id: Optional[str] = None
+    level: int = 1
+    sort_order: int = 0
+    manager_id: Optional[str] = None
+
+
+class DepartmentCreate(DepartmentBase):
+    pass
+
+
+class DepartmentUpdate(BaseModel):
+    name: Optional[str] = None
+    parent_id: Optional[str] = None
+    sort_order: Optional[int] = None
+    manager_id: Optional[str] = None
+
+
+class DepartmentTreeNode(BaseModel):
+    id: str
+    name: str
+    code: str
+    level: int
+    children: list["DepartmentTreeNode"] = []
+    user_count: int = 0
+
+    class Config:
+        from_attributes = True
+
+
+class UserDepartmentAssign(BaseModel):
+    department_id: str
+    position: Optional[str] = None
+    is_default: bool = False
+
+
+class DepartmentResponse(BaseModel):
+    id: str
+    name: str
+    code: str
+    parent_id: Optional[str] = None
+    level: int
+    sort_order: int
+    manager_id: Optional[str] = None
+    is_active: bool
+    created_at: str
+
+    class Config:
+        from_attributes = True
+
+
+class UserOrganizationResponse(BaseModel):
+    id: str
+    user_id: str
+    department_id: str
+    position: Optional[str] = None
+    is_default: bool
+
+    class Config:
+        from_attributes = True

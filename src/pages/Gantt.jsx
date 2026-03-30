@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import EmptyState from '../components/EmptyState';
 import { colors } from '../styles/theme'
-import { Card, Timeline, Tag, Empty, Spin, Button, Modal, Form, Input, message } from 'antd'
+import { Card, Timeline, Tag, Empty, Button, Modal, Form, Input, message } from 'antd'
 import { PlusOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 
 export default function Gantt() {
   const [tasks, setTasks] = useState([])
@@ -56,8 +58,8 @@ export default function Gantt() {
         <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>新建任务</Button>
       </div>
 
-      {loading ? <div style={{ textAlign: 'center', padding: 60 }}><Spin /></div> :
-       tasks.length === 0 ? <Empty description="暂无任务，请创建" style={{ marginTop: 80 }} /> : (
+      {loading ? <SkeletonContent type='table' /> :
+       tasks.length === 0 ? <EmptyState type="list" title="暂无任务" style={{ marginTop: 80 }} /> : (
         <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46' }}>
           <Timeline
             items={tasks.map(task => ({

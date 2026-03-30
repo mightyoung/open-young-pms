@@ -1,6 +1,6 @@
 """Pydantic schemas — generated from PRD."""
 
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional, Any
 from uuid import UUID
 from pydantic import BaseModel, Field, ConfigDict
@@ -257,3 +257,117 @@ class PaginatedResponse(BaseModel):
 UserResponse.model_rebuild()
 ProjectResponse.model_rebuild()
 HazardReportResponse.model_rebuild()
+
+
+# ===== 质量管理 =====
+class QualityStandardCreate(BaseModel):
+    code: str
+    name: str
+    category: Optional[str] = None
+    pass_score: int = 80
+    check_items: Optional[list] = None
+    description: Optional[str] = None
+
+class QualityStandardUpdate(BaseModel):
+    name: Optional[str] = None
+    category: Optional[str] = None
+    pass_score: Optional[int] = None
+    check_items: Optional[list] = None
+    description: Optional[str] = None
+
+class QualityInspectionCreate(BaseModel):
+    project_id: str
+    standard_id: str
+    inspector_id: str
+    score: Optional[int] = None
+    result: Optional[str] = None
+    findings: Optional[list] = None
+    photo_urls: Optional[list] = None
+
+
+# ===== 合同管理 =====
+class ContractCreate(BaseModel):
+    project_id: Optional[str] = None
+    name: str
+    party_a: Optional[str] = None
+    party_b: Optional[str] = None
+    amount: Optional[float] = None
+    sign_date: Optional[date] = None
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+    status: str = "draft"
+    file_url: Optional[str] = None
+
+
+class ContractUpdate(BaseModel):
+    name: Optional[str] = None
+    party_a: Optional[str] = None
+    party_b: Optional[str] = None
+    amount: Optional[float] = None
+    sign_date: Optional[date] = None
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+    status: Optional[str] = None
+    file_url: Optional[str] = None
+
+
+# ===== 风险管理 =====
+class RiskCreate(BaseModel):
+    project_id: Optional[str] = None
+    title: str
+    category: Optional[str] = None
+    probability: Optional[str] = None
+    impact: Optional[str] = None
+    level: Optional[str] = None
+    mitigation: Optional[str] = None
+    contingency: Optional[str] = None
+    owner_id: Optional[str] = None
+
+
+class RiskUpdate(BaseModel):
+    title: Optional[str] = None
+    category: Optional[str] = None
+    probability: Optional[str] = None
+    impact: Optional[str] = None
+    level: Optional[str] = None
+    status: Optional[str] = None
+    mitigation: Optional[str] = None
+    contingency: Optional[str] = None
+    owner_id: Optional[str] = None
+
+
+class ResourceItemCreate(BaseModel):
+    project_id: Optional[str] = None
+    name: str
+    type: Optional[str] = None
+    quantity: int = 1
+    unit: Optional[str] = None
+    location: Optional[str] = None
+
+
+class ResourceItemUpdate(BaseModel):
+    name: Optional[str] = None
+    type: Optional[str] = None
+    quantity: Optional[int] = None
+    unit: Optional[str] = None
+    status: Optional[str] = None
+    location: Optional[str] = None
+
+
+# ===== 通知设置 =====
+class NotificationSettingCreate(BaseModel):
+    hazard_report: bool = True
+    approval_update: bool = True
+    task_assignment: bool = True
+    task_comment: bool = True
+    weekly_report: bool = True
+    mentioned_me: bool = True
+
+
+class NotificationSettingUpdate(BaseModel):
+    hazard_report: Optional[bool] = None
+    approval_update: Optional[bool] = None
+    task_assignment: Optional[bool] = None
+    task_comment: Optional[bool] = None
+    weekly_report: Optional[bool] = None
+    mentioned_me: Optional[bool] = None

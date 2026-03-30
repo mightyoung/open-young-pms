@@ -3,6 +3,7 @@ import { colors } from '../styles/theme'
 import { Card, Table, Tag, Button, Typography, Select, Space, Modal, Form, Input, InputNumber, message } from 'antd'
 import { SafetyCertificateOutlined, PlusOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 
 const { Title, Text } = Typography
 
@@ -65,6 +66,29 @@ export default function Quality() {
     { title: '及格分', dataIndex: 'pass_score', render: s => <Text style={{ color: colors.success }}>{s}</Text> },
     { title: '检查项', dataIndex: 'check_items', render: items => <Text style={{ color: colors.text.muted }}>{Array.isArray(items) ? items.length + '项' : '-'}</Text> },
     { title: '描述', dataIndex: 'description', render: t => <Text style={{ color: colors.text.muted, fontSize: 12 }}>{t || '-'}</Text> },
+    {
+      title: '操作',
+      key: 'actions',
+      width: 80,
+      render: (_, r) => (
+        <Space size="small">
+          <Button type="link" size="small" style={{ color: colors.accent, padding: '2px 6px', height: 'auto' }}
+            onClick={() => { form.setFieldsValue(r); setEditingStandard(r.id); Modal.confirm({ title: '编辑标准', okText: '保存', cancelText: '取消', content: <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
+              <Form.Item name="name" label="标准名称"><Input /></Form.Item>
+              <Form.Item name="category" label="分类"><Select>
+                <Select.Option value="structural">结构工程</Select.Option>
+                <Select.Option value="electrical">电气工程</Select.Option>
+                <Select.Option value="pipe">管道工程</Select.Option>
+                <Select.Option value="other">其他</Select.Option>
+              </Select></Form.Item>
+              <Form.Item name="pass_score" label="及格分"><InputNumber min={0} max={100} /></Form.Item>
+              <Form.Item name="description" label="描述"><Input.TextArea rows={2} /></Form.Item>
+            </Form>, onOk: () => handleUpdateStandard(r.id) }) }}>
+            编辑
+          </Button>
+        </Space>
+      ),
+    },
   ]
 
   const inspColumns = [
@@ -74,6 +98,8 @@ export default function Quality() {
     { title: '结果', dataIndex: 'result', render: r => <Tag color={RESULT_MAP[r]?.color}>{RESULT_MAP[r]?.label || r}</Tag> },
     { title: '时间', dataIndex: 'created_at', render: t => <Text style={{ color: colors.text.muted, fontSize: 12 }}>{t ? new Date(t).toLocaleString() : '-'}</Text> },
   ]
+
+  if (loading) return <div style={{ padding: 24 }}><SkeletonContent type='table' /></div>
 
   return (
     <div style={{ padding: 24 }}>

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import EmptyState from '../components/EmptyState';
 import { colors } from '../styles/theme'
-import { Card, Table, Tag, Button, Select, Space, Empty, Spin, Drawer, Descriptions } from 'antd'
+import { Card, Table, Tag, Button, Select, Space, Empty, Drawer, Descriptions } from 'antd'
 import { FileTextOutlined, SearchOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 
 const ACTION_MAP = {
   login: { label: '登录', color: 'green' }, logout: { label: '登出', color: 'default' },
@@ -62,8 +64,8 @@ export default function AuditLogs() {
         </Space>
       </Card>
       <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46' }}>
-        {loading ? <div style={{ textAlign: 'center', padding: 60 }}><Spin /></div> :
-         data.length === 0 ? <Empty description="暂无日志" style={{ marginTop: 60 }} /> :
+        {loading ? <SkeletonContent type='table' /> :
+         data.length === 0 ? <EmptyState type="list" title="暂无日志" style={{ marginTop: 60 }} /> :
          <Table dataSource={data} columns={columns} rowKey="id" loading={loading}
            onChange={p => load(p.current)}
            pagination={{ current: page, total, pageSize: 20, showTotal: t => `共 ${t} 条` }}

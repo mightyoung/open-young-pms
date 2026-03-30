@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 
 const STATUS_MAP = {
   pending: { label: '待分配', color: '#71717a' },
@@ -92,9 +93,7 @@ export default function Hazards() {
       </div>
 
       {/* 列表 */}
-      {loading ? (
-        <div style={{ color: '#52525b', textAlign: 'center', padding: 60 }}>加载中...</div>
-      ) : reports.length === 0 ? (
+      {loading ? <SkeletonContent type='table' /> : reports.length === 0 ? (
         <div style={{ color: '#52525b', textAlign: 'center', padding: 60 }}>暂无数据</div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

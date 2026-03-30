@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import EmptyState from '../components/EmptyState';
+import SkeletonContent from "../components/SkeletonContent";
 import { colors } from '../styles/theme'
 import { Card, Typography, Button, Avatar, Space, Input, Divider, Tag, message, Empty, Spin } from 'antd'
 import { ArrowLeftOutlined, LikeOutlined, LikeFilled, CommentOutlined } from '@ant-design/icons'
@@ -54,10 +56,10 @@ export default function ForumDetail() {
     finally { setSubmitting(false) }
   }
 
-  const goBack = () => window.dispatchEvent(new CustomEvent('navigate', { detail: 'forum' }))
+  const goBack = () => window.dispatchEvent(new CustomEvent('__navigate', { detail: 'forum' }))
 
   if (loading) return <div style={{ textAlign: 'center', padding: 60 }}><Spin size="large" /></div>
-  if (!post) return <div style={{ padding: 40 }}><Empty description="帖子不存在" /></div>
+  if (!post) return <div style={{ padding: 40 }}><EmptyState type="error" title="帖子不存在" /></div>
 
   return (
     <div style={{ padding: 24, maxWidth: 800, margin: '0 auto' }}>

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { colors } from '../styles/theme'
-import { Card, Tree, Button, Modal, Form, Input, message, Spin, Popconfirm } from 'antd'
+import { Card, Tree, Button, Modal, Form, Input, message, Popconfirm } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 
 const { DirectoryTree } = Tree
 
@@ -106,7 +107,7 @@ export default function Organization() {
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>添加部门</Button>
       </div>
       <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46' }}>
-        {loading ? <div style={{ textAlign: 'center', padding: 60 }}><Spin /></div> : (
+        {loading ? <SkeletonContent type='table' /> : (
           <DirectoryTree treeData={treeData} expandAll style={{ color: colors.text.primary }} />
         )}
       </Card>

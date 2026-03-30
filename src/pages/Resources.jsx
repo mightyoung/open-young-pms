@@ -3,6 +3,7 @@ import { colors } from '../styles/theme'
 import { Card, Table, Tag, Button, Typography, Select, Space, Modal, Form, Input, InputNumber, message, Row, Col, Statistic } from 'antd'
 import { AppstoreOutlined, PlusOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 
 const { Title, Text } = Typography
 const STATUS_MAP = {
@@ -60,6 +61,8 @@ export default function Resources() {
     acc[k] = data.filter(d => d.status === k).length
     return acc
   }, {})
+
+  if (loading) return <div style={{ padding: 24 }}><SkeletonContent type='table' /></div>
 
   return (
     <div style={{ padding: 24 }}>

@@ -1,0 +1,21 @@
+{
+  "name": "PMS移动端",
+  "appid": "__UNI__PMS12345",
+  "description": "项目管理信息系统移动端",
+  "versionName": "1.0.0",
+  "h5": {
+    "router": {
+      "mode": "hash"
+    },
+    "devServer": {
+      "port": 5174,
+      "https": false,
+      "proxy": {
+        "/api": {
+          "target": "http://localhost:8000",
+          "changeOrigin": true
+        }
+      }
+    }
+  }
+}

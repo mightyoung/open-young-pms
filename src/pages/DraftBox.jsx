@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import EmptyState from '../components/EmptyState';
 import { colors } from '../styles/theme'
-import { Card, List, Empty, Popconfirm, message, Button, Tag, Spin } from 'antd'
+import { Card, List, Empty, Popconfirm, message, Button, Tag } from 'antd'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 
 const STATUS_MAP = {
   safety: { label: '安全', color: 'red' },
@@ -53,10 +55,8 @@ export default function DraftBox() {
         <span style={{ color: colors.text.muted }}>{drafts.length} 个草稿</span>
       </div>
 
-      {loading ? (
-        <div style={{ textAlign: 'center', padding: 60 }}><Spin /></div>
-      ) : drafts.length === 0 ? (
-        <Empty description="暂无草稿" style={{ marginTop: 80 }} />
+      {loading ? <SkeletonContent type='cards' count={3} /> : drafts.length === 0 ? (
+        <EmptyState type="list" title="暂无草稿" style={{ marginTop: 80 }} />
       ) : (
         <List
           dataSource={drafts}

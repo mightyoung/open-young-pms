@@ -3,6 +3,7 @@ import { colors } from '../styles/theme'
 import { Card, Row, Col, Statistic, Typography, Select, DatePicker } from 'antd'
 import { AlertOutlined, CheckCircleOutlined, ClockCircleOutlined, WarningOutlined, RiseOutlined, FallOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts'
 
 const { Title, Text } = Typography
@@ -45,6 +46,8 @@ export default function HazardStats() {
     { label: '整改中', value: summary.rectifying_hazards || 0, icon: <WarningOutlined />, color: colors.warning },
     { label: '已关闭', value: summary.closed_hazards || 0, icon: <CheckCircleOutlined />, color: colors.success },
   ]
+
+  if (loading) return <div style={{ padding: 24 }}><SkeletonContent type='dashboard' /></div>
 
   return (
     <div style={{ padding: 24 }}>

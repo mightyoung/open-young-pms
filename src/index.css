@@ -244,3 +244,19 @@ textarea,
 .sidebar-menu-item.active::before {
   width: 3px;
 }
+
+/* Skeleton pulse animation */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.ant-skeleton-active .ant-skeleton-content .ant-skeleton-title,
+.ant-skeleton-active .ant-skeleton-content .ant-skeleton-paragraph > li,
+.ant-skeleton-active .ant-skeleton-avatar,
+.ant-skeleton-active .ant-skeleton-button,
+.ant-skeleton-active .ant-skeleton-input {
+  background: linear-gradient(90deg, #27272a 25%, #3f3f46 50%, #27272a 75%) !important;
+  background-size: 200% 100% !important;
+  animation: skeleton-pulse 1.5s ease-in-out infinite !important;
+}

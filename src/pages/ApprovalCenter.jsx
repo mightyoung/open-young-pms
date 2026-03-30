@@ -3,6 +3,7 @@ import { colors } from '../styles/theme'
 import { Card, Table, Tag, Button, Tabs, Space, Modal, Typography, Divider } from 'antd'
 import { CheckOutlined, CloseOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 
 const { Text, Title } = Typography
 
@@ -77,6 +78,8 @@ export default function ApprovalCenter() {
       )
     },
   ]
+
+  if (loading) return <div style={{ padding: 24 }}><SkeletonContent type='table' /></div>
 
   return (
     <div style={{ padding: 24 }}>

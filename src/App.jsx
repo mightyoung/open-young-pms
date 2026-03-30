@@ -180,6 +180,23 @@ function AvatarChip({ user, size = 28 }) {
 
 function TagBadge({ tag }) {
   const c = TAGS[tag] || D.textMuted;
+
+  // 全局导航 API（供子页面调用）
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.detail && typeof e.detail === 'string') {
+        setCurrent(e.detail)
+      }
+    }
+    window.__setNav = setCurrent
+    window.__navigateTo = (key) => window.__setNav(key)
+    window.addEventListener('__navigate', handler)
+    return () => {
+      window.removeEventListener('__navigate', handler)
+    }
+  }, [])
+
+
   return (
     <span style={{ display: 'inline-flex', padding: '1px 8px', borderRadius: 8, fontSize: 11, fontWeight: 600, background: `${c}15`, color: c, border: `1px solid ${c}30` }}>
       {tag}

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
+import EmptyState from '../components/EmptyState';
 import { colors } from '../styles/theme'
-import { Card, List, Tag, Button, Badge, Empty, Spin } from 'antd'
-import { CheckOutlined, BellOutlined } from '@ant-design/icons'
+import { Card, Tag, Button, Badge, Empty, Space } from 'antd'
+import { CheckOutlined, BellOutlined, EyeOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import ProTable from '../components/ProTable'
+import SkeletonContent from '../components/SkeletonContent'
 
 const TYPE_MAP = {
   task: { label: '任务', color: 'blue' },
@@ -54,10 +57,11 @@ export default function Notifications() {
     } catch (e) {}
   }
 
-  const markRead = async (id) => {
+  const markRead = async (record) => {
+    if (record.is_read) return
     try {
-      await api.post(`/notifications/${id}/read`)
-      setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
+      await api.post(`/notifications/${record.id}/read`)
+      setNotifications(prev => prev.map(n => n.id === record.id ? { ...n, is_read: true } : n))
       setUnreadCount(prev => Math.max(0, prev - 1))
     } catch (e) {}
   }
@@ -74,6 +78,44 @@ export default function Notifications() {
   const filtered = tab === 'all' || tab === 'unread'
     ? notifications
     : notifications.filter(n => n.type === tab)
+
+  const baseColumns = [
+    {
+      title: '类型',
+      dataIndex: 'type',
+      key: 'type',
+      render: t => {
+        const cfg = TYPE_MAP[t] || TYPE_MAP.system
+        return <Tag color={cfg.color}>{cfg.label}</Tag>
+      },
+    },
+    {
+      title: '标题',
+      dataIndex: 'title',
+      key: 'title',
+      render: (t, r) => (
+        <span style={{ color: colors.text.primary, fontWeight: r.is_read ? 400 : 600 }}>{t}</span>
+      ),
+    },
+    {
+      title: '内容',
+      dataIndex: 'content',
+      key: 'content',
+      render: t => <span style={{ color: colors.text.muted, fontSize: 13 }}>{t}</span>,
+    },
+    {
+      title: '时间',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: t => <span style={{ color: colors.text.disabled, fontSize: 12 }}>{timeAgo(t)}</span>,
+    },
+    {
+      title: '状态',
+      dataIndex: 'is_read',
+      key: 'is_read',
+      render: v => v ? null : <Tag color="cyan">未读</Tag>,
+    },
+  ]
 
   return (
     <div style={{ padding: 24 }}>
@@ -94,36 +136,21 @@ export default function Notifications() {
       </div>
 
       <Card style={{ background: colors.bg.card, border: '1px solid #3f3f46' }}>
-        {loading ? <div style={{ textAlign: 'center', padding: 60 }}><Spin /></div> :
-         filtered.length === 0 ? <Empty description="暂无消息" style={{ marginTop: 60 }} /> : (
-          <List
+        {loading ? <SkeletonContent type='list' /> :
+         filtered.length === 0 ? <EmptyState type="list" title="暂无消息" style={{ marginTop: 60 }} /> : (
+          <ProTable
             dataSource={filtered}
-            renderItem={item => {
-              const cfg = TYPE_MAP[item.type] || TYPE_MAP.system
-              return (
-                <List.Item
-                  style={{
-                    background: item.is_read ? 'transparent' : 'rgba(59,130,246,0.08)',
-                    borderRadius: 8,
-                    padding: 12,
-                    marginBottom: 4,
-                    border: 'none',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => !item.is_read && markRead(item.id)}
-                >
-                  <div style={{ width: '100%' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <Tag color={cfg.color}>{cfg.label}</Tag>
-                      <span style={{ color: colors.text.primary, fontWeight: item.is_read ? 400 : 600 }}>{item.title}</span>
-                      {!item.is_read && <Tag color="cyan" style={{ marginLeft: 'auto' }}>未读</Tag>}
-                    </div>
-                    <div style={{ color: colors.text.muted, fontSize: 13 }}>{item.content}</div>
-                    <div style={{ color: colors.text.disabled, fontSize: 12, marginTop: 4 }}>{timeAgo(item.created_at)}</div>
-                  </div>
-                </List.Item>
-              )
-            }}
+            columns={baseColumns}
+            rowKey="id"
+            loading={loading}
+            pagination={{ pageSize: 20, showTotal: t => `共 ${t} 条` }}
+            extraActions={[
+              { key: 'read', label: '标为已读', icon: <EyeOutlined />, onClick: markRead, showIcon: false },
+            ]}
+            onRow={record => ({
+              onClick: () => markRead(record),
+              style: { cursor: 'pointer', background: record.is_read ? 'transparent' : 'rgba(59,130,246,0.08)', borderRadius: 8 },
+            })}
           />
         )}
       </Card>

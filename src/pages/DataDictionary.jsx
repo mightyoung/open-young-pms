@@ -3,6 +3,7 @@ import { colors } from '../styles/theme'
 import { Card, Typography, Table, Input, Space, Tag } from 'antd'
 import { DatabaseOutlined, SearchOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 
 const { Title, Text } = Typography
 
@@ -41,6 +42,8 @@ export default function DataDictionary() {
     { title: '说明', dataIndex: 'description', render: t => <Text style={{ color: colors.text.muted, fontSize: 12 }}>{t || '-'}</Text> },
     { title: '示例', dataIndex: 'example', render: t => <Text style={{ color: colors.text.disabled, fontSize: 11, fontFamily: 'monospace' }}>{t || '-'}</Text> },
   ]
+
+  if (loading) return <div style={{ padding: 24 }}><SkeletonContent type='table' rows={8} /></div>
 
   return (
     <div style={{ padding: 24 }}>

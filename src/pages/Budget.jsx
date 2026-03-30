@@ -3,6 +3,7 @@ import { colors } from '../styles/theme'
 import { Card, Typography, Select, Table, Progress, Row, Col, Statistic } from 'antd'
 import { DollarOutlined, CheckCircleOutlined, WarningOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 
 const { Title, Text } = Typography
 
@@ -78,6 +79,8 @@ export default function Budget() {
       }
     },
   ]
+
+  if (loading) return <div style={{ padding: 24 }}><SkeletonContent type='kpi' /></div>
 
   return (
     <div style={{ padding: 24 }}>

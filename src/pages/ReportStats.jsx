@@ -3,6 +3,7 @@ import { colors } from '../styles/theme'
 import { Card, Row, Col, Statistic, Typography, Select, Table, Tag, Progress } from 'antd'
 import { FileTextOutlined, CheckCircleOutlined, ClockCircleOutlined, RiseOutlined } from '@ant-design/icons'
 import { api } from '../api'
+import SkeletonContent from '../components/SkeletonContent'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 const { Title, Text } = Typography
@@ -43,6 +44,8 @@ export default function ReportStats() {
     { title: '状态', dataIndex: 'status', key: 'status', render: s => <Tag color={s === 'approved' ? 'green' : s === 'rejected' ? 'red' : 'orange'}>{s === 'approved' ? '已通过' : s === 'rejected' ? '已驳回' : '待审批'}</Tag> },
     { title: '提交时间', dataIndex: 'submitted_at', key: 'submitted_at', render: t => <Text style={{ color: colors.text.muted, fontSize: 12 }}>{t ? new Date(t).toLocaleString() : '-'}</Text> },
   ]
+
+  if (loading) return <div style={{ padding: 24 }}><SkeletonContent type='dashboard' /></div>
 
   return (
     <div style={{ padding: 24 }}>
