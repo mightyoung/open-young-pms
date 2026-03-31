@@ -1,5 +1,5 @@
 import { memo, useState } from 'react'
-import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react'
+import { ZoomIn } from 'lucide-react'
 
 const CompareView = memo(function CompareView({
   before,

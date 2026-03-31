@@ -26,10 +26,6 @@ const TYPE_DOTS = {
   other: { color: 'oklch(42% 0.01 250)', label: '其他' },
 }
 
-function getTrendIcon(trend) {
-  return trend > 0 ? 'up' : trend < 0 ? 'down' : 'flat'
-}
-
 /**
  * StatusStepper — extracted to module level (vercel: rerender-no-inline-components)
  * Visualizes issue lifecycle: pending → assigned → fixing → resolved

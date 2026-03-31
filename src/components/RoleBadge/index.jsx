@@ -1,4 +1,3 @@
-import { Tag } from 'antd'
 import { ROLE_LABELS, ROLE_COLORS } from '../../constants/permissions'
 
 /**
