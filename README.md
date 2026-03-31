@@ -21,7 +21,7 @@ docker-compose up -d postgres redis
 
 # 启动后端
 cd backend
-cp .env.example .env   # 编辑填入 JWT_SECRET 等配置
+cp .env.example .env   # 编辑填入 JWT_SECRET 等配置（已有模板）
 uvicorn main:app --reload --host 0.0.0.0 --port 8001
 
 # 启动前端（另一个终端）
@@ -158,13 +158,18 @@ CORS_ORIGINS=http://localhost:5173,http://localhost:3000
 ## 🧪 测试
 
 ```bash
+# 前端测试、格式检查、构建
+npm run lint      # ESLint (0 errors required)
+npx vitest run    # Vitest smoke tests
+npm run build     # 生产构建
+
 # 后端测试
 cd backend
-pytest tests/ -v
-
-# 前端构建验证
-npm run build
+pytest tests/ -v              # 所有测试 (auth + health + schemas + permissions)
+pytest tests/ -v -k health    # 仅健康检查测试
 ```
+
+> **CI 质量门禁**：所有检查均强制执行，无 `continue-on-error` 绕过。
 
 ---
 
@@ -179,10 +184,14 @@ npm run build
 
 ### 添加新页面
 
-1. 在 `src/pages/` 创建 `.jsx` 文件
-2. 在 `src/app/route-map.js` 添加路由元信息
-3. 在 `src/app/menu.config.js` 添加菜单项
-4. 在 `src/app/routes.jsx` 添加路由路径
+新页面应添加到 `src/features/<feature>/pages/`（参考 `src/features/dashboard/`）。
+已在 `src/pages/` 的遗留页面保持原样，不再新增。
+
+1. 在 `src/features/<feature>/pages/` 创建 `.jsx` 页面文件
+2. 在 `src/features/<feature>/api.js` 添加领域 API 方法（如需要）
+3. 在 `src/app/route-map.js` 添加路由元信息
+4. 在 `src/app/menu.config.js` 添加菜单项
+5. 在 `src/app/routes.jsx` 添加路由路径（使用 `React.lazy` + `Suspense`）
 
 ---
 
