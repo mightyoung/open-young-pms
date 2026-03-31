@@ -4,6 +4,7 @@ import { LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-desig
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { MENU_ITEMS } from './menu.config'
 import { getMenuKeyByPath } from './route-map'
+import { resolveIcon } from './icon-map'
 import { useAuth } from '../hooks/useAuth'
 
 const { Header, Sider, Content } = Layout
@@ -26,7 +27,7 @@ export default function MainLayout() {
     () =>
       MENU_ITEMS.map(item => ({
         ...item,
-        icon: item.icon ? React.createElement(item.icon) : null,
+        icon: item.iconKey ? React.createElement(resolveIcon(item.iconKey)) : null,
       })),
     []
   )

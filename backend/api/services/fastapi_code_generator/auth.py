@@ -12,6 +12,8 @@ from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.services.fastapi_code_generator.database import get_db
+
 SECRET_KEY = os.getenv("JWT_SECRET", os.getenv("JWT_SECRET_KEY", ""))
 if not SECRET_KEY:
     raise RuntimeError("JWT_SECRET or JWT_SECRET_KEY environment variable must be set")
@@ -47,32 +49,20 @@ def decode_token(token: str) -> dict:
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: AsyncSession = Depends(lambda: None),
+    db: AsyncSession = Depends(get_db),
 ) -> "User":
     """Extract and validate current user from JWT.
 
+    Shares the request's db session when used as a route dependency.
     Raises 401 if token is invalid or user does not exist in database.
     No demo/fallback users — authentication must be explicit.
     """
-    from api.services.fastapi_code_generator.database import get_db
     from api.services.fastapi_code_generator.models import User
 
     payload = decode_token(credentials.credentials)
     user_id = payload.get("sub")
     if not user_id:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload")
-
-    if db is None:
-        # Fallback: use get_db for a single query session
-        async for session in get_db():
-            try:
-                result = await session.execute(select(User).where(User.id == UUID(user_id)))
-                user = result.scalar_one_or_none()
-            finally:
-                await session.close()
-            if not user:
-                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
-            return user
 
     try:
         result = await db.execute(select(User).where(User.id == UUID(user_id)))
