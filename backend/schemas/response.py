@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Generic, TypeVar, Optional
 from datetime import datetime
 
@@ -13,15 +13,14 @@ class ApiResponse(BaseModel, Generic[T]):
     timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
     request_id: Optional[str] = None
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(json_schema_extra={
             "example": {
                 "code": 0,
                 "message": "success",
                 "data": {},
                 "timestamp": "2026-03-30T10:00:00"
             }
-        }
+        })
 
     @classmethod
     def ok(cls, data: T = None, message: str = "success") -> "ApiResponse[T]":
@@ -40,8 +39,7 @@ class PageResult(BaseModel, Generic[T]):
     page_size: int
     has_more: bool
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(json_schema_extra={
             "example": {
                 "items": [],
                 "total": 0,
@@ -49,4 +47,4 @@ class PageResult(BaseModel, Generic[T]):
                 "page_size": 20,
                 "has_more": False
             }
-        }
+        })

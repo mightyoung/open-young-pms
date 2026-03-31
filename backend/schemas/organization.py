@@ -1,7 +1,7 @@
 """Organization Pydantic schemas."""
 
 from typing import Optional, ForwardRef
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class DepartmentBase(BaseModel):
@@ -32,8 +32,7 @@ class DepartmentTreeNode(BaseModel):
     children: list["DepartmentTreeNode"] = []
     user_count: int = 0
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserDepartmentAssign(BaseModel):
@@ -53,8 +52,7 @@ class DepartmentResponse(BaseModel):
     is_active: bool
     created_at: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserOrganizationResponse(BaseModel):
@@ -64,5 +62,4 @@ class UserOrganizationResponse(BaseModel):
     position: Optional[str] = None
     is_default: bool
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
