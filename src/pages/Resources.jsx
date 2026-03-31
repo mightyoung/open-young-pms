@@ -3,8 +3,26 @@
  * 更新时间: 2026-03-30
  */
 import React, { useState, useEffect } from 'react'
-import { Table, Tag, Button, Select, Modal, Form, Input, InputNumber, message, Row, Col } from 'antd'
-import { AppstoreOutlined, PlusOutlined, ToolOutlined, InboxOutlined, CarOutlined } from '@ant-design/icons'
+import {
+  Table,
+  Tag,
+  Button,
+  Select,
+  Modal,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Row,
+  Col,
+} from 'antd'
+import {
+  AppstoreOutlined,
+  PlusOutlined,
+  ToolOutlined,
+  InboxOutlined,
+  CarOutlined,
+} from '@ant-design/icons'
 import { api } from '../api'
 import { PageHeader, StatusBadge, Tabs } from '../components/PMSComponents'
 
@@ -45,11 +63,16 @@ export default function Resources() {
       if (filters.category) params.category = filters.category
       const res = await api.get('/resources', { params })
       setData(res?.items || [])
-    } catch { setData([]) }
-    finally { setLoading(false) }
+    } catch {
+      setData([])
+    } finally {
+      setLoading(false)
+    }
   }
 
-  useEffect(() => { load() }, [filters])
+  useEffect(() => {
+    load()
+  }, [filters])
 
   const handleCreate = async () => {
     try {
@@ -59,14 +82,18 @@ export default function Resources() {
       form.resetFields()
       setModalVisible(false)
       load()
-    } catch { message.error('登记失败') }
+    } catch {
+      message.error('登记失败')
+    }
   }
 
   // 统计数据
   const stats = {
     total: data.length,
     available: data.filter(d => d.status === 'available' || d.status === 'idle').length,
-    inUse: data.filter(d => d.status === 'in_use' || d.status === 'ordered' || d.status === 'delivered').length,
+    inUse: data.filter(
+      d => d.status === 'in_use' || d.status === 'ordered' || d.status === 'delivered'
+    ).length,
     maintenance: data.filter(d => d.status === 'maintenance' || d.status === 'testing').length,
   }
 
@@ -84,7 +111,13 @@ export default function Resources() {
       render: (_, r) => (
         <div style={styles.resourceInfo}>
           <div style={styles.resourceHeader}>
-            <Tag style={{ ...styles.catTag, background: CAT_MAP[r.category]?.bg || '#f3f4f6', color: CAT_MAP[r.category]?.color || '#6b7280' }}>
+            <Tag
+              style={{
+                ...styles.catTag,
+                background: CAT_MAP[r.category]?.bg || '#f3f4f6',
+                color: CAT_MAP[r.category]?.color || '#6b7280',
+              }}
+            >
               {CAT_MAP[r.category]?.icon} {CAT_MAP[r.category]?.label || r.category}
             </Tag>
           </div>
@@ -119,13 +152,20 @@ export default function Resources() {
       title: '检测结果',
       dataIndex: 'test_result',
       key: 'test_result',
-      render: t => (
+      render: t =>
         t ? (
-          <Tag style={{ background: t === 'pass' ? '#dcfce7' : '#fee2e2', color: t === 'pass' ? '#166534' : '#991b1b', border: 'none' }}>
+          <Tag
+            style={{
+              background: t === 'pass' ? '#dcfce7' : '#fee2e2',
+              color: t === 'pass' ? '#166534' : '#991b1b',
+              border: 'none',
+            }}
+          >
             {t === 'pass' ? '合格' : '不合格'}
           </Tag>
-        ) : <span style={styles.noneText}>-</span>
-      ),
+        ) : (
+          <span style={styles.noneText}>-</span>
+        ),
     },
     {
       title: '订购日期',
@@ -174,17 +214,30 @@ export default function Resources() {
       {/* 分类标签 */}
       <div style={styles.catTags}>
         {catStats.map(cat => (
-          <div 
-            key={cat.key} 
-            style={{ 
+          <div
+            key={cat.key}
+            style={{
               ...styles.catTagCard,
-              background: filters.category === cat.key ? cat.bg : 'var(--color-surface-container-lowest)',
+              background:
+                filters.category === cat.key ? cat.bg : 'var(--color-surface-container-lowest)',
               cursor: 'pointer',
             }}
-            onClick={() => setFilters(f => ({ ...f, category: filters.category === cat.key ? undefined : cat.key }))}
+            onClick={() =>
+              setFilters(f => ({
+                ...f,
+                category: filters.category === cat.key ? undefined : cat.key,
+              }))
+            }
           >
             <span style={{ ...styles.catIcon, color: cat.color }}>{cat.icon}</span>
-            <span style={{ ...styles.catLabel, color: filters.category === cat.key ? cat.color : 'var(--color-on-surface)' }}>{cat.label}</span>
+            <span
+              style={{
+                ...styles.catLabel,
+                color: filters.category === cat.key ? cat.color : 'var(--color-on-surface)',
+              }}
+            >
+              {cat.label}
+            </span>
             <span style={{ ...styles.catCount, color: cat.color }}>{cat.count}</span>
           </div>
         ))}
@@ -203,10 +256,13 @@ export default function Resources() {
         </div>
         <div style={styles.filterRight}>
           <Button onClick={load}>刷新</Button>
-          <Button 
-            type="primary" 
-            icon={<PlusOutlined />} 
-            onClick={() => { form.resetFields(); setModalVisible(true) }}
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              form.resetFields()
+              setModalVisible(true)
+            }}
             style={styles.addBtn}
           >
             登记资源
@@ -216,11 +272,11 @@ export default function Resources() {
 
       {/* 资源列表 */}
       <div style={styles.tableCard}>
-        <Table 
-          dataSource={data} 
-          columns={columns} 
-          rowKey="id" 
-          loading={loading} 
+        <Table
+          dataSource={data}
+          columns={columns}
+          rowKey="id"
+          loading={loading}
           pagination={{ pageSize: 10 }}
           rowClassName={() => 'animate-fade-in-up'}
         />
@@ -246,7 +302,9 @@ export default function Resources() {
               <Form.Item name="category" label="类别" rules={[{ required: true }]}>
                 <Select placeholder="请选择类别">
                   {Object.entries(CAT_MAP).map(([k, v]) => (
-                    <Select.Option key={k} value={k}>{v.label}</Select.Option>
+                    <Select.Option key={k} value={k}>
+                      {v.label}
+                    </Select.Option>
                   ))}
                 </Select>
               </Form.Item>

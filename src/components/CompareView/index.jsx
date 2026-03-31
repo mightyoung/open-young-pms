@@ -1,7 +1,12 @@
 import { memo, useState } from 'react'
 import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react'
 
-const CompareView = memo(function CompareView({ before, after, beforeLabel = '整改前', afterLabel = '整改后' }) {
+const CompareView = memo(function CompareView({
+  before,
+  after,
+  beforeLabel = '整改前',
+  afterLabel = '整改后',
+}) {
   const [active, setActive] = useState('before')
   const [zoomed, setZoomed] = useState(false)
 
@@ -18,16 +23,26 @@ const CompareView = memo(function CompareView({ before, after, beforeLabel = '�
             style={{
               flex: 1,
               padding: '8px 0',
-              background: active === side
-                ? side === 'before' ? 'oklch(65% 0.2 25 / 0.15)' : 'oklch(70% 0.18 145 / 0.15)'
-                : 'oklch(22% 0.01 250)',
-              border: `1.5px solid ${active === side
-                ? side === 'before' ? 'oklch(65% 0.2 25)' : 'oklch(70% 0.18 145)'
-                : 'oklch(28% 0.01 250 / 0.3)'}`,
+              background:
+                active === side
+                  ? side === 'before'
+                    ? 'oklch(65% 0.2 25 / 0.15)'
+                    : 'oklch(70% 0.18 145 / 0.15)'
+                  : 'oklch(22% 0.01 250)',
+              border: `1.5px solid ${
+                active === side
+                  ? side === 'before'
+                    ? 'oklch(65% 0.2 25)'
+                    : 'oklch(70% 0.18 145)'
+                  : 'oklch(28% 0.01 250 / 0.3)'
+              }`,
               borderRadius: 10,
-              color: active === side
-                ? side === 'before' ? 'oklch(65% 0.2 25)' : 'oklch(70% 0.18 145)'
-                : 'oklch(65% 0.01 250)',
+              color:
+                active === side
+                  ? side === 'before'
+                    ? 'oklch(65% 0.2 25)'
+                    : 'oklch(70% 0.18 145)'
+                  : 'oklch(65% 0.01 250)',
               fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif',
               fontSize: 13,
               fontWeight: active === side ? 600 : 400,
@@ -64,7 +79,14 @@ const CompareView = memo(function CompareView({ before, after, beforeLabel = '�
             }}
           />
         ) : (
-          <div style={{ padding: '48px 0', textAlign: 'center', color: 'oklch(42% 0.01 250)', fontSize: 13 }}>
+          <div
+            style={{
+              padding: '48px 0',
+              textAlign: 'center',
+              color: 'oklch(42% 0.01 250)',
+              fontSize: 13,
+            }}
+          >
             暂无图片
           </div>
         )}
@@ -78,7 +100,8 @@ const CompareView = memo(function CompareView({ before, after, beforeLabel = '�
             borderRadius: 8,
             fontSize: 11,
             fontWeight: 600,
-            background: active === 'before' ? 'oklch(65% 0.2 25 / 0.85)' : 'oklch(70% 0.18 145 / 0.85)',
+            background:
+              active === 'before' ? 'oklch(65% 0.2 25 / 0.85)' : 'oklch(70% 0.18 145 / 0.85)',
             color: '#fff',
             fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif',
           }}

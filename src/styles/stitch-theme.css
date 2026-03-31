@@ -18,16 +18,16 @@
   --color-primary-dim: #0050a7;
   --color-on-primary: #f7f7ff;
   --color-on-primary-container: #004fa6;
-  
+
   --color-secondary: #5d5f65;
   --color-secondary-container: #e2e2e9;
   --color-on-secondary: #f9f8ff;
   --color-on-secondary-container: #505157;
-  
+
   --color-tertiary: #5e5c78;
   --color-tertiary-container: #d5d1f2;
   --color-on-tertiary: #fcf7ff;
-  
+
   --color-background: #fcf8f9;
   --color-surface: #fcf8f9;
   --color-surface-bright: #fcf8f9;
@@ -39,23 +39,23 @@
   --color-surface-container-lowest: #ffffff;
   --color-surface-variant: #e4e2e5;
   --color-surface-tint: #115cb9;
-  
+
   --color-on-background: #323235;
   --color-on-surface: #323235;
   --color-on-surface-variant: #5f5f61;
-  
+
   --color-outline: #7b7a7d;
   --color-outline-variant: #b3b1b4;
-  
+
   --color-error: #9f403d;
   --color-error-container: #fe8983;
   --color-on-error: #fff7f6;
   --color-on-error-container: #752121;
-  
+
   --color-inverse-on-surface: #9e9c9d;
   --color-inverse-primary: #659dfe;
   --color-inverse-surface: #0e0e0f;
-  
+
   /* 角色颜色 */
   --color-role-super-admin: #ff4d4f;
   --color-role-company-leader: #1890ff;
@@ -63,7 +63,7 @@
   --color-role-section-chief: #faad14;
   --color-role-project-manager: #52c41a;
   --color-role-field-staff: #13c2c2;
-  
+
   /* 状态颜色 */
   --color-status-active: #52c41a;
   --color-status-planning: #1890ff;
@@ -77,12 +77,12 @@
   --color-status-idle: #52c41a;
   --color-status-in-use: #1890ff;
   --color-status-maintenance: #faad14;
-  
+
   /* 字体 */
   --font-headline: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-label: 'Inter', sans-serif;
-  
+
   /* 圆角 (ROUND_FOUR) */
   --radius-xs: 2px;
   --radius-sm: 4px;
@@ -91,13 +91,13 @@
   --radius-xl: 16px;
   --radius-2xl: 20px;
   --radius-full: 9999px;
-  
+
   /* 阴影 */
   --shadow-soft: 0 2px 8px rgba(14, 14, 15, 0.04);
   --shadow-standard: 0 4px 16px rgba(14, 14, 15, 0.08);
   --shadow-ambient: 0 20px 40px rgba(14, 14, 15, 0.05);
   --shadow-lifted: 0 12px 40px rgba(17, 92, 185, 0.12);
-  
+
   /* 过渡 */
   --cubic-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -238,12 +238,24 @@ body {
   color: white;
 }
 
-.pms-badge-role.super_admin { background: var(--color-role-super-admin); }
-.pms-badge-role.company_leader { background: var(--color-role-company-leader); }
-.pms-badge-role.dept_leader { background: var(--color-role-dept-leader); }
-.pms-badge-role.section_chief { background: var(--color-role-section-chief); }
-.pms-badge-role.project_manager { background: var(--color-role-project-manager); }
-.pms-badge-role.field_staff { background: var(--color-role-field-staff); }
+.pms-badge-role.super_admin {
+  background: var(--color-role-super-admin);
+}
+.pms-badge-role.company_leader {
+  background: var(--color-role-company-leader);
+}
+.pms-badge-role.dept_leader {
+  background: var(--color-role-dept-leader);
+}
+.pms-badge-role.section_chief {
+  background: var(--color-role-section-chief);
+}
+.pms-badge-role.project_manager {
+  background: var(--color-role-project-manager);
+}
+.pms-badge-role.field_staff {
+  background: var(--color-role-field-staff);
+}
 
 /* ===========================
    侧边栏样式

@@ -4,7 +4,9 @@ export function getQueue() {
   try {
     const raw = localStorage.getItem(QUEUE_KEY)
     return raw ? JSON.parse(raw) : []
-  } catch { return [] }
+  } catch {
+    return []
+  }
 }
 
 export function enqueue(item) {
@@ -21,7 +23,7 @@ export function dequeue(id) {
 }
 
 export function updateStatus(id, status) {
-  const queue = getQueue().map(item => item.id === id ? { ...item, status } : item)
+  const queue = getQueue().map(item => (item.id === id ? { ...item, status } : item))
   localStorage.setItem(QUEUE_KEY, JSON.stringify(queue))
 }
 

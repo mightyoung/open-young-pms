@@ -16,14 +16,14 @@ export const api = {
   upload: {
     images(files) {
       const formData = new FormData()
-      files.forEach((file) => formData.append('files', file))
+      files.forEach(file => formData.append('files', file))
       return upload('/upload/images', formData)
     },
   },
   hazards: {
     list: (params = {}) => get('/hazards', { params }),
-    create: (data) => post('/hazards', data),
-    get: (id) => get(`/hazards/${id}`),
+    create: data => post('/hazards', data),
+    get: id => get(`/hazards/${id}`),
     assign: (id, data) => post(`/hazards/${id}/assign`, data),
     transfer: (id, data) => post(`/hazards/${id}/transfer`, data),
     confirm: (id, data) => post(`/hazards/${id}/confirm`, data),
@@ -33,25 +33,25 @@ export const api = {
     reject: (id, reason) => post(`/hazards/${id}/reject`, { reason }),
     stats: () => get('/hazards/stats/summary'),
     drafts: () => get('/hazards/drafts'),
-    saveDraft: (data) => post('/hazards/drafts', data),
-    deleteDraft: (id) => del(`/hazards/drafts/${id}`),
+    saveDraft: data => post('/hazards/drafts', data),
+    deleteDraft: id => del(`/hazards/drafts/${id}`),
   },
   projects: {
     list: (params = {}) => get('/projects', { params }),
-    get: (id) => get(`/projects/${id}`),
-    gantt: (id) => get(`/projects/${id}/gantt`),
-    create: (data) => post('/projects', data),
+    get: id => get(`/projects/${id}`),
+    gantt: id => get(`/projects/${id}/gantt`),
+    create: data => post('/projects', data),
     update: (id, data) => patch(`/projects/${id}`, data),
   },
   tasks: {
-    listByPhase: (phaseId) => get(`/tasks/by-phase/${phaseId}`),
-    create: (data) => post('/tasks', data),
+    listByPhase: phaseId => get(`/tasks/by-phase/${phaseId}`),
+    create: data => post('/tasks', data),
     update: (id, data) => patch(`/tasks/${id}`, data),
-    delete: (id) => del(`/tasks/${id}`),
+    delete: id => del(`/tasks/${id}`),
   },
   notifications: {
     list: (params = {}) => get('/notifications', { params }),
-    markRead: (id) => post(`/notifications/${id}/read`),
+    markRead: id => post(`/notifications/${id}/read`),
     markAllRead: () => post('/notifications/read-all'),
   },
   roles: {

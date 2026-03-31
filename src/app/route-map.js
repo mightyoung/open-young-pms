@@ -14,6 +14,8 @@ export const ROUTE_META = {
 export const DEFAULT_AUTH_ROUTE = ROUTE_META.dashboard.path
 
 export function getMenuKeyByPath(pathname) {
-  const item = Object.values(ROUTE_META).find((route) => pathname === route.path || pathname.startsWith(`${route.path}/`))
+  const item = Object.values(ROUTE_META).find(
+    route => pathname === route.path || pathname.startsWith(`${route.path}/`)
+  )
   return item?.key || 'dashboard'
 }

@@ -40,7 +40,9 @@ export const StatCard = memo(function StatCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1], delay }}
       onClick={onClick}
-      whileHover={onClick ? { x: 3, transition: { duration: 0.18, ease: [0.25, 1, 0.5, 1] } } : undefined}
+      whileHover={
+        onClick ? { x: 3, transition: { duration: 0.18, ease: [0.25, 1, 0.5, 1] } } : undefined
+      }
       whileTap={onClick ? { scale: 0.98 } : undefined}
       style={{
         background: 'oklch(18% 0.01 250)',

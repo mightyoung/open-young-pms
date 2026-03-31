@@ -67,7 +67,9 @@ export default function HazardReport({ onSuccess, onCancel }) {
           longitude: pos.coords.longitude,
         }))
         setGpsStatus('done')
-        message.success(`已获取位置：${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`)
+        message.success(
+          `已获取位置：${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`
+        )
       },
       err => {
         setGpsStatus('error')
@@ -105,23 +107,27 @@ export default function HazardReport({ onSuccess, onCancel }) {
   }
 
   // ── 自动保存草稿 ───────────────────────────────────────
-  const saveDraft = useCallback(async (data = form) => {
-    try {
-      const result = await api.hazards.saveDraft(data)
-      if (result?.id) setDraftId(result.id)
-      // 显示草稿保存提示（debounced）
-      if (draftSavedTimer.current) clearTimeout(draftSavedTimer.current)
-      draftSavedTimer.current = setTimeout(() => {
-        // 静默保存，不打扰用户
-      }, 2000)
-    } catch (e) {
-      console.error('草稿保存失败', e)
-    }
-  }, [form])
+  const saveDraft = useCallback(
+    async (data = form) => {
+      try {
+        const result = await api.hazards.saveDraft(data)
+        if (result?.id) setDraftId(result.id)
+        // 显示草稿保存提示（debounced）
+        if (draftSavedTimer.current) clearTimeout(draftSavedTimer.current)
+        draftSavedTimer.current = setTimeout(() => {
+          // 静默保存，不打扰用户
+        }, 2000)
+      } catch (e) {
+        console.error('草稿保存失败', e)
+      }
+    },
+    [form]
+  )
 
   // 初始加载草稿
   useEffect(() => {
-    api.hazards.drafts()
+    api.hazards
+      .drafts()
       .then(drafts => {
         if (drafts?.items?.length > 0) {
           const latest = drafts.items[0]
@@ -211,13 +217,26 @@ export default function HazardReport({ onSuccess, onCancel }) {
   return (
     <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 0 40px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 24,
+        }}
+      >
         <h2 style={{ color: colors.text.primary, margin: 0, fontSize: 18, fontWeight: 600 }}>
           上报隐患
         </h2>
         <button
           onClick={onCancel}
-          style={{ background: 'none', border: 'none', color: colors.text.secondary, cursor: 'pointer', fontSize: 20 }}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: colors.text.secondary,
+            cursor: 'pointer',
+            fontSize: 20,
+          }}
         >
           <X size={20} />
         </button>
@@ -232,9 +251,15 @@ export default function HazardReport({ onSuccess, onCancel }) {
           onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
           maxLength={300}
           style={{
-            width: '100%', background: colors.bg.page, border: `1px solid ${colors.bg.border}`,
-            borderRadius: 8, padding: '10px 12px', color: colors.text.primary, fontSize: 14,
-            outline: 'none', boxSizing: 'border-box',
+            width: '100%',
+            background: colors.bg.page,
+            border: `1px solid ${colors.bg.border}`,
+            borderRadius: 8,
+            padding: '10px 12px',
+            color: colors.text.primary,
+            fontSize: 14,
+            outline: 'none',
+            boxSizing: 'border-box',
           }}
         />
         <div style={{ color: colors.text.muted, fontSize: 12, marginTop: 4, textAlign: 'right' }}>
@@ -251,11 +276,17 @@ export default function HazardReport({ onSuccess, onCancel }) {
                 key={t.value}
                 onClick={() => setForm(f => ({ ...f, hazard_type: t.value }))}
                 style={{
-                  flex: 1, padding: '8px 0', borderRadius: 8, border: 'none', cursor: 'pointer',
-                  fontSize: 13, fontWeight: 500,
+                  flex: 1,
+                  padding: '8px 0',
+                  borderRadius: 8,
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: 500,
                   background: form.hazard_type === t.value ? t.color + '20' : colors.bg.page,
                   color: form.hazard_type === t.value ? t.color : colors.text.secondary,
-                  borderBottom: form.hazard_type === t.value ? `2px solid ${t.color}` : `2px solid transparent`,
+                  borderBottom:
+                    form.hazard_type === t.value ? `2px solid ${t.color}` : `2px solid transparent`,
                 }}
               >
                 {t.label}
@@ -271,11 +302,17 @@ export default function HazardReport({ onSuccess, onCancel }) {
                 key={u.value}
                 onClick={() => setForm(f => ({ ...f, urgency: u.value }))}
                 style={{
-                  flex: 1, padding: '8px 0', borderRadius: 8, border: 'none', cursor: 'pointer',
-                  fontSize: 13, fontWeight: 500,
+                  flex: 1,
+                  padding: '8px 0',
+                  borderRadius: 8,
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: 500,
                   background: form.urgency === u.value ? u.color + '20' : colors.bg.page,
                   color: form.urgency === u.value ? u.color : colors.text.secondary,
-                  borderBottom: form.urgency === u.value ? `2px solid ${u.color}` : `2px solid transparent`,
+                  borderBottom:
+                    form.urgency === u.value ? `2px solid ${u.color}` : `2px solid transparent`,
                 }}
               >
                 {u.label}
@@ -293,9 +330,17 @@ export default function HazardReport({ onSuccess, onCancel }) {
           onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
           rows={4}
           style={{
-            width: '100%', background: colors.bg.page, border: `1px solid ${colors.bg.border}`,
-            borderRadius: 8, padding: '10px 12px', color: colors.text.primary, fontSize: 14,
-            outline: 'none', resize: 'vertical', fontFamily: 'inherit', boxSizing: 'border-box',
+            width: '100%',
+            background: colors.bg.page,
+            border: `1px solid ${colors.bg.border}`,
+            borderRadius: 8,
+            padding: '10px 12px',
+            color: colors.text.primary,
+            fontSize: 14,
+            outline: 'none',
+            resize: 'vertical',
+            fontFamily: 'inherit',
+            boxSizing: 'border-box',
           }}
         />
       </FieldCard>
@@ -309,18 +354,30 @@ export default function HazardReport({ onSuccess, onCancel }) {
             value={form.location}
             onChange={e => setForm(f => ({ ...f, location: e.target.value }))}
             style={{
-              flex: 1, background: colors.bg.page, border: `1px solid ${colors.bg.border}`,
-              borderRadius: 8, padding: '10px 12px', color: colors.text.primary, fontSize: 14,
-              outline: 'none', boxSizing: 'border-box',
+              flex: 1,
+              background: colors.bg.page,
+              border: `1px solid ${colors.bg.border}`,
+              borderRadius: 8,
+              padding: '10px 12px',
+              color: colors.text.primary,
+              fontSize: 14,
+              outline: 'none',
+              boxSizing: 'border-box',
             }}
           />
           <button
             onClick={getLocation}
             disabled={gpsStatus === 'loading'}
             style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '10px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
-              fontSize: 13, whiteSpace: 'nowrap',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '10px 14px',
+              borderRadius: 8,
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: 13,
+              whiteSpace: 'nowrap',
               background: gpsStatus === 'done' ? colors.success + '20' : colors.bg.page,
               color: gpsStatus === 'done' ? colors.success : colors.text.secondary,
             }}
@@ -347,16 +404,29 @@ export default function HazardReport({ onSuccess, onCancel }) {
                   src={url.startsWith('/') ? url : '/' + url}
                   alt=""
                   style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8 }}
-                  onError={e => { e.target.style.display = 'none' }}
+                  onError={e => {
+                    e.target.style.display = 'none'
+                  }}
                 />
                 <button
                   onClick={() => removePhoto(idx)}
                   style={{
-                    position: 'absolute', top: -6, right: -6,
-                    width: 20, height: 20, borderRadius: '50%',
-                    background: colors.danger, border: 'none', cursor: 'pointer',
-                    color: '#fff', fontSize: 12, lineHeight: '20px', textAlign: 'center',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    position: 'absolute',
+                    top: -6,
+                    right: -6,
+                    width: 20,
+                    height: 20,
+                    borderRadius: '50%',
+                    background: colors.danger,
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#fff',
+                    fontSize: 12,
+                    lineHeight: '20px',
+                    textAlign: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
                   ×
@@ -376,13 +446,21 @@ export default function HazardReport({ onSuccess, onCancel }) {
               onChange={handleFileInput}
               style={{ display: 'none' }}
             />
-            <div style={{
-              width: '100%', height: 80, borderRadius: 8,
-              border: `1px dashed ${colors.bg.border}`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              gap: 8, color: colors.text.muted, fontSize: 13,
-              background: colors.bg.page,
-            }}>
+            <div
+              style={{
+                width: '100%',
+                height: 80,
+                borderRadius: 8,
+                border: `1px dashed ${colors.bg.border}`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                color: colors.text.muted,
+                fontSize: 13,
+                background: colors.bg.page,
+              }}
+            >
               {uploading ? (
                 <span style={{ color: colors.accent }}>上传中...</span>
               ) : (
@@ -401,9 +479,18 @@ export default function HazardReport({ onSuccess, onCancel }) {
         <button
           onClick={handleSaveDraft}
           style={{
-            flex: 1, padding: '12px', borderRadius: 8, border: `1px solid ${colors.bg.border}`,
-            background: colors.bg.page, color: colors.text.secondary, cursor: 'pointer', fontSize: 14,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+            flex: 1,
+            padding: '12px',
+            borderRadius: 8,
+            border: `1px solid ${colors.bg.border}`,
+            background: colors.bg.page,
+            color: colors.text.secondary,
+            cursor: 'pointer',
+            fontSize: 14,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
           }}
         >
           <Save size={16} />
@@ -413,9 +500,19 @@ export default function HazardReport({ onSuccess, onCancel }) {
           onClick={handleSubmit}
           disabled={submitting}
           style={{
-            flex: 2, padding: '12px', borderRadius: 8, border: 'none',
-            background: colors.accent, color: '#fff', cursor: 'pointer', fontSize: 14,
-            fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+            flex: 2,
+            padding: '12px',
+            borderRadius: 8,
+            border: 'none',
+            background: colors.accent,
+            color: '#fff',
+            cursor: 'pointer',
+            fontSize: 14,
+            fontWeight: 500,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
             opacity: submitting ? 0.7 : 1,
           }}
         >
@@ -425,12 +522,38 @@ export default function HazardReport({ onSuccess, onCancel }) {
       </div>
 
       {/* 提示 */}
-      <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 8, background: colors.bg.page, border: `1px solid ${colors.bg.border}` }}>
-        <div style={{ color: colors.warning, fontSize: 13, fontWeight: 500, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div
+        style={{
+          marginTop: 16,
+          padding: '12px 16px',
+          borderRadius: 8,
+          background: colors.bg.page,
+          border: `1px solid ${colors.bg.border}`,
+        }}
+      >
+        <div
+          style={{
+            color: colors.warning,
+            fontSize: 13,
+            fontWeight: 500,
+            marginBottom: 4,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+          }}
+        >
           <AlertTriangle size={14} />
           温馨提示
         </div>
-        <ul style={{ color: colors.text.muted, fontSize: 12, margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
+        <ul
+          style={{
+            color: colors.text.muted,
+            fontSize: 12,
+            margin: 0,
+            paddingLeft: 18,
+            lineHeight: 1.8,
+          }}
+        >
           <li>标题尽量详细（10字以上），便于快速识别</li>
           <li>上传现场照片可大幅提升处理效率</li>
           <li>开启 GPS 可精确定位问题位置</li>

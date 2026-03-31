@@ -19,12 +19,14 @@ export default function Organization() {
     try {
       const res = await api.get('/departments/tree')
       const data = res?.data || res?.items || []
-      const convert = (nodes) => nodes.map(n => ({
-        key: n.id, title: n.name,
-        isLeaf: !n.children || n.children.length === 0,
-        children: n.children ? convert(n.children) : undefined,
-        type: n.type,
-      }))
+      const convert = nodes =>
+        nodes.map(n => ({
+          key: n.id,
+          title: n.name,
+          isLeaf: !n.children || n.children.length === 0,
+          children: n.children ? convert(n.children) : undefined,
+          type: n.type,
+        }))
       setTreeData(convert(data))
     } catch (e) {
       message.error('加载组织架构失败')
@@ -33,7 +35,9 @@ export default function Organization() {
     }
   }
 
-  useEffect(() => { loadTree() }, [])
+  useEffect(() => {
+    loadTree()
+  }, [])
 
   const handleAdd = () => {
     setEditingNode(null)
@@ -41,13 +45,13 @@ export default function Organization() {
     setModalOpen(true)
   }
 
-  const handleEdit = (node) => {
+  const handleEdit = node => {
     setEditingNode(node)
     form.setFieldsValue({ name: node.title })
     setModalOpen(true)
   }
 
-  const handleDelete = async (node) => {
+  const handleDelete = async node => {
     try {
       await api.delete(`/departments/${node.key}`)
       message.success('已删除')
@@ -73,30 +77,42 @@ export default function Organization() {
     }
   }
 
-  const renderTreeNodes = (data) =>
+  const renderTreeNodes = data =>
     data.map(item => {
       if (item.children) {
         return (
-          <Tree.TreeNode key={item.key} title={
-            <span style={{ color: colors.text.primary }}>
-              {item.title}
-              <EditOutlined style={{ marginLeft: 8, fontSize: 12 }} onClick={() => handleEdit(item)} />
-              <Popconfirm title="确定删除？" onConfirm={() => handleDelete(item)}>
-                <DeleteOutlined style={{ marginLeft: 8, fontSize: 12, color: colors.danger }} />
-              </Popconfirm>
-            </span>
-          }>
+          <Tree.TreeNode
+            key={item.key}
+            title={
+              <span style={{ color: colors.text.primary }}>
+                {item.title}
+                <EditOutlined
+                  style={{ marginLeft: 8, fontSize: 12 }}
+                  onClick={() => handleEdit(item)}
+                />
+                <Popconfirm title="确定删除？" onConfirm={() => handleDelete(item)}>
+                  <DeleteOutlined style={{ marginLeft: 8, fontSize: 12, color: colors.danger }} />
+                </Popconfirm>
+              </span>
+            }
+          >
             {renderTreeNodes(item.children)}
           </Tree.TreeNode>
         )
       }
       return (
-        <Tree.TreeNode key={item.key} title={
-          <span style={{ color: colors.text.secondary }}>
-            {item.title}
-            <EditOutlined style={{ marginLeft: 8, fontSize: 12 }} onClick={() => handleEdit(item)} />
-          </span>
-        } />
+        <Tree.TreeNode
+          key={item.key}
+          title={
+            <span style={{ color: colors.text.secondary }}>
+              {item.title}
+              <EditOutlined
+                style={{ marginLeft: 8, fontSize: 12 }}
+                onClick={() => handleEdit(item)}
+              />
+            </span>
+          }
+        />
       )
     })
 
@@ -104,10 +120,14 @@ export default function Organization() {
     <div style={{ padding: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
         <h2 style={{ color: colors.text.primary, margin: 0 }}>组织架构</h2>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>添加部门</Button>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+          添加部门
+        </Button>
       </div>
       <Card style={{ background: colors.bg.card, border: '1px solid #e5e7eb' }}>
-        {loading ? <SkeletonContent type='table' /> : (
+        {loading ? (
+          <SkeletonContent type="table" />
+        ) : (
           <DirectoryTree treeData={treeData} expandAll style={{ color: colors.text.primary }} />
         )}
       </Card>

@@ -13,33 +13,37 @@ export function RoleBadge({ role, variant = 'filled', size = 12 }) {
 
   if (variant === 'outline') {
     return (
-      <span style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        padding: '2px 8px',
-        borderRadius: 8,
-        fontSize: size,
-        fontWeight: 600,
-        color,
-        border: `1px solid ${color}40`,
-        background: `${color}10`,
-      }}>
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          padding: '2px 8px',
+          borderRadius: 8,
+          fontSize: size,
+          fontWeight: 600,
+          color,
+          border: `1px solid ${color}40`,
+          background: `${color}10`,
+        }}
+      >
         {label}
       </span>
     )
   }
 
   return (
-    <span style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      padding: '2px 8px',
-      borderRadius: 8,
-      fontSize: size,
-      fontWeight: 600,
-      color: '#fff',
-      background: color,
-    }}>
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        padding: '2px 8px',
+        borderRadius: 8,
+        fontSize: size,
+        fontWeight: 600,
+        color: '#fff',
+        background: color,
+      }}
+    >
       {label}
     </span>
   )

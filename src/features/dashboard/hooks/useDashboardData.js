@@ -20,9 +20,9 @@ export function useDashboardData() {
         ])
 
         setSummary(summaryResult || null)
-        setHazardTrend(Array.isArray(trendResult) ? trendResult : (trendResult?.items || []))
-        setHazardByType(Array.isArray(typeResult) ? typeResult : (typeResult?.items || []))
-        setHazardByStatus(Array.isArray(statusResult) ? statusResult : (statusResult?.items || []))
+        setHazardTrend(Array.isArray(trendResult) ? trendResult : trendResult?.items || [])
+        setHazardByType(Array.isArray(typeResult) ? typeResult : typeResult?.items || [])
+        setHazardByStatus(Array.isArray(statusResult) ? statusResult : statusResult?.items || [])
       } catch (error) {
         console.error(error)
       } finally {

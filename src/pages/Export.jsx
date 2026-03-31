@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import SkeletonContent from "../components/SkeletonContent";
+import SkeletonContent from '../components/SkeletonContent'
 import { Card, Typography, Button, Table, message } from 'antd'
 import { DownloadOutlined } from '@ant-design/icons'
 import { api } from '../api'
@@ -17,7 +17,7 @@ export default function Export() {
   const [loading, setLoading] = useState(null)
   const [lastResult, setLastResult] = useState(null)
 
-  const handleExport = async (type) => {
+  const handleExport = async type => {
     setLoading(type)
     try {
       const res = await api.get(`/export/${type}`)
@@ -42,21 +42,57 @@ export default function Export() {
   }
 
   const columns = [
-    { title: '文件名', dataIndex: 'file_name', render: t => <Text style={{ color: '#1a1a2e' }}>{t || '-'}</Text> },
-    { title: '记录数', dataIndex: 'record_count', render: v => <Text style={{ color: '#52c41a', fontWeight: 600 }}>{v ?? '-'}</Text> },
-    { title: '下载链接', dataIndex: 'download_url', render: u => u ? <a href={`http://localhost:8001${u}`} target="_blank" rel="noreferrer" style={{ color: '#115cb9' }}>点击下载</a> : <Text style={{ color: '#8c8c8c' }}>-</Text> },
+    {
+      title: '文件名',
+      dataIndex: 'file_name',
+      render: t => <Text style={{ color: '#1a1a2e' }}>{t || '-'}</Text>,
+    },
+    {
+      title: '记录数',
+      dataIndex: 'record_count',
+      render: v => <Text style={{ color: '#52c41a', fontWeight: 600 }}>{v ?? '-'}</Text>,
+    },
+    {
+      title: '下载链接',
+      dataIndex: 'download_url',
+      render: u =>
+        u ? (
+          <a
+            href={`http://localhost:8001${u}`}
+            target="_blank"
+            rel="noreferrer"
+            style={{ color: '#115cb9' }}
+          >
+            点击下载
+          </a>
+        ) : (
+          <Text style={{ color: '#8c8c8c' }}>-</Text>
+        ),
+    },
   ]
 
   return (
     <div style={{ padding: 24, background: '#f5f7fa', minHeight: '100vh' }}>
       <Title level={4} style={{ color: '#1a1a2e', marginBottom: 16 }}>
-        <DownloadOutlined style={{ marginRight: 8 }} />数据导出
+        <DownloadOutlined style={{ marginRight: 8 }} />
+        数据导出
       </Title>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, marginBottom: 24 }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: 16,
+          marginBottom: 24,
+        }}
+      >
         {EXPORT_TYPES.map(t => (
-          <Card key={t.key} style={{ background: '#ffffff', border: '1px solid #e5e7eb', cursor: 'pointer' }}
-            onClick={() => handleExport(t.key)} hoverable>
+          <Card
+            key={t.key}
+            style={{ background: '#ffffff', border: '1px solid #e5e7eb', cursor: 'pointer' }}
+            onClick={() => handleExport(t.key)}
+            hoverable
+          >
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 36, marginBottom: 12 }}>{t.icon}</div>
               <Text style={{ color: '#1a1a2e', fontSize: 15, display: 'block' }}>{t.label}</Text>
@@ -65,7 +101,10 @@ export default function Export() {
                 icon={<DownloadOutlined />}
                 loading={loading === t.key}
                 style={{ marginTop: 12 }}
-                onClick={(e) => { e.stopPropagation(); handleExport(t.key); }}
+                onClick={e => {
+                  e.stopPropagation()
+                  handleExport(t.key)
+                }}
               >
                 导出 CSV
               </Button>
@@ -75,14 +114,24 @@ export default function Export() {
       </div>
 
       {lastResult && (
-        <Card title={<Text style={{ color: '#1a1a2e' }}>最近导出</Text>} style={{ background: '#ffffff', border: '1px solid #e5e7eb' }}>
-          <Table dataSource={[lastResult]} columns={columns} rowKey="file_name" pagination={false} size="small" />
+        <Card
+          title={<Text style={{ color: '#1a1a2e' }}>最近导出</Text>}
+          style={{ background: '#ffffff', border: '1px solid #e5e7eb' }}
+        >
+          <Table
+            dataSource={[lastResult]}
+            columns={columns}
+            rowKey="file_name"
+            pagination={false}
+            size="small"
+          />
         </Card>
       )}
 
       <Card style={{ background: '#ffffff', border: '1px solid #e5e7eb', marginTop: 16 }}>
         <Text style={{ color: '#8c8c8c', fontSize: 12 }}>
-          💡 提示：导出文件格式为 CSV（Excel兼容），可直接用 Excel 打开。导出的文件保存在服务器临时目录。
+          💡 提示：导出文件格式为 CSV（Excel兼容），可直接用 Excel
+          打开。导出的文件保存在服务器临时目录。
         </Text>
       </Card>
     </div>

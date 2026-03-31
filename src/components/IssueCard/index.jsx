@@ -18,12 +18,12 @@ const STATUS_STEPS = [
 ]
 
 const TYPE_DOTS = {
-  safety:   { color: 'oklch(65% 0.2 25)',  label: '安全' },
-  quality:   { color: 'oklch(80% 0.16 85)',  label: '质量' },
-  progress:  { color: 'oklch(65% 0.13 250)', label: '进度' },
+  safety: { color: 'oklch(65% 0.2 25)', label: '安全' },
+  quality: { color: 'oklch(80% 0.16 85)', label: '质量' },
+  progress: { color: 'oklch(65% 0.13 250)', label: '进度' },
   equipment: { color: 'oklch(60% 0.15 270)', label: '设备' },
   environment: { color: 'oklch(70% 0.18 145)', label: '环境' },
-  other:     { color: 'oklch(42% 0.01 250)', label: '其他' },
+  other: { color: 'oklch(42% 0.01 250)', label: '其他' },
 }
 
 function getTrendIcon(trend) {
@@ -193,7 +193,10 @@ export const IssueCard = memo(function IssueCard({ issue, onAssign, onView }) {
             <motion.button
               whileHover={{ backgroundColor: 'oklch(60% 0.15 250)' }}
               whileTap={{ scale: 0.97 }}
-              onClick={(e) => { e.stopPropagation(); onAssign(issue) }}
+              onClick={e => {
+                e.stopPropagation()
+                onAssign(issue)
+              }}
               style={{
                 flex: 1,
                 padding: '7px 0',
@@ -215,7 +218,10 @@ export const IssueCard = memo(function IssueCard({ issue, onAssign, onView }) {
             <motion.button
               whileHover={{ backgroundColor: 'oklch(22% 0.01 250)' }}
               whileTap={{ scale: 0.97 }}
-              onClick={(e) => { e.stopPropagation(); onView(issue) }}
+              onClick={e => {
+                e.stopPropagation()
+                onView(issue)
+              }}
               style={{
                 flex: 1,
                 padding: '7px 0',

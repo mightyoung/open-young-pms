@@ -4,14 +4,23 @@ import { colors } from '../styles/theme'
 
 function SkeletonCard({ count = 4 }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: 12,
+      }}
+    >
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} style={{
-          background: colors.bg.card,
-          border: `1px solid ${colors.bg.border}`,
-          borderRadius: 8,
-          padding: 16,
-        }}>
+        <div
+          key={i}
+          style={{
+            background: colors.bg.card,
+            border: `1px solid ${colors.bg.border}`,
+            borderRadius: 8,
+            padding: 16,
+          }}
+        >
           <Skeleton active paragraph={{ rows: 1 }} />
         </div>
       ))}
@@ -51,15 +60,18 @@ function SkeletonList({ count = 5 }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} style={{
-          background: colors.bg.card,
-          border: `1px solid ${colors.bg.border}`,
-          borderRadius: 8,
-          padding: '12px 16px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
-        }}>
+        <div
+          key={i}
+          style={{
+            background: colors.bg.card,
+            border: `1px solid ${colors.bg.border}`,
+            borderRadius: 8,
+            padding: '12px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+          }}
+        >
           <Skeleton.Avatar active size="small" />
           <div style={{ flex: 1 }}>
             <Skeleton.Input active size="small" style={{ width: '60%' }} />
@@ -73,14 +85,23 @@ function SkeletonList({ count = 5 }) {
 
 function SkeletonKPIGrid({ count = 4 }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: 16,
+      }}
+    >
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} style={{
-          background: colors.bg.card,
-          border: `1px solid ${colors.bg.border}`,
-          borderRadius: 8,
-          padding: 20,
-        }}>
+        <div
+          key={i}
+          style={{
+            background: colors.bg.card,
+            border: `1px solid ${colors.bg.border}`,
+            borderRadius: 8,
+            padding: 20,
+          }}
+        >
           <Skeleton active paragraph={{ rows: 1 }} />
         </div>
       ))}
@@ -91,14 +112,25 @@ function SkeletonKPIGrid({ count = 4 }) {
 function SkeletonChart({ height = 200 }) {
   return (
     <Card style={{ background: colors.bg.card, border: `1px solid ${colors.bg.border}` }}>
-      <div style={{ height, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', padding: 16 }}>
+      <div
+        style={{
+          height,
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'space-around',
+          padding: 16,
+        }}
+      >
         {Array.from({ length: 12 }).map((_, i) => (
-          <div key={i} style={{
-            width: 20,
-            height: `${30 + ((i * 37) % 70)}%`,
-            background: colors.bg.elevated,
-            borderRadius: 4,
-          }} />
+          <div
+            key={i}
+            style={{
+              width: 20,
+              height: `${30 + ((i * 37) % 70)}%`,
+              background: colors.bg.elevated,
+              borderRadius: 4,
+            }}
+          />
         ))}
       </div>
     </Card>
@@ -123,7 +155,13 @@ export default function SkeletonContent({ type = 'table', ...props }) {
       return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           <SkeletonKPIGrid count={4} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: 16,
+            }}
+          >
             <SkeletonChart height={200} />
             <SkeletonChart height={200} />
           </div>

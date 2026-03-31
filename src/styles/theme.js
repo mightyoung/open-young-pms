@@ -4,11 +4,11 @@
 export const colors = {
   // 背景层级
   bg: {
-    base: '#f5f7fa',      // 页面背景
-    page: '#f5f7fa',      // 卡片容器背景
-    card: '#ffffff',      // 卡片背景
-    elevated: '#ffffff',  // 悬浮元素
-    border: '#e5e7eb',    // 边框
+    base: '#f5f7fa', // 页面背景
+    page: '#f5f7fa', // 卡片容器背景
+    card: '#ffffff', // 卡片背景
+    elevated: '#ffffff', // 悬浮元素
+    border: '#e5e7eb', // 边框
   },
   // 主色
   accent: '#115cb9',

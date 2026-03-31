@@ -2,14 +2,12 @@
  * Team.jsx — 团队页面
  * 包含团队统计、成员网格、工作分布图表
  */
-import React, { useState } from 'react';
-import { Row, Col, Avatar, Tag, Tooltip, Typography } from 'antd';
-import { motion } from 'framer-motion';
-import {
-  Users, Wifi, Clock, CheckCircle2, Star, TrendingUp, ChevronDown
-} from 'lucide-react';
+import React, { useState } from 'react'
+import { Row, Col, Avatar, Tag, Tooltip, Typography } from 'antd'
+import { motion } from 'framer-motion'
+import { Users, Wifi, Clock, CheckCircle2, Star, TrendingUp, ChevronDown } from 'lucide-react'
 
-const { Text } = Typography;
+const { Text } = Typography
 
 // ============================================================
 // 设计系统 (与 App.jsx 保持一致)
@@ -30,18 +28,19 @@ const DESIGN = {
   text: '#e4e4e7',
   textSec: '#a1a1aa',
   textMuted: '#52525b',
-};
+}
 
 // 动画变体
 const va = {
   fadeUp: {
     hidden: { opacity: 0, y: 16 },
     visible: (i = 0) => ({
-      opacity: 1, y: 0,
-      transition: { delay: i * 0.07, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.07, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] },
     }),
   },
-};
+}
 
 // ============================================================
 // 模拟数据
@@ -51,7 +50,7 @@ const TEAM_STATS = {
   online: 3,
   activeThisWeek: 4,
   completedThisWeek: 12,
-};
+}
 
 const SKILL_COLORS = {
   React: '#61dafb',
@@ -66,7 +65,7 @@ const SKILL_COLORS = {
   SQL: '#336791',
   Redux: '#764abc',
   Vue: '#4fc08d',
-};
+}
 
 const TEAM_MEMBERS = [
   {
@@ -113,14 +112,14 @@ const TEAM_MEMBERS = [
     lastActive: '刚刚',
     skills: ['Git', 'CI', 'Docker', 'Node'],
   },
-];
+]
 
 const WORK_DISTRIBUTION = [
   { name: '张小明', tasks: 8, completed: 4 },
   { name: '李华', tasks: 12, completed: 5 },
   { name: '王芳', tasks: 6, completed: 2 },
   { name: '赵强', tasks: 9, completed: 3 },
-];
+]
 
 // ============================================================
 // 统计卡片
@@ -134,54 +133,77 @@ function TeamStatCard({ title, value, icon, color, delay = 0 }) {
       animate="visible"
       whileHover={{ y: -2, transition: { type: 'spring', stiffness: 300 } }}
     >
-      <div style={{
-        background: `linear-gradient(135deg, ${DESIGN.card} 0%, ${DESIGN.elevated} 100%)`,
-        border: `1px solid ${DESIGN.border}`,
-        borderRadius: 16,
-        padding: '20px 22px',
-        position: 'relative',
-        overflow: 'hidden',
-        cursor: 'default',
-        transition: 'border-color 0.25s',
-      }}
-      onMouseEnter={e => e.currentTarget.style.borderColor = DESIGN.borderHover}
-      onMouseLeave={e => e.currentTarget.style.borderColor = DESIGN.border}
+      <div
+        style={{
+          background: `linear-gradient(135deg, ${DESIGN.card} 0%, ${DESIGN.elevated} 100%)`,
+          border: `1px solid ${DESIGN.border}`,
+          borderRadius: 16,
+          padding: '20px 22px',
+          position: 'relative',
+          overflow: 'hidden',
+          cursor: 'default',
+          transition: 'border-color 0.25s',
+        }}
+        onMouseEnter={e => (e.currentTarget.style.borderColor = DESIGN.borderHover)}
+        onMouseLeave={e => (e.currentTarget.style.borderColor = DESIGN.border)}
       >
         {/* 装饰 */}
-        <div style={{
-          position: 'absolute', top: -24, right: -24,
-          width: 90, height: 90, borderRadius: '50%',
-          background: `radial-gradient(circle, ${color}15 0%, transparent 70%)`,
-        }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative' }}>
+        <div
+          style={{
+            position: 'absolute',
+            top: -24,
+            right: -24,
+            width: 90,
+            height: 90,
+            borderRadius: '50%',
+            background: `radial-gradient(circle, ${color}15 0%, transparent 70%)`,
+          }}
+        />
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            position: 'relative',
+          }}
+        >
           <div>
-            <Text style={{ color: DESIGN.textSec, fontSize: 12, display: 'block', marginBottom: 8 }}>
+            <Text
+              style={{ color: DESIGN.textSec, fontSize: 12, display: 'block', marginBottom: 8 }}
+            >
               {title}
             </Text>
             <span style={{ fontSize: 30, fontWeight: 800, color: DESIGN.text, lineHeight: 1 }}>
               {value}
             </span>
           </div>
-          <div style={{
-            width: 42, height: 42, borderRadius: 12,
-            background: `${color}15`,
-            border: `1px solid ${color}25`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color, flexShrink: 0,
-          }}>
+          <div
+            style={{
+              width: 42,
+              height: 42,
+              borderRadius: 12,
+              background: `${color}15`,
+              border: `1px solid ${color}25`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color,
+              flexShrink: 0,
+            }}
+          >
             {icon}
           </div>
         </div>
       </div>
     </motion.div>
-  );
+  )
 }
 
 // ============================================================
 // 成员卡片
 // ============================================================
 function MemberCard({ member, delay = 0 }) {
-  const [hovered, setHovered] = useState(false);
+  const [hovered, setHovered] = useState(false)
 
   return (
     <motion.div
@@ -205,21 +227,35 @@ function MemberCard({ member, delay = 0 }) {
       }}
     >
       {/* 背景装饰 */}
-      <div style={{
-        position: 'absolute', top: 0, right: 0,
-        width: 120, height: 120,
-        background: `radial-gradient(circle at top right, ${member.color}12 0%, transparent 70%)`,
-        pointerEvents: 'none',
-      }} />
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: 120,
+          height: 120,
+          background: `radial-gradient(circle at top right, ${member.color}12 0%, transparent 70%)`,
+          pointerEvents: 'none',
+        }}
+      />
 
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
+          position: 'relative',
+        }}
+      >
         {/* 头像 + 在线状态 */}
         <div style={{ position: 'relative', marginBottom: 16 }}>
           <Avatar
             size={72}
             style={{
               background: `linear-gradient(135deg, ${member.color} 0%, ${member.color}aa 100%)`,
-              fontSize: 26, fontWeight: 800,
+              fontSize: 26,
+              fontWeight: 800,
               border: `3px solid ${DESIGN.card}`,
               boxShadow: `0 0 24px ${member.color}40`,
             }}
@@ -227,17 +263,31 @@ function MemberCard({ member, delay = 0 }) {
             {member.initials}
           </Avatar>
           {/* 在线指示灯 */}
-          <div style={{
-            position: 'absolute', bottom: 2, right: 2,
-            width: 16, height: 16, borderRadius: '50%',
-            background: member.online ? DESIGN.success : DESIGN.textMuted,
-            border: `3px solid ${DESIGN.card}`,
-            boxShadow: member.online ? `0 0 8px ${DESIGN.success}` : 'none',
-          }} />
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 2,
+              right: 2,
+              width: 16,
+              height: 16,
+              borderRadius: '50%',
+              background: member.online ? DESIGN.success : DESIGN.textMuted,
+              border: `3px solid ${DESIGN.card}`,
+              boxShadow: member.online ? `0 0 8px ${DESIGN.success}` : 'none',
+            }}
+          />
         </div>
 
         {/* 名字 + 角色 */}
-        <Text style={{ color: DESIGN.text, fontWeight: 700, fontSize: 16, display: 'block', marginBottom: 4 }}>
+        <Text
+          style={{
+            color: DESIGN.text,
+            fontWeight: 700,
+            fontSize: 16,
+            display: 'block',
+            marginBottom: 4,
+          }}
+        >
           {member.name}
         </Text>
         <Text style={{ color: DESIGN.textSec, fontSize: 13, display: 'block', marginBottom: 16 }}>
@@ -245,30 +295,47 @@ function MemberCard({ member, delay = 0 }) {
         </Text>
 
         {/* 本周完成 */}
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 8,
-          background: `${member.color}12`,
-          border: `1px solid ${member.color}25`,
-          borderRadius: 20,
-          padding: '6px 14px',
-          marginBottom: 16,
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            background: `${member.color}12`,
+            border: `1px solid ${member.color}25`,
+            borderRadius: 20,
+            padding: '6px 14px',
+            marginBottom: 16,
+          }}
+        >
           <CheckCircle2 size={14} color={member.color} />
-          <span style={{ color: member.color, fontWeight: 700, fontSize: 18 }}>{member.tasksCompleted}</span>
+          <span style={{ color: member.color, fontWeight: 700, fontSize: 18 }}>
+            {member.tasksCompleted}
+          </span>
           <span style={{ color: DESIGN.textMuted, fontSize: 12 }}>本周完成</span>
         </div>
 
         {/* 技能标签 */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center', marginBottom: 16 }}>
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 6,
+            justifyContent: 'center',
+            marginBottom: 16,
+          }}
+        >
           {member.skills.map(skill => {
-            const sc = SKILL_COLORS[skill] || DESIGN.accent;
+            const sc = SKILL_COLORS[skill] || DESIGN.accent
             return (
               <span
                 key={skill}
                 style={{
-                  display: 'inline-flex', alignItems: 'center',
-                  padding: '2px 10px', borderRadius: 8,
-                  fontSize: 11, fontWeight: 600,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  padding: '2px 10px',
+                  borderRadius: 8,
+                  fontSize: 11,
+                  fontWeight: 600,
                   background: `${sc}15`,
                   color: sc,
                   border: `1px solid ${sc}25`,
@@ -276,7 +343,7 @@ function MemberCard({ member, delay = 0 }) {
               >
                 {skill}
               </span>
-            );
+            )
           })}
         </div>
 
@@ -293,27 +360,34 @@ function MemberCard({ member, delay = 0 }) {
         </div>
       </div>
     </motion.div>
-  );
+  )
 }
 
 // ============================================================
 // 团队工作分布柱状图
 // ============================================================
 function WorkDistributionChart() {
-  const maxTasks = Math.max(...WORK_DISTRIBUTION.map(d => d.tasks));
-  const colors = ['#115cb9', '#22c55e', '#ec4899', '#f59e0b'];
+  const maxTasks = Math.max(...WORK_DISTRIBUTION.map(d => d.tasks))
+  const colors = ['#115cb9', '#22c55e', '#ec4899', '#f59e0b']
 
   return (
-    <div style={{
-      background: DESIGN.card,
-      border: `1px solid ${DESIGN.border}`,
-      borderRadius: 18,
-      padding: '22px 26px',
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <Text style={{ color: DESIGN.textSec, fontSize: 13, fontWeight: 600 }}>
-          团队工作分布
-        </Text>
+    <div
+      style={{
+        background: DESIGN.card,
+        border: `1px solid ${DESIGN.border}`,
+        borderRadius: 18,
+        padding: '22px 26px',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 20,
+        }}
+      >
+        <Text style={{ color: DESIGN.textSec, fontSize: 13, fontWeight: 600 }}>团队工作分布</Text>
         <div style={{ display: 'flex', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
             <div style={{ width: 8, height: 8, borderRadius: 2, background: DESIGN.accent }} />
@@ -327,20 +401,35 @@ function WorkDistributionChart() {
       </div>
 
       {/* 柱状图 */}
-      <div style={{
-        display: 'flex', alignItems: 'flex-end',
-        gap: 16, height: 140,
-        paddingBottom: 8,
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-end',
+          gap: 16,
+          height: 140,
+          paddingBottom: 8,
+        }}
+      >
         {WORK_DISTRIBUTION.map((d, i) => {
-          const totalH = (d.tasks / maxTasks) * 110;
-          const doneH = (d.completed / maxTasks) * 110;
+          const totalH = (d.tasks / maxTasks) * 110
+          const doneH = (d.completed / maxTasks) * 110
           return (
-            <div key={d.name} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <div
+              key={d.name}
+              style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 8,
+              }}
+            >
               {/* 标签 */}
               <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                 <Tooltip title={`已完成 ${d.completed}/${d.tasks}`}>
-                  <span style={{ color: DESIGN.success, fontSize: 12, fontWeight: 700 }}>{d.completed}</span>
+                  <span style={{ color: DESIGN.success, fontSize: 12, fontWeight: 700 }}>
+                    {d.completed}
+                  </span>
                 </Tooltip>
                 <span style={{ color: DESIGN.textMuted, fontSize: 11 }}>/</span>
                 <Tooltip title={`总任务 ${d.tasks}`}>
@@ -348,14 +437,24 @@ function WorkDistributionChart() {
                 </Tooltip>
               </div>
               {/* 柱子组 */}
-              <div style={{ width: '100%', display: 'flex', gap: 4, justifyContent: 'center', alignItems: 'flex-end', height: 100 }}>
+              <div
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  gap: 4,
+                  justifyContent: 'center',
+                  alignItems: 'flex-end',
+                  height: 100,
+                }}
+              >
                 {/* 背景柱子 */}
                 <motion.div
                   initial={{ height: 0 }}
                   animate={{ height: totalH }}
                   transition={{ duration: 0.6, delay: i * 0.08, ease: 'easeOut' }}
                   style={{
-                    width: 28, borderRadius: '6px 6px 0 0',
+                    width: 28,
+                    borderRadius: '6px 6px 0 0',
                     background: `${colors[i]}18`,
                     border: `1px solid ${colors[i]}30`,
                   }}
@@ -366,22 +465,30 @@ function WorkDistributionChart() {
                   animate={{ height: doneH }}
                   transition={{ duration: 0.7, delay: i * 0.08 + 0.1, ease: 'easeOut' }}
                   style={{
-                    width: 28, borderRadius: '6px 6px 0 0',
+                    width: 28,
+                    borderRadius: '6px 6px 0 0',
                     background: `linear-gradient(180deg, ${colors[i]} 0%, ${colors[i]}80 100%)`,
                     boxShadow: `0 0 12px ${colors[i]}40`,
                   }}
                 />
               </div>
               {/* 名字 */}
-              <Text style={{ color: DESIGN.textSec, fontSize: 11, fontWeight: 500, textAlign: 'center' }}>
+              <Text
+                style={{
+                  color: DESIGN.textSec,
+                  fontSize: 11,
+                  fontWeight: 500,
+                  textAlign: 'center',
+                }}
+              >
                 {d.name.slice(0, 2)}
               </Text>
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }
 
 // ============================================================
@@ -442,5 +549,5 @@ export default function Team() {
       {/* 工作分布柱状图 */}
       <WorkDistributionChart />
     </div>
-  );
+  )
 }

@@ -28,51 +28,57 @@ export const StatCard = ({ title, value, trend, icon: Icon, delay = 0 }) => {
         overflow: 'hidden',
       }}
     >
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: 1,
-        background: 'linear-gradient(90deg, transparent, rgba(99,102,241,0.5), transparent)',
-      }} />
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 1,
+          background: 'linear-gradient(90deg, transparent, rgba(99,102,241,0.5), transparent)',
+        }}
+      />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <div style={{
-            fontSize: 13,
-            color: 'rgba(255,255,255,0.5)',
-            marginBottom: 8,
-            fontWeight: 500,
-          }}>
+          <div
+            style={{
+              fontSize: 13,
+              color: 'rgba(255,255,255,0.5)',
+              marginBottom: 8,
+              fontWeight: 500,
+            }}
+          >
             {title}
           </div>
-          <div style={{ fontSize: 32, fontWeight: 700, color: '#fff', lineHeight: 1 }}>
-            {value}
-          </div>
+          <div style={{ fontSize: 32, fontWeight: 700, color: '#fff', lineHeight: 1 }}>{value}</div>
         </div>
-        <div style={{
-          width: 44,
-          height: 44,
-          borderRadius: 12,
-          background: 'rgba(99, 102, 241, 0.15)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
+        <div
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: 12,
+            background: 'rgba(99, 102, 241, 0.15)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <Icon size={22} color="#115cb9" />
         </div>
       </div>
 
       {trend !== 0 && (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 4,
-          marginTop: 12,
-          fontSize: 13,
-          color: isPositive ? '#22c55e' : isNegative ? '#ef4444' : 'rgba(255,255,255,0.5)',
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            marginTop: 12,
+            fontSize: 13,
+            color: isPositive ? '#22c55e' : isNegative ? '#ef4444' : 'rgba(255,255,255,0.5)',
+          }}
+        >
           <TrendIcon size={14} />
           <span>{Math.abs(trend)}%</span>
           <span style={{ color: 'rgba(255,255,255,0.4)', marginLeft: 4 }}>较上周</span>

@@ -444,8 +444,12 @@ a:focus-visible {
 
 /* ========== 骨架屏 ========== */
 @keyframes skeleton-shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .skeleton-block {
@@ -817,7 +821,9 @@ a:focus-visible {
 .page-enter-active {
   opacity: 1;
   transform: translateX(0);
-  transition: opacity 250ms ease-out, transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    opacity 250ms ease-out,
+    transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .page-exit {
@@ -828,7 +834,9 @@ a:focus-visible {
 .page-exit-active {
   opacity: 0;
   transform: translateX(-20px);
-  transition: opacity 200ms ease-out, transform 200ms ease-out;
+  transition:
+    opacity 200ms ease-out,
+    transform 200ms ease-out;
 }
 
 /* ========== 统计卡片动画 ========== */
@@ -846,7 +854,11 @@ a:focus-visible {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--card-glow, rgba(17, 92, 185, 0.08)) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    var(--card-glow, rgba(17, 92, 185, 0.08)) 0%,
+    transparent 70%
+  );
   pointer-events: none;
   transition: opacity 250ms ease-out;
 }

@@ -56,12 +56,7 @@ export const PERMISSION_MATRIX = {
     'report:manage',
     'ai:chat:project',
   ],
-  [ROLES.FIELD_STAFF]: [
-    'issue:create',
-    'task:execute',
-    'report:create',
-    'ai:chat',
-  ],
+  [ROLES.FIELD_STAFF]: ['issue:create', 'task:execute', 'report:create', 'ai:chat'],
 }
 
 export const ROLE_HOME_ROUTES = {
@@ -75,26 +70,75 @@ export const ROLE_HOME_ROUTES = {
 
 export const ROLE_MENUS = {
   [ROLES.SUPER_ADMIN]: [
-    'admin', 'admin/users', 'admin/roles', 'admin/departments', 'admin/workflows',
-    'dashboard', 'projects', 'projects/all', 'issues/all', 'reports/all',
-    'approvals', 'ai', 'forum', 'notifications', 'settings',
+    'admin',
+    'admin/users',
+    'admin/roles',
+    'admin/departments',
+    'admin/workflows',
+    'dashboard',
+    'projects',
+    'projects/all',
+    'issues/all',
+    'reports/all',
+    'approvals',
+    'ai',
+    'forum',
+    'notifications',
+    'settings',
   ],
   [ROLES.COMPANY_LEADER]: [
-    'dashboard', 'projects', 'issues/all', 'reports/all', 'approvals', 'ai', 'forum', 'notifications', 'settings',
+    'dashboard',
+    'projects',
+    'issues/all',
+    'reports/all',
+    'approvals',
+    'ai',
+    'forum',
+    'notifications',
+    'settings',
   ],
   [ROLES.DEPT_LEADER]: [
-    'dept', 'projects/my-dept', 'issues/dept', 'monitor', 'approvals', 'ai', 'forum', 'notifications', 'settings',
+    'dept',
+    'projects/my-dept',
+    'issues/dept',
+    'monitor',
+    'approvals',
+    'ai',
+    'forum',
+    'notifications',
+    'settings',
   ],
   [ROLES.SECTION_CHIEF]: [
-    'approvals', 'issues/section', 'reports/section', 'ai', 'forum', 'notifications', 'settings',
+    'approvals',
+    'issues/section',
+    'reports/section',
+    'ai',
+    'forum',
+    'notifications',
+    'settings',
   ],
   [ROLES.PROJECT_MANAGER]: [
-    'projects', 'projects/:id', 'projects/:id/tasks', 'projects/:id/gantt',
-    'projects/:id/issues', 'projects/:id/reports', 'ai', 'forum', 'notifications', 'settings',
+    'projects',
+    'projects/:id',
+    'projects/:id/tasks',
+    'projects/:id/gantt',
+    'projects/:id/issues',
+    'projects/:id/reports',
+    'ai',
+    'forum',
+    'notifications',
+    'settings',
   ],
   [ROLES.FIELD_STAFF]: [
-    'mobile', 'mobile/capture', 'mobile/tasks', 'mobile/reports',
-    'my-tasks', 'my-reports', 'forum', 'notifications', 'settings',
+    'mobile',
+    'mobile/capture',
+    'mobile/tasks',
+    'mobile/reports',
+    'my-tasks',
+    'my-reports',
+    'forum',
+    'notifications',
+    'settings',
   ],
 }
 
@@ -105,7 +149,12 @@ export function hasPermission(permissions, required) {
       const prefix = p.slice(0, -2)
       return required.some(r => r.startsWith(prefix + ':'))
     }
-    if (p.includes(':read:') || p.includes(':manage') || p.includes(':create') || p.includes(':verify')) {
+    if (
+      p.includes(':read:') ||
+      p.includes(':manage') ||
+      p.includes(':create') ||
+      p.includes(':verify')
+    ) {
       return required.includes(p)
     }
     return p === required

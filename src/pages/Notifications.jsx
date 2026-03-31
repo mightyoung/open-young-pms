@@ -4,7 +4,14 @@
  */
 import React, { useState, useEffect } from 'react'
 import { Card, Tag, Button, Badge, Empty, Space } from 'antd'
-import { CheckOutlined, BellOutlined, FileTextOutlined, WarningOutlined, AuditOutlined, MessageOutlined } from '@ant-design/icons'
+import {
+  CheckOutlined,
+  BellOutlined,
+  FileTextOutlined,
+  WarningOutlined,
+  AuditOutlined,
+  MessageOutlined,
+} from '@ant-design/icons'
 import { api } from '../api'
 import { PageHeader, Tabs, EmptyState } from '../components/PMSComponents'
 
@@ -17,13 +24,13 @@ const TYPE_MAP = {
   mention: { label: '@我', icon: <MessageOutlined />, bg: '#dcfce7', color: '#166534' },
 }
 
-const timeAgo = (t) => {
+const timeAgo = t => {
   if (!t) return ''
   const diff = (Date.now() - new Date(t)) / 1000
   if (diff < 60) return '刚刚'
-  if (diff < 3600) return `${Math.floor(diff/60)}分钟前`
-  if (diff < 86400) return `${Math.floor(diff/3600)}小时前`
-  return `${Math.floor(diff/86400)}天前`
+  if (diff < 3600) return `${Math.floor(diff / 60)}分钟前`
+  if (diff < 86400) return `${Math.floor(diff / 3600)}小时前`
+  return `${Math.floor(diff / 86400)}天前`
 }
 
 export default function Notifications() {
@@ -48,7 +55,9 @@ export default function Notifications() {
     }
   }
 
-  useEffect(() => { load() }, [tab])
+  useEffect(() => {
+    load()
+  }, [tab])
 
   const markAllRead = async () => {
     try {
@@ -58,19 +67,18 @@ export default function Notifications() {
     } catch (e) {}
   }
 
-  const markRead = async (record) => {
+  const markRead = async record => {
     if (record.is_read) return
     try {
       await api.post(`/notifications/${record.id}/read`)
-      setNotifications(prev => prev.map(n => n.id === record.id ? { ...n, is_read: true } : n))
+      setNotifications(prev => prev.map(n => (n.id === record.id ? { ...n, is_read: true } : n)))
       setUnreadCount(prev => Math.max(0, prev - 1))
     } catch (e) {}
   }
 
   // 筛选通知
-  const filtered = tab === 'all' || tab === 'unread'
-    ? notifications
-    : notifications.filter(n => n.type === tab)
+  const filtered =
+    tab === 'all' || tab === 'unread' ? notifications : notifications.filter(n => n.type === tab)
 
   // 统计数据
   const stats = {
@@ -96,16 +104,21 @@ export default function Notifications() {
           <div style={styles.statValue}>{stats.total}</div>
           <div style={styles.statLabel}>全部消息</div>
         </div>
-        <div style={{ ...styles.statCard, borderLeft: '3px solid #fee2e2' }} onClick={() => setTab('unread')}>
+        <div
+          style={{ ...styles.statCard, borderLeft: '3px solid #fee2e2' }}
+          onClick={() => setTab('unread')}
+        >
           <div style={{ ...styles.statValue, color: '#991b1b' }}>{stats.unread}</div>
           <div style={styles.statLabel}>未读消息</div>
         </div>
-        {Object.entries(TYPE_MAP).slice(0, 4).map(([k, v]) => (
-          <div key={k} style={styles.statCard} onClick={() => setTab(k)}>
-            <div style={{ ...styles.statValue, color: v.color }}>{stats.byType[k] || 0}</div>
-            <div style={styles.statLabel}>{v.label}</div>
-          </div>
-        ))}
+        {Object.entries(TYPE_MAP)
+          .slice(0, 4)
+          .map(([k, v]) => (
+            <div key={k} style={styles.statCard} onClick={() => setTab(k)}>
+              <div style={{ ...styles.statValue, color: v.color }}>{stats.byType[k] || 0}</div>
+              <div style={styles.statLabel}>{v.label}</div>
+            </div>
+          ))}
       </div>
 
       {/* 筛选栏 */}
@@ -121,15 +134,13 @@ export default function Notifications() {
               onClick={() => setTab(key)}
             >
               {key === 'all' ? '全部' : '未读'}
-              {key === 'all' && unreadCount > 0 && (
-                <span style={styles.badge}>{unreadCount}</span>
-              )}
+              {key === 'all' && unreadCount > 0 && <span style={styles.badge}>{unreadCount}</span>}
             </button>
           ))}
         </div>
-        <Button 
-          icon={<CheckOutlined />} 
-          onClick={markAllRead} 
+        <Button
+          icon={<CheckOutlined />}
+          onClick={markAllRead}
           disabled={unreadCount === 0}
           style={styles.markAllBtn}
         >
@@ -142,7 +153,7 @@ export default function Notifications() {
         {loading ? (
           <div style={styles.loading}>加载中...</div>
         ) : filtered.length === 0 ? (
-          <EmptyState 
+          <EmptyState
             icon="🔔"
             title="暂无消息"
             description={tab === 'unread' ? '所有消息都已读' : '暂无消息记录'}
@@ -150,8 +161,8 @@ export default function Notifications() {
         ) : (
           <div style={styles.list}>
             {filtered.map(notif => (
-              <div 
-                key={notif.id} 
+              <div
+                key={notif.id}
                 style={{
                   ...styles.notifItem,
                   background: notif.is_read ? 'transparent' : 'var(--color-primary-container)',
@@ -159,13 +170,26 @@ export default function Notifications() {
                 onClick={() => markRead(notif)}
               >
                 <div style={styles.notifIcon}>
-                  <span style={{ ...styles.iconWrapper, background: TYPE_MAP[notif.type]?.bg || '#f3f4f6', color: TYPE_MAP[notif.type]?.color || '#6b7280' }}>
+                  <span
+                    style={{
+                      ...styles.iconWrapper,
+                      background: TYPE_MAP[notif.type]?.bg || '#f3f4f6',
+                      color: TYPE_MAP[notif.type]?.color || '#6b7280',
+                    }}
+                  >
                     {TYPE_MAP[notif.type]?.icon || <BellOutlined />}
                   </span>
                 </div>
                 <div style={styles.notifContent}>
                   <div style={styles.notifHeader}>
-                    <Tag style={{ ...styles.typeTag, background: TYPE_MAP[notif.type]?.bg || '#f3f4f6', color: TYPE_MAP[notif.type]?.color || '#6b7280', border: 'none' }}>
+                    <Tag
+                      style={{
+                        ...styles.typeTag,
+                        background: TYPE_MAP[notif.type]?.bg || '#f3f4f6',
+                        color: TYPE_MAP[notif.type]?.color || '#6b7280',
+                        border: 'none',
+                      }}
+                    >
                       {TYPE_MAP[notif.type]?.label || notif.type}
                     </Tag>
                     <span style={styles.notifTime}>{timeAgo(notif.created_at)}</span>

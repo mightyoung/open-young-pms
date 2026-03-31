@@ -58,7 +58,15 @@ const MetaRow = memo(function MetaRow({ memberCount, issueCount }) {
         borderRadius: 8,
       }}
     >
-      <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'oklch(65% 0.01 250)' }}>
+      <span
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
+          fontSize: 12,
+          color: 'oklch(65% 0.01 250)',
+        }}
+      >
         <Users size={13} color="oklch(65% 0.01 250)" />
         {memberCount}人
       </span>
@@ -71,10 +79,7 @@ const MetaRow = memo(function MetaRow({ memberCount, issueCount }) {
           color: hasIssues ? 'oklch(80% 0.16 85)' : 'oklch(65% 0.01 250)',
         }}
       >
-        <AlertTriangle
-          size={13}
-          color={hasIssues ? 'oklch(80% 0.16 85)' : 'oklch(65% 0.01 250)'}
-        />
+        <AlertTriangle size={13} color={hasIssues ? 'oklch(80% 0.16 85)' : 'oklch(65% 0.01 250)'} />
         {issueCount}个
       </span>
     </div>
@@ -141,7 +146,10 @@ export const ProjectCard = memo(function ProjectCard({ project, onEnter, onGantt
           <motion.button
             whileHover={{ backgroundColor: 'oklch(60% 0.15 250)' }}
             whileTap={{ scale: 0.97 }}
-            onClick={(e) => { e.stopPropagation(); onEnter?.(project) }}
+            onClick={e => {
+              e.stopPropagation()
+              onEnter?.(project)
+            }}
             style={{
               flex: 1,
               display: 'flex',
@@ -166,7 +174,10 @@ export const ProjectCard = memo(function ProjectCard({ project, onEnter, onGantt
             <motion.button
               whileHover={{ backgroundColor: 'oklch(28% 0.01 250 / 0.8)' }}
               whileTap={{ scale: 0.97 }}
-              onClick={(e) => { e.stopPropagation(); onGantt(project) }}
+              onClick={e => {
+                e.stopPropagation()
+                onGantt(project)
+              }}
               title="甘特图"
               style={{
                 width: 34,
@@ -190,7 +201,10 @@ export const ProjectCard = memo(function ProjectCard({ project, onEnter, onGantt
             <motion.button
               whileHover={{ backgroundColor: 'oklch(28% 0.01 250 / 0.8)' }}
               whileTap={{ scale: 0.97 }}
-              onClick={(e) => { e.stopPropagation(); onIssues(project) }}
+              onClick={e => {
+                e.stopPropagation()
+                onIssues(project)
+              }}
               title="问题"
               style={{
                 width: 34,

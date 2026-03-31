@@ -18,7 +18,7 @@ export default function Login() {
 
   const hint = useMemo(() => '演示账号: admin | 密码: admin123', [])
 
-  const handleLogin = async (e) => {
+  const handleLogin = async e => {
     e.preventDefault()
     setLoading(true)
     setError('')
@@ -92,7 +92,9 @@ export default function Login() {
               />
               <span>记住我</span>
             </label>
-            <a href="#" style={styles.forgotLink}>忘记密码？</a>
+            <a href="#" style={styles.forgotLink}>
+              忘记密码？
+            </a>
           </div>
 
           <button
@@ -128,14 +130,24 @@ const styles = {
   },
   bgDecoration: { position: 'absolute', inset: 0, pointerEvents: 'none' },
   bgCircle1: {
-    position: 'absolute', top: '-20%', right: '-10%',
-    width: 600, height: 600, borderRadius: '50%',
-    background: '#d7e2ff', opacity: 0.5,
+    position: 'absolute',
+    top: '-20%',
+    right: '-10%',
+    width: 600,
+    height: 600,
+    borderRadius: '50%',
+    background: '#d7e2ff',
+    opacity: 0.5,
   },
   bgCircle2: {
-    position: 'absolute', bottom: '-30%', left: '-15%',
-    width: 800, height: 800, borderRadius: '50%',
-    background: '#d7e2ff', opacity: 0.3,
+    position: 'absolute',
+    bottom: '-30%',
+    left: '-15%',
+    width: 800,
+    height: 800,
+    borderRadius: '50%',
+    background: '#d7e2ff',
+    opacity: 0.3,
   },
   card: {
     background: '#ffffff',
@@ -149,14 +161,20 @@ const styles = {
   },
   logoSection: { textAlign: 'center', marginBottom: 32 },
   logoPlaceholder: {
-    width: 64, height: 64, borderRadius: 16,
+    width: 64,
+    height: 64,
+    borderRadius: 16,
     background: '#115cb9',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     margin: '0 auto 16px',
   },
   logoText: { color: '#ffffff', fontSize: 20, fontWeight: 700 },
   title: {
-    fontSize: 24, fontWeight: 700, color: '#323235',
+    fontSize: 24,
+    fontWeight: 700,
+    color: '#323235',
     marginBottom: 4,
   },
   subtitle: { fontSize: 13, color: '#8c8c8c' },
@@ -174,8 +192,10 @@ const styles = {
   label: { fontSize: 14, fontWeight: 500, color: '#323235' },
   inputWrapper: { position: 'relative', display: 'flex', alignItems: 'center' },
   inputIcon: {
-    position: 'absolute', left: 14,
-    color: '#8c8c8c', fontSize: 16,
+    position: 'absolute',
+    left: 14,
+    color: '#8c8c8c',
+    fontSize: 16,
   },
   input: {
     width: '100%',
@@ -190,17 +210,28 @@ const styles = {
     boxSizing: 'border-box',
   },
   rememberRow: {
-    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   checkboxLabel: {
-    display: 'flex', alignItems: 'center', gap: 8,
-    fontSize: 14, color: '#8c8c8c', cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    fontSize: 14,
+    color: '#8c8c8c',
+    cursor: 'pointer',
   },
   checkbox: { width: 16, height: 16, cursor: 'pointer' },
   forgotLink: { fontSize: 14, color: '#115cb9', textDecoration: 'none' },
   loginBtn: {
-    width: '100%', padding: '14px', borderRadius: 12, border: 'none',
-    color: '#ffffff', fontSize: 16, fontWeight: 600,
+    width: '100%',
+    padding: '14px',
+    borderRadius: 12,
+    border: 'none',
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 600,
     transition: 'all 0.2s',
     marginTop: 8,
   },

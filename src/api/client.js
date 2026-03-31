@@ -1,6 +1,12 @@
 import { getToken } from '../app/auth-session'
 import { normalizeApiResponse } from './adapters'
-import { BusinessError, ForbiddenError, NetworkError, ServerError, UnauthorizedError } from './errors'
+import {
+  BusinessError,
+  ForbiddenError,
+  NetworkError,
+  ServerError,
+  UnauthorizedError,
+} from './errors'
 
 const BASE_URL = '/api/v1'
 let unauthorizedHandler = null

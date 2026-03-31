@@ -51,7 +51,14 @@ export default function PageContainer({
 
   if (loading) {
     return (
-      <div style={{ ...containerStyle, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div
+        style={{
+          ...containerStyle,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <Spin size="large" />
       </div>
     )
@@ -63,9 +70,15 @@ export default function PageContainer({
       {(title || extra) && (
         <div style={headerStyle}>
           <div>
-            {title && <Title level={4} style={titleStyle}>{title}</Title>}
+            {title && (
+              <Title level={4} style={titleStyle}>
+                {title}
+              </Title>
+            )}
             {description && (
-              <Text style={{ color: colors.text.muted, fontSize: 13, marginTop: 4, display: 'block' }}>
+              <Text
+                style={{ color: colors.text.muted, fontSize: 13, marginTop: 4, display: 'block' }}
+              >
                 {description}
               </Text>
             )}
@@ -94,7 +107,13 @@ export default function PageContainer({
       {children ? (
         children
       ) : empty ? (
-        <Card style={{ background: colors.bg.card, border: `1px solid ${colors.bg.border}`, borderRadius: radius.lg }}>
+        <Card
+          style={{
+            background: colors.bg.card,
+            border: `1px solid ${colors.bg.border}`,
+            borderRadius: radius.lg,
+          }}
+        >
           {empty}
         </Card>
       ) : null}

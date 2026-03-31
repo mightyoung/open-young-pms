@@ -10,23 +10,23 @@ export const STITCH_DESIGN_SYSTEM = {
   version: '1.0.0',
   source: 'Google Stitch AI',
   projectId: '8004525097705286938',
-  
+
   // 字体
   fonts: {
     headline: 'Manrope',
     body: 'Inter',
     label: 'Inter',
   },
-  
+
   // 圆角
   roundness: 'ROUND_FOUR',
-  
+
   // 颜色模式
   colorMode: 'LIGHT',
-  
+
   // 主色调
   customColor: '#0056b3',
-  
+
   // 颜色表
   colors: {
     // 主色系
@@ -39,7 +39,7 @@ export const STITCH_DESIGN_SYSTEM = {
     onPrimaryContainer: '#004fa6',
     onPrimaryFixed: '#003d83',
     onPrimaryFixedVariant: '#0959b6',
-    
+
     // 次要色系
     secondary: '#5d5f65',
     secondaryContainer: '#e2e2e9',
@@ -50,7 +50,7 @@ export const STITCH_DESIGN_SYSTEM = {
     onSecondaryContainer: '#505157',
     onSecondaryFixed: '#3d3f45',
     onSecondaryFixedVariant: '#5a5b61',
-    
+
     // 第三色系
     tertiary: '#5e5c78',
     tertiaryContainer: '#d5d1f2',
@@ -61,7 +61,7 @@ export const STITCH_DESIGN_SYSTEM = {
     onTertiaryContainer: '#484661',
     onTertiaryFixed: '#35334d',
     onTertiaryFixedVariant: '#52506b',
-    
+
     // 表面色系
     background: '#fcf8f9',
     surface: '#fcf8f9',
@@ -77,24 +77,24 @@ export const STITCH_DESIGN_SYSTEM = {
     onBackground: '#323235',
     onSurface: '#323235',
     onSurfaceVariant: '#5f5f61',
-    
+
     // 错误色系
     error: '#9f403d',
     errorContainer: '#fe8983',
     errorDim: '#4e0309',
     onError: '#fff7f6',
     onErrorContainer: '#752121',
-    
+
     // 轮廓色
     outline: '#7b7a7d',
     outlineVariant: '#b3b1b4',
-    
+
     // 反色
     inverseOnSurface: '#9e9c9d',
     inversePrimary: '#659dfe',
     inverseSurface: '#0e0e0f',
   },
-  
+
   // 角色颜色（与 permissions.js 保持一致）
   roleColors: {
     super_admin: '#ff4d4f',
@@ -104,7 +104,7 @@ export const STITCH_DESIGN_SYSTEM = {
     project_manager: '#52c41a',
     field_staff: '#13c2c2',
   },
-  
+
   // 状态颜色
   statusColors: {
     active: '#52c41a',
@@ -120,7 +120,7 @@ export const STITCH_DESIGN_SYSTEM = {
     in_use: '#1890ff',
     maintenance: '#faad14',
   },
-  
+
   // 阴影
   shadows: {
     // 柔和阴影（用于卡片）
@@ -130,7 +130,7 @@ export const STITCH_DESIGN_SYSTEM = {
     // 环境阴影（用于模态框）
     ambient: '0 20px 40px rgba(14, 14, 15, 0.05)',
   },
-};
+}
 
 // 导出为 CSS 变量
 export const CSS_VARIABLES = `
@@ -182,6 +182,6 @@ export const CSS_VARIABLES = `
     --shadow-standard: ${STITCH_DESIGN_SYSTEM.shadows.standard};
     --shadow-ambient: ${STITCH_DESIGN_SYSTEM.shadows.ambient};
   }
-`;
+`
 
-export default STITCH_DESIGN_SYSTEM;
+export default STITCH_DESIGN_SYSTEM

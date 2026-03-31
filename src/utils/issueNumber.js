@@ -13,7 +13,10 @@ export function generateIssueNumber() {
     if (parsed && parsed.date === `${year}${month}${day}`) {
       counter = parsed.count + 1
     }
-    localStorage.setItem(COUNTER_KEY, JSON.stringify({ date: `${year}${month}${day}`, count: counter }))
+    localStorage.setItem(
+      COUNTER_KEY,
+      JSON.stringify({ date: `${year}${month}${day}`, count: counter })
+    )
   } catch {}
 
   const seq = String(counter).padStart(4, '0')

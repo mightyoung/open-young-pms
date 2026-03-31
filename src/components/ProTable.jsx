@@ -62,7 +62,7 @@ export default function ProTable({
 
       return (
         <Space size="small">
-          {extraActions.map(a => (
+          {extraActions.map(a =>
             a.showIcon !== false ? (
               <Button
                 key={a.key}
@@ -79,7 +79,7 @@ export default function ProTable({
                 {a.label}
               </Button>
             ) : null
-          ))}
+          )}
           {(extraActions.length > 1 || onDelete) && (
             <Dropdown
               menu={{ items, onClick: handleMenuClick }}
@@ -107,11 +107,7 @@ export default function ProTable({
 
   const tableColumns = cols.map(c => ({
     ...c,
-    title: (
-      <span style={{ color: colors.text.secondary, fontSize: 12 }}>
-        {c.title}
-      </span>
-    ),
+    title: <span style={{ color: colors.text.secondary, fontSize: 12 }}>{c.title}</span>,
   }))
 
   return (
@@ -124,11 +120,7 @@ export default function ProTable({
       size="middle"
       scroll={{ x: 'max-content' }}
       locale={{
-        emptyText: (
-          <div style={{ padding: '40px 0', color: colors.text.muted }}>
-            暂无数据
-          </div>
-        ),
+        emptyText: <div style={{ padding: '40px 0', color: colors.text.muted }}>暂无数据</div>,
       }}
       style={{
         background: colors.bg.card,

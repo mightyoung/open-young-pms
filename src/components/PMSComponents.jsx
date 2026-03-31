@@ -14,7 +14,7 @@ export function RoleBadge({ role }) {
     project_manager: '项目经理',
     field_staff: '现场人员',
   }
-  
+
   return (
     <span className={`pms-badge-role ${role}`} style={badgeStyles[role]}>
       {roleLabels[role] || role}
@@ -49,14 +49,10 @@ export function StatusBadge({ status }) {
     medium: { bg: '#fef3c7', color: '#92400e', label: '中风险' },
     low: { bg: '#dcfce7', color: '#166534', label: '低风险' },
   }
-  
+
   const { bg, color, label } = config[status] || { bg: '#f3f4f6', color: '#6b7280', label: status }
-  
-  return (
-    <span style={{ ...badgeBase, background: bg, color }}>
-      {label}
-    </span>
-  )
+
+  return <span style={{ ...badgeBase, background: bg, color }}>{label}</span>
 }
 
 const badgeBase = {
@@ -78,7 +74,12 @@ export function MetricCard({ title, value, icon, trend }) {
       </div>
       <div style={metricCardStyles.value}>{value}</div>
       {trend && (
-        <div style={{ ...metricCardStyles.trend, color: trend > 0 ? 'var(--color-status-active)' : 'var(--color-error)' }}>
+        <div
+          style={{
+            ...metricCardStyles.trend,
+            color: trend > 0 ? 'var(--color-status-active)' : 'var(--color-error)',
+          }}
+        >
           {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}%
         </div>
       )}
@@ -121,7 +122,7 @@ const metricCardStyles = {
 // 进度条
 export function ProgressBar({ value, max = 100, color = 'var(--color-primary)' }) {
   const percentage = Math.min(100, Math.max(0, (value / max) * 100))
-  
+
   return (
     <div style={progressStyles.track}>
       <div style={{ ...progressStyles.bar, width: `${percentage}%`, background: color }} />
@@ -157,9 +158,7 @@ export function Tabs({ tabs, activeTab, onChange }) {
           }}
         >
           {tab.label}
-          {tab.count !== undefined && (
-            <span style={tabsStyles.count}>{tab.count}</span>
-          )}
+          {tab.count !== undefined && <span style={tabsStyles.count}>{tab.count}</span>}
         </button>
       ))}
     </div>

@@ -1,4 +1,7 @@
-export async function compressImage(file, { maxWidth = 1280, quality = 0.72, maxSizeKB = 512 } = {}) {
+export async function compressImage(
+  file,
+  { maxWidth = 1280, quality = 0.72, maxSizeKB = 512 } = {}
+) {
   return new Promise(resolve => {
     const img = new Image()
     const url = URL.createObjectURL(file)
@@ -6,14 +9,21 @@ export async function compressImage(file, { maxWidth = 1280, quality = 0.72, max
       URL.revokeObjectURL(url)
       const canvas = document.createElement('canvas')
       let { width, height } = img
-      if (width > maxWidth) { height = (height * maxWidth) / width; width = maxWidth }
-      canvas.width = width; canvas.height = height
+      if (width > maxWidth) {
+        height = (height * maxWidth) / width
+        width = maxWidth
+      }
+      canvas.width = width
+      canvas.height = height
       canvas.getContext('2d').drawImage(img, 0, 0, width, height)
 
-      const trySave = (q) => {
+      const trySave = q => {
         canvas.toBlob(
           blob => {
-            if (!blob) { resolve(file); return }
+            if (!blob) {
+              resolve(file)
+              return
+            }
             if (blob.size > maxSizeKB * 1024 && q > 0.3) {
               trySave(q - 0.1)
             } else {

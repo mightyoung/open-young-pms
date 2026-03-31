@@ -1,11 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import {
-  LayoutDashboard,
-  Kanban,
-  Users,
-  FileText,
-} from 'lucide-react'
+import { LayoutDashboard, Kanban, Users, FileText } from 'lucide-react'
 import { LogoIcon } from './Icons'
 import { currentUser } from '../data'
 
@@ -36,15 +31,17 @@ export const Sidebar = ({ collapsed, activeMenu, setActiveMenu }) => {
       }}
     >
       {/* Logo */}
-      <div style={{
-        padding: collapsed ? '0 16px' : '0 20px',
-        height: 64,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        borderBottom: '1px solid #e5e7eb',
-        flexShrink: 0,
-      }}>
+      <div
+        style={{
+          padding: collapsed ? '0 16px' : '0 20px',
+          height: 64,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          borderBottom: '1px solid #e5e7eb',
+          flexShrink: 0,
+        }}
+      >
         <LogoIcon size={32} />
         {!collapsed && (
           <motion.span
@@ -124,28 +121,32 @@ export const Sidebar = ({ collapsed, activeMenu, setActiveMenu }) => {
       </nav>
 
       {/* 用户信息 */}
-      <div style={{
-        padding: collapsed ? '16px 12px' : '16px 20px',
-        borderTop: '1px solid #e5e7eb',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        flexShrink: 0,
-      }}>
-        <div style={{
-          width: 36,
-          height: 36,
-          borderRadius: '50%',
-          background: 'linear-gradient(135deg, #115cb9, #3377cc)',
+      <div
+        style={{
+          padding: collapsed ? '16px 12px' : '16px 20px',
+          borderTop: '1px solid #e5e7eb',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          fontWeight: 600,
-          fontSize: 14,
-          color: '#fff',
+          gap: 10,
           flexShrink: 0,
-          border: '2px solid #eef3ff',
-        }}>
+        }}
+      >
+        <div
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #115cb9, #3377cc)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 600,
+            fontSize: 14,
+            color: '#fff',
+            flexShrink: 0,
+            border: '2px solid #eef3ff',
+          }}
+        >
           {currentUser.avatar}
         </div>
         {!collapsed && (
@@ -158,9 +159,7 @@ export const Sidebar = ({ collapsed, activeMenu, setActiveMenu }) => {
             <div style={{ fontSize: 14, fontWeight: 500, color: '#1a1a2e' }}>
               {currentUser.name}
             </div>
-            <div style={{ fontSize: 12, color: '#8c8c8c' }}>
-              {currentUser.role}
-            </div>
+            <div style={{ fontSize: 12, color: '#8c8c8c' }}>{currentUser.role}</div>
           </motion.div>
         )}
       </div>

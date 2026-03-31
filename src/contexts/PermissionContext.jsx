@@ -35,11 +35,11 @@ export function PermissionProvider({ user, children }) {
     })
   }
 
-  const canAny = (actions) => actions.some(([action, resource]) => can(action, resource))
+  const canAny = actions => actions.some(([action, resource]) => can(action, resource))
 
-  const canAll = (actions) => actions.every(([action, resource]) => can(action, resource))
+  const canAll = actions => actions.every(([action, resource]) => can(action, resource))
 
-  const canAccessProject = (projectId) => {
+  const canAccessProject = projectId => {
     if (!user) return false
     if (permissions.includes('*')) return true
     if (user.assignedProjects?.includes(projectId)) return true
@@ -57,23 +57,22 @@ export function PermissionProvider({ user, children }) {
     return ROLE_LABELS[normalizedRole] || user?.role || normalizedRole
   }, [normalizedRole, user?.role])
 
-  const value = useMemo(() => ({
-    user,
-    permissions,
-    role: normalizedRole,
-    roleLabel,
-    can,
-    canAny,
-    canAll,
-    canAccessProject,
-    homeRoute,
-  }), [user, permissions, normalizedRole, roleLabel, homeRoute])
-
-  return (
-    <PermissionContext.Provider value={value}>
-      {children}
-    </PermissionContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      permissions,
+      role: normalizedRole,
+      roleLabel,
+      can,
+      canAny,
+      canAll,
+      canAccessProject,
+      homeRoute,
+    }),
+    [user, permissions, normalizedRole, roleLabel, homeRoute]
   )
+
+  return <PermissionContext.Provider value={value}>{children}</PermissionContext.Provider>
 }
 
 export function usePermission() {

@@ -13,22 +13,24 @@ export const Header = ({ collapsed, onToggleSidebar }) => {
   ]
 
   return (
-    <header style={{
-      height: 64,
-      background: 'rgba(19, 19, 26, 0.8)',
-      backdropFilter: 'blur(20px)',
-      borderBottom: '1px solid rgba(255,255,255,0.06)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '0 24px',
-      position: 'fixed',
-      top: 0,
-      right: 0,
-      left: collapsed ? 72 : 240,
-      zIndex: 99,
-      transition: 'left 0.3s ease',
-    }}>
+    <header
+      style={{
+        height: 64,
+        background: 'rgba(19, 19, 26, 0.8)',
+        backdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 24px',
+        position: 'fixed',
+        top: 0,
+        right: 0,
+        left: collapsed ? 72 : 240,
+        zIndex: 99,
+        transition: 'left 0.3s ease',
+      }}
+    >
       <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -50,16 +52,18 @@ export const Header = ({ collapsed, onToggleSidebar }) => {
           <Menu size={20} />
         </motion.button>
 
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          background: 'rgba(255,255,255,0.05)',
-          border: '1px solid rgba(255,255,255,0.06)',
-          borderRadius: 10,
-          padding: '8px 16px',
-          width: 280,
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: 10,
+            padding: '8px 16px',
+            width: 280,
+          }}
+        >
           <Search size={18} color="rgba(255,255,255,0.4)" />
           <input
             placeholder="搜索任务、项目..."
@@ -135,11 +139,7 @@ export const Header = ({ collapsed, onToggleSidebar }) => {
           </Badge>
         </motion.button>
 
-        <Dropdown
-          menu={{ items: userMenuItems }}
-          trigger={['click']}
-          placement="bottomRight"
-        >
+        <Dropdown menu={{ items: userMenuItems }} trigger={['click']} placement="bottomRight">
           <motion.div
             whileHover={{ scale: 1.05 }}
             style={{

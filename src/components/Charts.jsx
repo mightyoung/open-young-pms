@@ -27,16 +27,16 @@ const COLORS = {
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div style={{
-        background: '#f5f7fa',
-        border: '1px solid rgba(255,255,255,0.1)',
-        borderRadius: 8,
-        padding: '8px 12px',
-      }}>
+      <div
+        style={{
+          background: '#f5f7fa',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: 8,
+          padding: '8px 12px',
+        }}
+      >
         <p style={{ color: '#fff', margin: 0, fontWeight: 500 }}>{label}</p>
-        <p style={{ color: COLORS.accent, margin: 0, fontSize: 14 }}>
-          {payload[0].value}
-        </p>
+        <p style={{ color: COLORS.accent, margin: 0, fontSize: 14 }}>{payload[0].value}</p>
       </div>
     )
   }
@@ -58,11 +58,7 @@ export const AreaChartComponent = ({ data }) => (
         tickLine={false}
         tick={{ fill: COLORS.text, fontSize: 11 }}
       />
-      <YAxis
-        axisLine={false}
-        tickLine={false}
-        tick={{ fill: COLORS.text, fontSize: 11 }}
-      />
+      <YAxis axisLine={false} tickLine={false} tick={{ fill: COLORS.text, fontSize: 11 }} />
       <Tooltip content={<CustomTooltip />} />
       <Area
         type="monotone"
@@ -84,18 +80,9 @@ export const BarChartComponent = ({ data }) => (
         tickLine={false}
         tick={{ fill: COLORS.text, fontSize: 11 }}
       />
-      <YAxis
-        axisLine={false}
-        tickLine={false}
-        tick={{ fill: COLORS.text, fontSize: 11 }}
-      />
+      <YAxis axisLine={false} tickLine={false} tick={{ fill: COLORS.text, fontSize: 11 }} />
       <Tooltip content={<CustomTooltip />} />
-      <Bar
-        dataKey="tasks"
-        fill={COLORS.accent}
-        radius={[6, 6, 0, 0]}
-        opacity={0.85}
-      />
+      <Bar dataKey="tasks" fill={COLORS.accent} radius={[6, 6, 0, 0]} opacity={0.85} />
     </BarChart>
   </ResponsiveContainer>
 )
@@ -120,13 +107,15 @@ export const DonutChartComponent = ({ data }) => (
         <Tooltip content={<CustomTooltip />} />
       </PieChart>
     </ResponsiveContainer>
-    <div style={{
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      textAlign: 'center',
-    }}>
+    <div
+      style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        textAlign: 'center',
+      }}
+    >
       <div style={{ fontSize: 24, fontWeight: 700, color: '#fff' }}>
         {data.reduce((acc, curr) => acc + curr.value, 0)}
       </div>

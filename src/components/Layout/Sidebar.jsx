@@ -35,7 +35,12 @@ const ALL_MENU_ITEMS = [
   { id: 'team', label: '团队', icon: Users, permission: null },
   { id: 'docs', label: '文档', icon: FileText, permission: null },
   { id: 'projects', label: '所有项目', icon: FolderKanban, permission: 'projects' },
-  { id: 'projects/my-dept', label: '本部门项目', icon: FolderKanban, permission: 'projects/my-dept' },
+  {
+    id: 'projects/my-dept',
+    label: '本部门项目',
+    icon: FolderKanban,
+    permission: 'projects/my-dept',
+  },
   { id: 'issues/all', label: '问题总览', icon: AlertTriangle, permission: 'issues/all' },
   { id: 'issues/dept', label: '本部门问题', icon: AlertTriangle, permission: 'issues/dept' },
   { id: 'issues/section', label: '本科室问题', icon: AlertTriangle, permission: 'issues/section' },
@@ -66,19 +71,55 @@ const ALL_MENU_ITEMS = [
 const ROLE_VISIBLE_MENUS = {
   super_admin: ALL_MENU_ITEMS,
   company_leader: ALL_MENU_ITEMS.filter(m =>
-    ['dashboard', 'projects', 'issues/all', 'reports/all', 'approvals', 'ai', 'forum', 'notifications', 'settings'].includes(m.id)
+    [
+      'dashboard',
+      'projects',
+      'issues/all',
+      'reports/all',
+      'approvals',
+      'ai',
+      'forum',
+      'notifications',
+      'settings',
+    ].includes(m.id)
   ),
   dept_leader: ALL_MENU_ITEMS.filter(m =>
-    ['dept', 'projects/my-dept', 'issues/dept', 'monitor', 'approvals', 'ai', 'forum', 'notifications', 'settings'].includes(m.id)
+    [
+      'dept',
+      'projects/my-dept',
+      'issues/dept',
+      'monitor',
+      'approvals',
+      'ai',
+      'forum',
+      'notifications',
+      'settings',
+    ].includes(m.id)
   ),
   section_chief: ALL_MENU_ITEMS.filter(m =>
-    ['approvals', 'issues/section', 'reports/section', 'ai', 'forum', 'notifications', 'settings'].includes(m.id)
+    [
+      'approvals',
+      'issues/section',
+      'reports/section',
+      'ai',
+      'forum',
+      'notifications',
+      'settings',
+    ].includes(m.id)
   ),
   project_manager: ALL_MENU_ITEMS.filter(m =>
     ['projects', 'gantt', 'approvals', 'ai', 'forum', 'notifications', 'settings'].includes(m.id)
   ),
   field_staff: ALL_MENU_ITEMS.filter(m =>
-    ['mobile', 'mobile/capture', 'mobile/tasks', 'mobile/reports', 'forum', 'notifications', 'settings'].includes(m.id)
+    [
+      'mobile',
+      'mobile/capture',
+      'mobile/tasks',
+      'mobile/reports',
+      'forum',
+      'notifications',
+      'settings',
+    ].includes(m.id)
   ),
 }
 
@@ -105,27 +146,31 @@ export function Sidebar({ collapsed, activeMenu, setActiveMenu, user }) {
         overflowX: 'hidden',
       }}
     >
-      <div style={{
-        padding: collapsed ? '20px 16px' : '20px 24px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-        flexShrink: 0,
-      }}>
-        <div style={{
-          width: 32,
-          height: 32,
-          borderRadius: 8,
-          background: 'linear-gradient(135deg, #115cb9, #115cb9)',
+      <div
+        style={{
+          padding: collapsed ? '20px 16px' : '20px 24px',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          fontWeight: 700,
-          fontSize: 14,
-          color: '#fff',
+          gap: 12,
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
           flexShrink: 0,
-        }}>
+        }}
+      >
+        <div
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 8,
+            background: 'linear-gradient(135deg, #115cb9, #115cb9)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 700,
+            fontSize: 14,
+            color: '#fff',
+            flexShrink: 0,
+          }}
+        >
           P
         </div>
         {!collapsed && (
@@ -214,31 +259,37 @@ export function Sidebar({ collapsed, activeMenu, setActiveMenu, user }) {
             <Tooltip key={id} title={label} placement="right">
               {button}
             </Tooltip>
-          ) : button
+          ) : (
+            button
+          )
         })}
       </nav>
 
-      <div style={{
-        padding: collapsed ? '16px 12px' : '16px 20px',
-        borderTop: '1px solid rgba(255,255,255,0.06)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-        flexShrink: 0,
-      }}>
-        <div style={{
-          width: 36,
-          height: 36,
-          borderRadius: '50%',
-          background: 'linear-gradient(135deg, #115cb9, #115cb9)',
+      <div
+        style={{
+          padding: collapsed ? '16px 12px' : '16px 20px',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          fontWeight: 600,
-          fontSize: 14,
-          color: '#fff',
+          gap: 12,
           flexShrink: 0,
-        }}>
+        }}
+      >
+        <div
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #115cb9, #115cb9)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 600,
+            fontSize: 14,
+            color: '#fff',
+            flexShrink: 0,
+          }}
+        >
           {user?.name?.[0] || 'P'}
         </div>
         {!collapsed && (

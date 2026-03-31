@@ -34,70 +34,84 @@ export const TaskCard = ({ task, onClick, delay = 0 }) => {
         overflow: 'hidden',
       }}
     >
-      <div style={{
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        bottom: 0,
-        width: 3,
-        background: priorityColors[task.priority],
-      }} />
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: 3,
+          background: priorityColors[task.priority],
+        }}
+      />
 
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 6,
-        marginBottom: 10,
-      }}>
-        <span style={{
-          fontSize: 11,
-          fontWeight: 600,
-          padding: '2px 8px',
-          borderRadius: 4,
-          background: `${priorityColors[task.priority]}20`,
-          color: priorityColors[task.priority],
-        }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 6,
+          marginBottom: 10,
+        }}
+      >
+        <span
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            padding: '2px 8px',
+            borderRadius: 4,
+            background: `${priorityColors[task.priority]}20`,
+            color: priorityColors[task.priority],
+          }}
+        >
           {task.priority === 'high' ? '高' : task.priority === 'medium' ? '中' : '低'}
         </span>
-        <span style={{
-          fontSize: 11,
-          padding: '2px 8px',
-          borderRadius: 4,
-          background: 'rgba(99, 102, 241, 0.15)',
-          color: '#115cb9',
-        }}>
+        <span
+          style={{
+            fontSize: 11,
+            padding: '2px 8px',
+            borderRadius: 4,
+            background: 'rgba(99, 102, 241, 0.15)',
+            color: '#115cb9',
+          }}
+        >
           {typeLabels[task.type]}
         </span>
       </div>
 
-      <h4 style={{
-        fontSize: 14,
-        fontWeight: 600,
-        color: '#fff',
-        marginBottom: 12,
-        lineHeight: 1.4,
-      }}>
+      <h4
+        style={{
+          fontSize: 14,
+          fontWeight: 600,
+          color: '#fff',
+          marginBottom: 12,
+          lineHeight: 1.4,
+        }}
+      >
         {task.title}
       </h4>
 
       {task.status === 'in-progress' && (
         <div style={{ marginBottom: 12 }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: 11,
-            color: 'rgba(255,255,255,0.5)',
-            marginBottom: 4,
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: 11,
+              color: 'rgba(255,255,255,0.5)',
+              marginBottom: 4,
+            }}
+          >
             <span>进度</span>
             <span>{task.progress}%</span>
           </div>
-          <div style={{
-            height: 4,
-            background: 'rgba(255,255,255,0.1)',
-            borderRadius: 2,
-            overflow: 'hidden',
-          }}>
+          <div
+            style={{
+              height: 4,
+              background: 'rgba(255,255,255,0.1)',
+              borderRadius: 2,
+              overflow: 'hidden',
+            }}
+          >
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${task.progress}%` }}
@@ -112,55 +126,65 @@ export const TaskCard = ({ task, onClick, delay = 0 }) => {
         </div>
       )}
 
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 4,
-            color: 'rgba(255,255,255,0.4)',
-            fontSize: 11,
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              color: 'rgba(255,255,255,0.4)',
+              fontSize: 11,
+            }}
+          >
             <MessageSquare size={12} />
             <span>{task.comments}</span>
           </div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 4,
-            color: 'rgba(255,255,255,0.4)',
-            fontSize: 11,
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              color: 'rgba(255,255,255,0.4)',
+              fontSize: 11,
+            }}
+          >
             <Paperclip size={12} />
             <span>{task.attachments}</span>
           </div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 4,
-            color: 'rgba(255,255,255,0.4)',
-            fontSize: 11,
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              color: 'rgba(255,255,255,0.4)',
+              fontSize: 11,
+            }}
+          >
             <Clock size={12} />
             <span>{task.storyPoints}pt</span>
           </div>
         </div>
 
-        <div style={{
-          width: 26,
-          height: 26,
-          borderRadius: '50%',
-          background: task.assignee.color,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: 11,
-          fontWeight: 600,
-        }}>
+        <div
+          style={{
+            width: 26,
+            height: 26,
+            borderRadius: '50%',
+            background: task.assignee.color,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 11,
+            fontWeight: 600,
+          }}
+        >
           {task.assignee.avatar}
         </div>
       </div>
@@ -168,7 +192,7 @@ export const TaskCard = ({ task, onClick, delay = 0 }) => {
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
         style={{
           position: 'absolute',
           top: 10,
