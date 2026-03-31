@@ -1,0 +1,57 @@
+# Build outputs
+dist/
+dist-ssr/
+
+# uniapp mobile project (separate framework, not part of PMS React SPA)
+pms-uniapp/
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Backend
+backend/.venv/
+backend/__pycache__/
+backend/*.db
+backend/.pytest_cache/
+backend/*.pyc
+backend/**/__pycache__/
+backend/**/*.pyc
+# WIP health check router (evaluate for inclusion)
+backend/routers/health.py
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+.Python
+*.so
+.eggs/
+*.egg-info/
+*.egg
+.mypy_cache/
+.pytest_cache/
+.tox/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Runtime artifacts
+*.sqlite
+*.sqlite3
