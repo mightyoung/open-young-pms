@@ -2,9 +2,7 @@
 """API 回归测试 — 验证所有核心 API 格式和响应"""
 
 import requests
-import json
 import sys
-from datetime import datetime
 
 BASE = "http://127.0.0.1:8001/api/v1"
 TOKEN = None
