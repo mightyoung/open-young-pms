@@ -12,9 +12,17 @@ PMS (Project Management System) - A React + Ant Design + Tailwind CSS SPA fronte
 npm run dev      # Frontend dev server → http://localhost:5173 (proxies /api/* to :8001)
 npm run build   # Production build with vendor chunk splitting + lazy-loaded routes
 npm run preview # Preview production build
-npm run lint    # ESLint + Prettier
+npm run lint    # ESLint + Prettier (0 errors required in CI)
 npm run test    # Vitest smoke tests
-cd backend && uvicorn main:app --reload --port 8001  # Backend API
+
+# Backend (from project root)
+cd backend
+pip install -r requirements.txt
+cp .env.example .env   # fill in JWT_SECRET
+ruff check .           # Python lint (0 errors required in CI)
+pytest tests/ -v       # All backend tests (36 passing)
+
+uvicorn main:app --reload --port 8001  # Backend API
 ```
 
 ## Architecture
