@@ -21,8 +21,6 @@ backend/.pytest_cache/
 backend/*.pyc
 backend/**/__pycache__/
 backend/**/*.pyc
-# WIP health check router (evaluate for inclusion)
-backend/routers/health.py
 
 # Python
 __pycache__/
