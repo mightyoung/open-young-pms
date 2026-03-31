@@ -1,6 +1,6 @@
 """Tiered health check endpoints."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, status
 from sqlalchemy import text
@@ -15,7 +15,7 @@ async def liveness():
     """Tier 1: Application liveness. Returns UP if the process is running."""
     return {
         "status": "UP",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "service": "pms-backend",
         "tier": "liveness",
     }
@@ -30,7 +30,7 @@ async def readiness():
             await conn.execute(text("SELECT 1"))
         return {
             "status": "UP",
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "service": "pms-backend",
             "tier": "readiness",
             "database": "connected",
@@ -38,7 +38,7 @@ async def readiness():
     except Exception as e:
         return {
             "status": "DOWN",
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "service": "pms-backend",
             "tier": "readiness",
             "database": "unreachable",
@@ -57,7 +57,7 @@ async def database_detail():
         db_size = pg_result.scalar()
     return {
         "status": "UP",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "tier": "database",
         "database": "postgresql",
         "version": version,
