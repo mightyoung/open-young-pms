@@ -3,8 +3,27 @@
  * 更新时间: 2026-03-30
  */
 import React, { useState, useEffect } from 'react'
-import { Row, Col, Button, Select, Space, Table, Tag, message, Drawer, Descriptions, Divider, Avatar } from 'antd'
-import { WarningOutlined, CheckCircleOutlined, ClockCircleOutlined, EnvironmentOutlined, UserOutlined } from '@ant-design/icons'
+import {
+  Row,
+  Col,
+  Button,
+  Select,
+  Space,
+  Table,
+  Tag,
+  message,
+  Drawer,
+  Descriptions,
+  Divider,
+  Avatar,
+} from 'antd'
+import {
+  WarningOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  EnvironmentOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
 import { api } from '../api'
 import { PageHeader, StatusBadge, Tabs, SearchInput } from '../components/PMSComponents'
 
@@ -50,22 +69,24 @@ export default function HazardManagement() {
       const items = res?.items || res?.data?.items || []
       setData(items)
       setTotal(res?.total || res?.data?.total || 0)
-    } catch (e) {
+    } catch {
       setData([])
     } finally {
       setLoading(false)
     }
   }
 
-  useEffect(() => { load() }, [filters, page])
+  useEffect(() => {
+    load()
+  }, [filters, page])
 
-  const handleVerify = async (id) => {
+  const handleVerify = async id => {
     try {
       await api.post(`/hazards/${id}/verify`)
       message.success('验收成功')
       load()
       setDetail(null)
-    } catch (e) {
+    } catch {
       message.error('验收失败')
     }
   }
@@ -78,10 +99,11 @@ export default function HazardManagement() {
 
   // 筛选后的数据
   const filteredData = searchText
-    ? data.filter(d => 
-        d.description?.includes(searchText) || 
-        d.hazard_no?.includes(searchText) ||
-        d.location?.includes(searchText)
+    ? data.filter(
+        d =>
+          d.description?.includes(searchText) ||
+          d.hazard_no?.includes(searchText) ||
+          d.location?.includes(searchText)
       )
     : data
 
@@ -92,10 +114,22 @@ export default function HazardManagement() {
       render: (_, r) => (
         <div style={styles.hazardInfo}>
           <div style={styles.hazardHeader}>
-            <Tag style={{ ...styles.typeTag, background: TYPE_MAP[r.type]?.bg || '#f3f4f6', color: TYPE_MAP[r.type]?.color || '#6b7280' }}>
+            <Tag
+              style={{
+                ...styles.typeTag,
+                background: TYPE_MAP[r.type]?.bg || '#f3f4f6',
+                color: TYPE_MAP[r.type]?.color || '#6b7280',
+              }}
+            >
               {TYPE_MAP[r.type]?.icon} {TYPE_MAP[r.type]?.label || r.type}
             </Tag>
-            <Tag style={{ ...styles.urgencyTag, background: URGENCY_MAP[r.urgency]?.bg || '#f3f4f6', color: URGENCY_MAP[r.urgency]?.color || '#6b7280' }}>
+            <Tag
+              style={{
+                ...styles.urgencyTag,
+                background: URGENCY_MAP[r.urgency]?.bg || '#f3f4f6',
+                color: URGENCY_MAP[r.urgency]?.color || '#6b7280',
+              }}
+            >
               {URGENCY_MAP[r.urgency]?.label || r.urgency}
             </Tag>
           </div>
@@ -108,9 +142,7 @@ export default function HazardManagement() {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: s => (
-        <StatusBadge status={s} />
-      ),
+      render: s => <StatusBadge status={s} />,
     },
     {
       title: '位置',
@@ -118,7 +150,9 @@ export default function HazardManagement() {
       key: 'location',
       render: t => (
         <div style={styles.locationCell}>
-          <EnvironmentOutlined style={{ color: 'var(--color-on-surface-variant)', marginRight: 4 }} />
+          <EnvironmentOutlined
+            style={{ color: 'var(--color-on-surface-variant)', marginRight: 4 }}
+          />
           {t || '-'}
         </div>
       ),
@@ -129,7 +163,11 @@ export default function HazardManagement() {
       key: 'reporter_name',
       render: t => (
         <div style={styles.reporterCell}>
-          <Avatar size="small" icon={<UserOutlined />} style={{ background: 'var(--color-primary)' }} />
+          <Avatar
+            size="small"
+            icon={<UserOutlined />}
+            style={{ background: 'var(--color-primary)' }}
+          />
           <span>{t || '-'}</span>
         </div>
       ),
@@ -139,9 +177,7 @@ export default function HazardManagement() {
       dataIndex: 'created_at',
       key: 'created_at',
       render: t => (
-        <span style={styles.timeCell}>
-          {t ? new Date(t).toLocaleString('zh-CN') : '-'}
-        </span>
+        <span style={styles.timeCell}>{t ? new Date(t).toLocaleString('zh-CN') : '-'}</span>
       ),
     },
     {
@@ -165,25 +201,39 @@ export default function HazardManagement() {
 
       {/* 状态统计卡片 */}
       <Row gutter={[12, 12]} style={{ marginBottom: 20 }}>
-        {Object.entries(STATUS_MAP).slice(0, 4).map(([k, v]) => (
-          <Col xs={12} sm={6} key={k}>
-            <div 
-              style={{ 
-                ...styles.statCard,
-                background: filters.status === k ? v.bg : 'var(--color-surface-container-lowest)',
-                cursor: 'pointer',
-              }}
-              onClick={() => setFilters(f => ({ ...f, status: filters.status === k ? undefined : k }))}
-            >
-              <div style={{ ...styles.statCount, color: filters.status === k ? v.color : 'var(--color-on-surface)' }}>
-                {statusCounts[k]}
+        {Object.entries(STATUS_MAP)
+          .slice(0, 4)
+          .map(([k, v]) => (
+            <Col xs={12} sm={6} key={k}>
+              <div
+                style={{
+                  ...styles.statCard,
+                  background: filters.status === k ? v.bg : 'var(--color-surface-container-lowest)',
+                  cursor: 'pointer',
+                }}
+                onClick={() =>
+                  setFilters(f => ({ ...f, status: filters.status === k ? undefined : k }))
+                }
+              >
+                <div
+                  style={{
+                    ...styles.statCount,
+                    color: filters.status === k ? v.color : 'var(--color-on-surface)',
+                  }}
+                >
+                  {statusCounts[k]}
+                </div>
+                <div
+                  style={{
+                    ...styles.statLabel,
+                    color: filters.status === k ? v.color : 'var(--color-on-surface-variant)',
+                  }}
+                >
+                  {v.label}
+                </div>
               </div>
-              <div style={{ ...styles.statLabel, color: filters.status === k ? v.color : 'var(--color-on-surface-variant)' }}>
-                {v.label}
-              </div>
-            </div>
-          </Col>
-        ))}
+            </Col>
+          ))}
       </Row>
 
       {/* 筛选栏 */}
@@ -205,22 +255,24 @@ export default function HazardManagement() {
           />
         </div>
         <div style={styles.filterRight}>
-          <SearchInput 
-            placeholder="搜索隐患描述、编号..." 
+          <SearchInput
+            placeholder="搜索隐患描述、编号..."
             value={searchText}
             onChange={setSearchText}
           />
-          <Button onClick={load} style={{ marginLeft: 8 }}>刷新</Button>
+          <Button onClick={load} style={{ marginLeft: 8 }}>
+            刷新
+          </Button>
         </div>
       </div>
 
       {/* 隐患列表 */}
       <div style={styles.tableCard}>
-        <Table 
-          dataSource={filteredData} 
-          columns={columns} 
-          rowKey="id" 
-          loading={loading} 
+        <Table
+          dataSource={filteredData}
+          columns={columns}
+          rowKey="id"
+          loading={loading}
           pagination={{
             current: page,
             pageSize: 20,
@@ -245,10 +297,22 @@ export default function HazardManagement() {
             {/* 头部信息 */}
             <div style={styles.detailHeader}>
               <div style={styles.detailTypeRow}>
-                <Tag style={{ ...styles.detailTag, background: TYPE_MAP[detail.type]?.bg, color: TYPE_MAP[detail.type]?.color }}>
+                <Tag
+                  style={{
+                    ...styles.detailTag,
+                    background: TYPE_MAP[detail.type]?.bg,
+                    color: TYPE_MAP[detail.type]?.color,
+                  }}
+                >
                   {TYPE_MAP[detail.type]?.icon} {TYPE_MAP[detail.type]?.label}
                 </Tag>
-                <Tag style={{ ...styles.detailTag, background: URGENCY_MAP[detail.urgency]?.bg, color: URGENCY_MAP[detail.urgency]?.color }}>
+                <Tag
+                  style={{
+                    ...styles.detailTag,
+                    background: URGENCY_MAP[detail.urgency]?.bg,
+                    color: URGENCY_MAP[detail.urgency]?.color,
+                  }}
+                >
                   {URGENCY_MAP[detail.urgency]?.label}
                 </Tag>
                 <StatusBadge status={detail.status} />
@@ -268,7 +332,11 @@ export default function HazardManagement() {
                 {detail.description || '-'}
               </Descriptions.Item>
               <Descriptions.Item label={<span style={styles.detailLabel}>上报人</span>}>
-                <Avatar size="small" icon={<UserOutlined />} style={{ marginRight: 8, background: 'var(--color-primary)' }} />
+                <Avatar
+                  size="small"
+                  icon={<UserOutlined />}
+                  style={{ marginRight: 8, background: 'var(--color-primary)' }}
+                />
                 {detail.reporter_name || '-'}
               </Descriptions.Item>
               <Descriptions.Item label={<span style={styles.detailLabel}>上报时间</span>}>
@@ -281,10 +349,10 @@ export default function HazardManagement() {
 
             {/* 验收按钮 */}
             {detail.status === 'pending_verify' && (
-              <Button 
-                type="primary" 
-                icon={<CheckCircleOutlined />} 
-                block 
+              <Button
+                type="primary"
+                icon={<CheckCircleOutlined />}
+                block
                 size="large"
                 onClick={() => handleVerify(detail.id)}
                 style={styles.verifyBtn}

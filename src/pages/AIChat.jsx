@@ -4,7 +4,13 @@
  */
 import React, { useState, useRef, useEffect } from 'react'
 import { Input, Button, Avatar, Spin, List } from 'antd'
-import { RobotOutlined, UserOutlined, SendOutlined, BulbOutlined, StarOutlined } from '@ant-design/icons'
+import {
+  RobotOutlined,
+  UserOutlined,
+  SendOutlined,
+  BulbOutlined,
+  StarOutlined,
+} from '@ant-design/icons'
 import { api } from '../api'
 import { PageHeader } from '../components/PMSComponents'
 
@@ -35,16 +41,22 @@ export default function AIChat() {
       })
       const data = res.data || res
       if (!sessionId && data.session_id) setSessionId(data.session_id)
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: data.answer || data,
-        sources: data.sources || [],
-      }])
-    } catch (e) {
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: '抱歉，AI 服务暂时不可用，请稍后再试。',
-      }])
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: data.answer || data,
+          sources: data.sources || [],
+        },
+      ])
+    } catch {
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: '抱歉，AI 服务暂时不可用，请稍后再试。',
+        },
+      ])
     } finally {
       setLoading(false)
     }
@@ -57,17 +69,23 @@ export default function AIChat() {
     { icon: '📈', text: '帮我分析最近的安全隐患趋势' },
   ]
 
-  const handleQuickAction = (text) => {
+  const handleQuickAction = text => {
     setInput(text)
     setMessages(prev => [...prev, { role: 'user', content: text }])
     setLoading(true)
-    api.post('/ai/chat', { message: text, use_rag: true })
+    api
+      .post('/ai/chat', { message: text, use_rag: true })
       .then(r => {
         const d = r.data || r
         setSessionId(d.session_id || sessionId)
-        setMessages(prev => [...prev, { role: 'assistant', content: d.answer || d, sources: d.sources || [] }])
+        setMessages(prev => [
+          ...prev,
+          { role: 'assistant', content: d.answer || d, sources: d.sources || [] },
+        ])
       })
-      .catch(() => setMessages(prev => [...prev, { role: 'assistant', content: '抱歉，AI 服务暂时不可用。' }]))
+      .catch(() =>
+        setMessages(prev => [...prev, { role: 'assistant', content: '抱歉，AI 服务暂时不可用。' }])
+      )
       .finally(() => setLoading(false))
   }
 
@@ -91,13 +109,17 @@ export default function AIChat() {
               </div>
               <h2 style={styles.welcomeTitle}>你好，我是 AI 助手</h2>
               <p style={styles.welcomeDesc}>我可以帮你分析数据、解答问题、提供建议</p>
-              
+
               {/* 快捷问题 */}
               <div style={styles.quickActions}>
                 <div style={styles.quickTitle}>试试这样问我：</div>
                 <div style={styles.quickGrid}>
                   {quickActions.map((q, i) => (
-                    <button key={i} style={styles.quickBtn} onClick={() => handleQuickAction(q.text)}>
+                    <button
+                      key={i}
+                      style={styles.quickBtn}
+                      onClick={() => handleQuickAction(q.text)}
+                    >
                       <span style={styles.quickIcon}>{q.icon}</span>
                       <span style={styles.quickText}>{q.text}</span>
                     </button>
@@ -109,18 +131,44 @@ export default function AIChat() {
             <List
               dataSource={messages}
               renderItem={msg => (
-                <List.Item style={{ ...styles.messageItem, justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
-                  <div style={{ ...styles.messageRow, flexDirection: msg.role === 'user' ? 'row-reverse' : 'row' }}>
-                    <Avatar 
-                      icon={msg.role === 'user' ? <UserOutlined /> : <RobotOutlined />} 
-                      style={{ ...styles.avatar, background: msg.role === 'user' ? 'var(--color-primary)' : 'var(--color-secondary-container)', color: msg.role === 'user' ? 'white' : 'var(--color-on-secondary-container)' }} 
+                <List.Item
+                  style={{
+                    ...styles.messageItem,
+                    justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                  }}
+                >
+                  <div
+                    style={{
+                      ...styles.messageRow,
+                      flexDirection: msg.role === 'user' ? 'row-reverse' : 'row',
+                    }}
+                  >
+                    <Avatar
+                      icon={msg.role === 'user' ? <UserOutlined /> : <RobotOutlined />}
+                      style={{
+                        ...styles.avatar,
+                        background:
+                          msg.role === 'user'
+                            ? 'var(--color-primary)'
+                            : 'var(--color-secondary-container)',
+                        color:
+                          msg.role === 'user' ? 'white' : 'var(--color-on-secondary-container)',
+                      }}
                     />
-                    <div style={{ ...styles.messageBubble, background: msg.role === 'user' ? 'var(--color-primary)' : 'var(--color-surface-container-lowest)', color: msg.role === 'user' ? 'white' : 'var(--color-on-surface)', ...(msg.role === 'user' ? styles.userBubble : styles.assistantBubble) }}>
+                    <div
+                      style={{
+                        ...styles.messageBubble,
+                        background:
+                          msg.role === 'user'
+                            ? 'var(--color-primary)'
+                            : 'var(--color-surface-container-lowest)',
+                        color: msg.role === 'user' ? 'white' : 'var(--color-on-surface)',
+                        ...(msg.role === 'user' ? styles.userBubble : styles.assistantBubble),
+                      }}
+                    >
                       {msg.content}
                       {msg.sources?.length > 0 && (
-                        <div style={styles.sources}>
-                          📚 参考：{msg.sources.join(', ')}
-                        </div>
+                        <div style={styles.sources}>📚 参考：{msg.sources.join(', ')}</div>
                       )}
                     </div>
                   </div>
@@ -143,15 +191,20 @@ export default function AIChat() {
             <TextArea
               value={input}
               onChange={e => setInput(e.target.value)}
-              onPressEnter={e => { if (!e.shiftKey) { e.preventDefault(); send() } }}
+              onPressEnter={e => {
+                if (!e.shiftKey) {
+                  e.preventDefault()
+                  send()
+                }
+              }}
               placeholder="输入问题，按 Enter 发送，Shift+Enter 换行..."
               autoSize={{ minRows: 1, maxRows: 4 }}
               style={styles.input}
             />
-            <Button 
-              type="primary" 
-              icon={<SendOutlined />} 
-              onClick={send} 
+            <Button
+              type="primary"
+              icon={<SendOutlined />}
+              onClick={send}
               loading={loading}
               style={styles.sendBtn}
             >

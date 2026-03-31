@@ -4,7 +4,16 @@
  */
 import React, { useState, useEffect } from 'react'
 import { Card, Button, Input, List, Space, Tag, Modal, Form, message } from 'antd'
-import { BookOutlined, PlusOutlined, SearchOutlined, FileTextOutlined, SafetyOutlined, TrophyOutlined, ReadOutlined, FileExcelOutlined } from '@ant-design/icons'
+import {
+  BookOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  FileTextOutlined,
+  SafetyOutlined,
+  TrophyOutlined,
+  ReadOutlined,
+  FileExcelOutlined,
+} from '@ant-design/icons'
 import { api } from '../api'
 import { PageHeader, EmptyState, SearchInput } from '../components/PMSComponents'
 
@@ -39,7 +48,9 @@ export default function KnowledgeBase() {
     }
   }
 
-  useEffect(() => { load() }, [keyword, category])
+  useEffect(() => {
+    load()
+  }, [keyword, category])
 
   const handleCreate = async () => {
     try {
@@ -49,7 +60,9 @@ export default function KnowledgeBase() {
       form.resetFields()
       setCreateOpen(false)
       load()
-    } catch (e) { message.error('创建失败') }
+    } catch {
+      message.error('创建失败')
+    }
   }
 
   // 分类筛选
@@ -75,15 +88,11 @@ export default function KnowledgeBase() {
       {/* 搜索栏 */}
       <div style={styles.searchBar}>
         <div style={styles.searchLeft}>
-          <SearchInput 
-            placeholder="搜索文档标题、内容..." 
-            value={keyword}
-            onChange={setKeyword}
-          />
+          <SearchInput placeholder="搜索文档标题、内容..." value={keyword} onChange={setKeyword} />
         </div>
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />} 
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
           onClick={() => setCreateOpen(true)}
           style={styles.createBtn}
         >
@@ -98,19 +107,30 @@ export default function KnowledgeBase() {
             key={cat.key || 'all'}
             style={{
               ...styles.categoryTag,
-              background: (category === cat.key) ? (cat.bg || 'var(--color-primary-container)') : 'var(--color-surface-container-lowest)',
-              color: (category === cat.key) ? (cat.color || 'var(--color-primary)') : 'var(--color-on-surface-variant)',
+              background:
+                category === cat.key
+                  ? cat.bg || 'var(--color-primary-container)'
+                  : 'var(--color-surface-container-lowest)',
+              color:
+                category === cat.key
+                  ? cat.color || 'var(--color-primary)'
+                  : 'var(--color-on-surface-variant)',
               cursor: 'pointer',
             }}
             onClick={() => setCategory(cat.key)}
           >
             {cat.icon && <span style={{ marginRight: 6 }}>{cat.icon}</span>}
             <span>{cat.label}</span>
-            <span style={{ 
-              ...styles.catCount,
-              background: (category === cat.key) ? (cat.color || 'var(--color-primary)') : 'var(--color-surface-container)',
-              color: (category === cat.key) ? 'white' : 'var(--color-on-surface-variant)'
-            }}>
+            <span
+              style={{
+                ...styles.catCount,
+                background:
+                  category === cat.key
+                    ? cat.color || 'var(--color-primary)'
+                    : 'var(--color-surface-container)',
+                color: category === cat.key ? 'white' : 'var(--color-on-surface-variant)',
+              }}
+            >
               {cat.key ? stats[cat.key] || 0 : docs.length}
             </span>
           </div>
@@ -122,7 +142,7 @@ export default function KnowledgeBase() {
         {loading ? (
           <div style={styles.loading}>加载中...</div>
         ) : docs.length === 0 ? (
-          <EmptyState 
+          <EmptyState
             icon="📚"
             title="暂无文档"
             description={'点击上方"新建文档"创建第一篇知识文档'}
@@ -131,16 +151,25 @@ export default function KnowledgeBase() {
           <List
             dataSource={docs}
             renderItem={doc => (
-              <List.Item 
+              <List.Item
                 style={styles.listItem}
                 actions={[
-                  <Button key="view" type="link" style={styles.viewBtn}>查看</Button>,
-                  <Button key="edit" type="link" style={styles.editBtn}>编辑</Button>,
+                  <Button key="view" type="link" style={styles.viewBtn}>
+                    查看
+                  </Button>,
+                  <Button key="edit" type="link" style={styles.editBtn}>
+                    编辑
+                  </Button>,
                 ]}
               >
                 <List.Item.Meta
                   avatar={
-                    <div style={{ ...styles.docIcon, background: CATEGORY_MAP[doc.category]?.bg || '#f3f4f6' }}>
+                    <div
+                      style={{
+                        ...styles.docIcon,
+                        background: CATEGORY_MAP[doc.category]?.bg || '#f3f4f6',
+                      }}
+                    >
                       <span style={{ color: CATEGORY_MAP[doc.category]?.color || '#6b7280' }}>
                         {CATEGORY_MAP[doc.category]?.icon || <FileTextOutlined />}
                       </span>
@@ -149,12 +178,14 @@ export default function KnowledgeBase() {
                   title={<span style={styles.docTitle}>{doc.title}</span>}
                   description={
                     <Space size={12}>
-                      <Tag style={{ 
-                        ...styles.catTag, 
-                        background: CATEGORY_MAP[doc.category]?.bg || '#f3f4f6', 
-                        color: CATEGORY_MAP[doc.category]?.color || '#6b7280',
-                        border: 'none',
-                      }}>
+                      <Tag
+                        style={{
+                          ...styles.catTag,
+                          background: CATEGORY_MAP[doc.category]?.bg || '#f3f4f6',
+                          color: CATEGORY_MAP[doc.category]?.color || '#6b7280',
+                          border: 'none',
+                        }}
+                      >
                         {CATEGORY_MAP[doc.category]?.label || doc.category}
                       </Tag>
                       <span style={styles.docDate}>
