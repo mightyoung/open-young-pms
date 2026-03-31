@@ -14,21 +14,9 @@ import {
   Col,
   Typography,
   Divider,
-  Timeline,
-  Tabs,
   Progress,
 } from 'antd'
-import {
-  PlusOutlined,
-  FileTextOutlined,
-  DollarOutlined,
-  CalendarOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  ExclamationCircleOutlined,
-} from '@ant-design/icons'
+import { PlusOutlined, EditOutlined } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 
 const { Title, Text } = Typography
@@ -160,7 +148,7 @@ const MOCK_CONTRACTS = [
   },
 ]
 
-const MOCK_FLOWS = [
+const _MOCK_FLOWS = [
   {
     contract: 'CTR-SUP-2026-001',
     events: [
@@ -181,7 +169,6 @@ function va(i = 0) {
 }
 
 export default function Contracts() {
-  const [tab, setTab] = useState('list')
   const [data] = useState(MOCK_CONTRACTS)
   const [modalOpen, setModalOpen] = useState(false)
   const [detailOpen, setDetailOpen] = useState(false)

@@ -1,22 +1,18 @@
 import React, { useState } from 'react'
-import { Layout, Menu, Input, Badge, Avatar, Dropdown, Button, Tooltip, Tour } from 'antd'
+import { Layout, Menu, Input, Badge, Avatar, Button, Tooltip } from 'antd'
 import {
   LayoutDashboard,
   Kanban,
-  Calendar,
   BarChart3,
   Activity,
   BarChart,
   FolderKanban,
   AlertTriangle,
   Shield,
-  FileSearch,
   GitBranch,
   ClipboardList,
   FileText,
-  PieChart,
   CheckCircle2,
-  Clock,
   MessageCircle,
   BookOpen,
   FileText as FileTextIcon,
@@ -25,16 +21,10 @@ import {
   UserCog,
   Bell,
   Search,
-  LogOut,
-  User,
   Cog,
   Database,
-  Printer,
-  Clipboard,
-  BellRing,
   Truck,
   Flag,
-  MessageSquare,
 } from 'lucide-react'
 
 const { Sider, Header, Content } = Layout

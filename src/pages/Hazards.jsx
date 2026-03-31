@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState } from 'react'
 import {
   Card,
   Tag,
@@ -8,16 +8,13 @@ import {
   Modal,
   Form,
   Input,
-  InputNumber,
   Upload,
   message,
   Row,
   Col,
   Typography,
   Avatar,
-  Tabs,
   Divider,
-  Tooltip,
   Timeline,
 } from 'antd'
 import {
@@ -25,12 +22,9 @@ import {
   CameraOutlined,
   EnvironmentOutlined,
   SendOutlined,
-  LoadingOutlined,
   DeleteOutlined,
   PictureOutlined,
   CheckCircleOutlined,
-  ClockCircleOutlined,
-  ExclamationCircleOutlined,
 } from '@ant-design/icons'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -189,7 +183,7 @@ function va(i = 0) {
   }
 }
 
-function StatCard({ title, value, color, bg }) {
+function StatCard({ title, value, color, _bg }) {
   return (
     <div
       style={{
@@ -206,7 +200,7 @@ function StatCard({ title, value, color, bg }) {
   )
 }
 
-function PhotoCard({ url, onRemove }) {
+function PhotoCard({ _url, onRemove }) {
   return (
     <div
       style={{

@@ -19,26 +19,8 @@ import {
   message,
   Statistic,
 } from 'antd'
+import { Database, CheckCircle2, Lock, Setting, Plus, Edit2, Eye, FileSearch } from 'lucide-react'
 import {
-  Database,
-  Shield,
-  CheckCircle2,
-  AlertTriangle,
-  Clock,
-  Lock,
-  Unlock,
-  Setting,
-  Plus,
-  Edit2,
-  Eye,
-  FileSearch,
-} from 'lucide-react'
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
   ResponsiveContainer,
   RadarChart,
   PolarGrid,
@@ -47,7 +29,7 @@ import {
   Radar,
 } from 'recharts'
 
-const { Title, Text, Paragraph } = Typography
+const { Title, Text } = Typography
 
 const COLORS = {
   primary: '#115cb9',
@@ -183,7 +165,7 @@ const DICT_ITEMS = [
   },
 ]
 
-const QUALITY_TREND = [
+const _QUALITY_TREND = [
   { month: '1月', completeness: 90, accuracy: 85, consistency: 95, timeliness: 82 },
   { month: '2月', completeness: 92, accuracy: 87, consistency: 96, timeliness: 85 },
   { month: '3月', completeness: 95, accuracy: 89, consistency: 97, timeliness: 88 },
@@ -200,7 +182,7 @@ export default function DataGovernanceEnhanced() {
       dataIndex: 'name',
       key: 'name',
       width: 200,
-      render: (text, record) => (
+      render: (text, _record) => (
         <Space>
           <Database size={14} color={COLORS.primary} />
           <span style={{ fontWeight: 500 }}>{text}</span>
@@ -264,7 +246,7 @@ export default function DataGovernanceEnhanced() {
     },
   ]
 
-  const radarData = [
+  const _radarData = [
     { subject: '完整性', value: DATA_QUALITY.completeness, fullMark: 100 },
     { subject: '准确性', value: DATA_QUALITY.accuracy, fullMark: 100 },
     { subject: '一致性', value: DATA_QUALITY.consistency, fullMark: 100 },

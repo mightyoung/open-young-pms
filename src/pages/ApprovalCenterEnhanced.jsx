@@ -6,36 +6,18 @@ import {
   Space,
   Button,
   Modal,
-  Form,
-  Select,
   Input,
-  DatePicker,
   Row,
   Col,
   Typography,
-  Progress,
-  Badge,
   Avatar,
-  Divider,
   Tabs,
   Statistic,
   message,
-  Steps,
 } from 'antd'
-import {
-  CheckCircle2,
-  Clock,
-  XCircle,
-  User,
-  FileText,
-  AlertTriangle,
-  Send,
-  Eye,
-  ArrowRight,
-} from 'lucide-react'
-import { TimelineChart, Timeline } from '@ant-design/charts'
+import { CheckCircle2, Clock, XCircle, User, Eye, ArrowRight } from 'lucide-react'
 
-const { Title, Text, Paragraph } = Typography
+const { Title, Text } = Typography
 const { TextArea } = Input
 
 const COLORS = {
@@ -148,11 +130,11 @@ export default function ApprovalCenterEnhanced() {
   const [detailModal, setDetailModal] = useState(false)
   const [selectedApproval, setSelectedApproval] = useState(null)
 
-  const handleApprove = id => {
+  const handleApprove = _id => {
     message.success('审批通过')
   }
 
-  const handleReject = id => {
+  const handleReject = _id => {
     message.success('已驳回')
   }
 

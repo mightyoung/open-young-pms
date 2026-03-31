@@ -9,7 +9,6 @@ import {
   Form,
   Input,
   Select,
-  InputNumber,
   DatePicker,
   Row,
   Col,
@@ -18,36 +17,13 @@ import {
   Badge,
   Tooltip,
   Tree,
-  Divider,
   message,
 } from 'antd'
-import {
-  Plus,
-  Edit2,
-  Trash2,
-  CheckCircle2,
-  Clock,
-  User,
-  Calendar,
-  FolderTree,
-  GanttChart,
-  Filter,
-  Export,
-} from 'lucide-react'
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-} from 'recharts'
+import { Plus, Edit2, Trash2, FolderTree, GanttChart, Export } from 'lucide-react'
+import { XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from 'recharts'
 import { measureText } from '../utils/pretextMeasure'
 
 const { Title, Text } = Typography
-const { TextArea } = Input
 const { RangePicker } = DatePicker
 
 const COLORS = {
@@ -217,7 +193,7 @@ export default function TaskManagement() {
   const [loading, setLoading] = useState(false)
 
   // Pretext: pre-compute row heights for virtual scrolling optimization
-  const taskRowMetrics = useMemo(() => {
+  const _taskRowMetrics = useMemo(() => {
     return tasks.map(task => {
       const titleMetrics = measureText(task.title, '500 14px Inter, sans-serif', 140)
       return {

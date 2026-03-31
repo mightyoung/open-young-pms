@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import {
   Card,
   Table,
@@ -15,12 +15,8 @@ import {
   Col,
   Avatar,
   Tooltip,
-  Divider,
   Typography,
   Progress,
-  DatePicker,
-  Tabs,
-  List,
 } from 'antd'
 import {
   PlusOutlined,
@@ -28,11 +24,10 @@ import {
   EditOutlined,
   DeleteOutlined,
   TeamOutlined,
-  SettingOutlined,
   BuildOutlined,
   SafetyOutlined,
 } from '@ant-design/icons'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 const { Title, Text } = Typography
 const { TextArea } = Input
@@ -60,7 +55,7 @@ const PROJ_STATUS = {
   closed: { label: '已关闭', bg: '#f3f4f6', color: '#6b7280' },
 }
 
-const PARTY_TYPE = {
+const _PARTY_TYPE = {
   party_a: { label: '甲方', bg: '#dbeafe', color: '#1e40af' },
   party_b: { label: '乙方', bg: '#dcfce7', color: '#166534' },
 }
@@ -223,9 +218,8 @@ function StatCard({ title, value, color, icon }) {
 }
 
 export default function Projects() {
-  const [tab, setTab] = useState('list')
   const [data, setData] = useState(MOCK_PROJECTS)
-  const [loading, setLoading] = useState(false)
+  const [loading] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [detailOpen, setDetailOpen] = useState(false)
   const [membersOpen, setMembersOpen] = useState(false)
@@ -424,7 +418,7 @@ export default function Projects() {
             color: D.primary,
             icon: <SafetyOutlined />,
           },
-        ].map((c, i) => (
+        ].map((c, _i) => (
           <Col xs={12} sm={6} key={c.title}>
             <StatCard {...c} />
           </Col>

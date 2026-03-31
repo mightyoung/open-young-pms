@@ -6,10 +6,7 @@ import {
   Button,
   Space,
   Modal,
-  Form,
-  Select,
   Input,
-  Divider,
   Typography,
   Avatar,
   Tabs,
@@ -17,16 +14,11 @@ import {
   message,
   Row,
   Col,
-  Steps,
   Timeline,
-  Empty,
 } from 'antd'
 import {
   CheckOutlined,
   CloseOutlined,
-  ClockCircleOutlined,
-  SendOutlined,
-  ExclamationCircleOutlined,
   SafetyOutlined,
   FileTextOutlined,
   BuildOutlined,
@@ -220,7 +212,6 @@ function AvatarChip({ name, size = 32 }) {
 export default function ApprovalCenter() {
   const [tab, setTab] = useState('todo')
   const [detailOpen, setDetailOpen] = useState(false)
-  const [workflowOpen, setWorkflowOpen] = useState(false)
   const [selected, setSelected] = useState(null)
   const [rejectReason, setRejectReason] = useState('')
 
@@ -236,7 +227,7 @@ export default function ApprovalCenter() {
       },
     })
   }
-  const handleReject = item => {
+  const handleReject = _item => {
     Modal.confirm({
       title: '确认驳回',
       content: (
