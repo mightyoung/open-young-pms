@@ -1,4 +1,9 @@
-"""AI 助手路由 — RAG 问答 + 闲聊"""
+"""AI 助手路由 — RAG 问答 + 闲聊
+
+DEPRECATED: This router duplicates routers.ai (Layer 2).
+Use routers.ai ("AI助手V2") as the canonical implementation.
+Will be removed in a future release after routes are consolidated.
+"""
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from api.services.fastapi_code_generator.auth import get_current_user

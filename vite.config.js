@@ -1,6 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// API proxy target — must match backend port (see README.md §端口规范)
+const API_PROXY_TARGET = 'http://localhost:8001'
+
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -8,7 +11,7 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:8001',
+        target: API_PROXY_TARGET,
         changeOrigin: true,
       },
     },

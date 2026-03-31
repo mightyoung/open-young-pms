@@ -1,4 +1,4 @@
-import { usePermission } from '../../contexts/PermissionContext'
+import { usePermission } from '../../hooks/usePermission'
 
 /**
  * PermissionGate - 权限门控组件

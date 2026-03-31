@@ -1,1 +1,0 @@
-const f={bg:{base:"#f5f7fa",page:"#f5f7fa",card:"#ffffff",elevated:"#ffffff",border:"#e5e7eb"},accent:"#115cb9",success:"#52c41a",warning:"#faad14",danger:"#ff4d4f",text:{primary:"#1a1a2e",secondary:"#5f5f61",muted:"#8c8c8c",disabled:"#bfbfbf"}};export{f as c};

@@ -2,40 +2,30 @@
  * 登录页 - 蓝白主题
  * 更新时间: 2026-03-30
  */
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
 
-export default function Login({ onLogin }) {
-  const [username, setUsername] = useState('')
+export default function Login() {
+  const navigate = useNavigate()
+  const { login, rememberedUser } = useAuth()
+  const [username, setUsername] = useState(() => rememberedUser || '')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [rememberMe, setRememberMe] = useState(false)
+  const [rememberMe, setRememberMe] = useState(Boolean(rememberedUser))
+
+  const hint = useMemo(() => '演示账号: admin | 密码: admin123', [])
 
   const handleLogin = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError('')
+
     try {
-      // 演示模式：前端校验 admin / admin123
-      if (username === 'admin' && password === 'admin123') {
-        const mockToken = 'demo_token_' + Date.now()
-        const mockUser = { id: 1, name: '管理员', role: 'admin' }
-        localStorage.setItem('token', mockToken)
-        localStorage.setItem('user', JSON.stringify(mockUser))
-        if (rememberMe) localStorage.setItem('rememberedUser', username)
-        onLogin()
-        return
-      }
-      // 非演示账号，走 API
-      const { api } = await import('../api')
-      const data = await api.login(username, password)
-      if (data?.access_token) {
-        localStorage.setItem('token', data.access_token)
-        localStorage.setItem('user', JSON.stringify(data.user))
-        if (rememberMe) localStorage.setItem('rememberedUser', username)
-        onLogin()
-      }
+      await login({ username, password, rememberMe })
+      navigate('/dashboard', { replace: true })
     } catch (err) {
       setError(err.message || '登录失败，请检查用户名和密码')
     } finally {
@@ -119,7 +109,7 @@ export default function Login({ onLogin }) {
         </form>
 
         <div style={styles.footer}>
-          <span style={styles.hint}>演示账号: admin | 密码: admin123</span>
+          <span style={styles.hint}>{hint}</span>
         </div>
       </div>
     </div>

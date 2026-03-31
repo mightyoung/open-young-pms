@@ -1,14 +1,17 @@
-"""Database configuration — uses SQLite for demo, PostgreSQL for production."""
+"""Database configuration — PostgreSQL only. No SQLite fallback."""
 
 import os
+from typing import AsyncGenerator
 
 from sqlalchemy import create_engine, String
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.types import TypeDecorator, CHAR
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import Session, sessionmaker
 
 
 class GUID(TypeDecorator):
-    """Platform-independent GUID type — stores as String(36) in SQLite, native UUID in PostgreSQL."""
+    """Platform-independent GUID type."""
     impl = CHAR(36)
     cache_ok = True
 
@@ -24,79 +27,67 @@ class GUID(TypeDecorator):
             return str(value)
         return value
 
+
 class Base(DeclarativeBase):
     pass
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-USE_SQLITE = os.environ.get("USE_SQLITE", "true").lower() in ("true", "1", "yes")
 
-if USE_SQLITE:
-    DATABASE_URL = "sqlite+aiosqlite:///./pms_demo.db"
-    _sqlite_engine = create_async_engine(DATABASE_URL, echo=False)
-    _sqlite_maker = async_sessionmaker(_sqlite_engine, class_=AsyncSession, expire_on_commit=False)
+DATABASE_URL = os.environ.get(
+    "DATABASE_URL",
+    "postgresql+asyncpg://postgres:postgres@localhost:5432/pms"
+)
 
-    async def init_db() -> None:
-        from api.services.fastapi_code_generator.models import Base as ModelBase
-        async with _sqlite_engine.begin() as conn:
-            await conn.run_sync(ModelBase.metadata.create_all)
-else:
-    DATABASE_URL = os.environ.get(
-        "DATABASE_URL",
-        "postgresql+asyncpg://postgres:postgres@localhost:5432/pms"
-    )
-    _pg_engine = None
-    _pg_maker = None
+_async_engine = None
+_async_session_factory = None
 
-    async def init_db() -> None:
+
+def _get_async_engine():
+    global _async_engine
+    if _async_engine is None:
+        _async_engine = create_async_engine(DATABASE_URL, echo=False, pool_size=20, max_overflow=10)
+    return _async_engine
+
+
+def _get_async_session_factory():
+    global _async_session_factory
+    if _async_session_factory is None:
+        _async_session_factory = async_sessionmaker(
+            _get_async_engine(),
+            class_=AsyncSession,
+            expire_on_commit=False,
+        )
+    return _async_session_factory
+
+
+async def init_db() -> None:
+    """Initialize database tables. Raises exception on failure — no silent fallback."""
+    from api.services.fastapi_code_generator.models import Base as ModelBase
+    engine = _get_async_engine()
+    async with engine.begin() as conn:
+        await conn.run_sync(ModelBase.metadata.create_all)
+
+
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    """Async dependency for FastAPI — single canonical session factory."""
+    factory = _get_async_session_factory()
+    async with factory() as session:
         try:
-            from api.services.fastapi_code_generator.models import Base as ModelBase
-            global _pg_engine, _pg_maker
-            _pg_engine = create_async_engine(DATABASE_URL, echo=False, pool_size=20, max_overflow=10)
-            _pg_maker = async_sessionmaker(_pg_engine, class_=AsyncSession, expire_on_commit=False)
-            async with _pg_engine.begin() as conn:
-                await conn.run_sync(ModelBase.metadata.create_all)
-            print("Database tables created successfully.")
-        except Exception as e:
-            print(f"Database initialization skipped (no connection): {e}")
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
 
 
-async def get_db() -> AsyncSession:
-    """Async dependency for FastAPI."""
-    if USE_SQLITE:
-        async with _sqlite_maker() as session:
-            try:
-                yield session
-                await session.commit()
-            except Exception:
-                await session.rollback()
-                raise
-            finally:
-                await session.close()
-    else:
-        global _pg_maker
-        if _pg_maker is None:
-            _pg_maker = async_sessionmaker(
-                create_async_engine(DATABASE_URL, echo=False, pool_size=20, max_overflow=10),
-                class_=AsyncSession, expire_on_commit=False
-            )
-        async with _pg_maker() as session:
-            try:
-                yield session
-                await session.commit()
-            except Exception:
-                await session.rollback()
-                raise
-            finally:
-                await session.close()
-
-
-_sync_url = "sqlite:///./pms_demo.db"
-_sync_engine = create_engine(_sync_url, pool_size=5)
-from sqlalchemy.orm import sessionmaker
+# Sync engine only for migrations/CLI — uses same URL as async
+_sync_engine = create_engine(DATABASE_URL.replace("+asyncpg", "").replace("postgresql+asyncpg", "postgresql"), pool_size=5)
 SyncSessionLocal = sessionmaker(_sync_engine, autocommit=False, autoflush=False)
 
 
-def get_sync_db():
+def get_sync_db() -> Session:
+    """Sync dependency for background tasks / migrations."""
     db = SyncSessionLocal()
     try:
         yield db

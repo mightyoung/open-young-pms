@@ -1,13 +1,23 @@
 import { createContext, useContext, useMemo } from 'react'
-import { PERMISSION_MATRIX, ROLE_HOME_ROUTES, ROLE_LABELS } from '../constants/permissions'
+import { PERMISSION_MATRIX, ROLE_HOME_ROUTES, ROLE_LABELS, ROLES } from '../constants/permissions'
 
 const PermissionContext = createContext(null)
+const ROLE_ALIASES = {
+  admin: ROLES.SUPER_ADMIN,
+}
+
+function normalizeRole(role) {
+  if (!role) return ''
+  return ROLE_ALIASES[role] || role
+}
 
 export function PermissionProvider({ user, children }) {
+  const normalizedRole = useMemo(() => normalizeRole(user?.role), [user?.role])
+
   const permissions = useMemo(() => {
-    if (!user?.role) return []
-    return PERMISSION_MATRIX[user.role] || []
-  }, [user?.role])
+    if (!normalizedRole) return []
+    return PERMISSION_MATRIX[normalizedRole] || []
+  }, [normalizedRole])
 
   const can = (action, resource) => {
     const required = resource ? `${action}:${resource}` : action
@@ -38,26 +48,26 @@ export function PermissionProvider({ user, children }) {
   }
 
   const homeRoute = useMemo(() => {
-    if (!user?.role) return '/login'
-    return ROLE_HOME_ROUTES[user.role] || '/'
-  }, [user?.role])
+    if (!normalizedRole) return '/login'
+    return ROLE_HOME_ROUTES[normalizedRole] || '/dashboard'
+  }, [normalizedRole])
 
   const roleLabel = useMemo(() => {
-    if (!user?.role) return ''
-    return ROLE_LABELS[user.role] || user.role
-  }, [user?.role])
+    if (!normalizedRole) return ''
+    return ROLE_LABELS[normalizedRole] || user?.role || normalizedRole
+  }, [normalizedRole, user?.role])
 
   const value = useMemo(() => ({
     user,
     permissions,
-    role: user?.role,
+    role: normalizedRole,
     roleLabel,
     can,
     canAny,
     canAll,
     canAccessProject,
     homeRoute,
-  }), [user, permissions, roleLabel, homeRoute])
+  }), [user, permissions, normalizedRole, roleLabel, homeRoute])
 
   return (
     <PermissionContext.Provider value={value}>

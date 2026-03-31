@@ -1,15 +1,19 @@
 """Permission middleware — JWT validation + user injection into request.state."""
 
+import os
 from typing import Callable
-from uuid import UUID
 
 from fastapi import HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
+from sqlalchemy import select
 from starlette.middleware.base import BaseHTTPMiddleware
 
-SECRET_KEY = "pms-secret-key-change-in-production"
-ALGORITHM = "HS256"
+SECRET_KEY = os.getenv("JWT_SECRET", os.getenv("JWT_SECRET_KEY", ""))
+if not SECRET_KEY:
+    raise RuntimeError("JWT_SECRET or JWT_SECRET_KEY environment variable must be set")
+
+ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
 _bearer = HTTPBearer(auto_error=False)
 
@@ -22,7 +26,11 @@ def decode_token(token: str) -> dict:
 
 
 async def get_current_user_from_request(request: Request):
-    """Extract user from Authorization header, validate JWT, and load from DB."""
+    """Extract user from Authorization header, validate JWT, and load from DB.
+
+    Uses the same database as the business layer (not a separate SQLite).
+    Raises 401 if token is invalid or user does not exist.
+    """
     credentials: HTTPAuthorizationCredentials | None = await _bearer(request)
     if not credentials:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing Authorization header")
@@ -30,17 +38,20 @@ async def get_current_user_from_request(request: Request):
     user_id = payload.get("sub")
     if not user_id:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload")
-    from api.services.fastapi_code_generator.database import get_sync_db
+
+    from api.services.fastapi_code_generator.database import get_db
     from api.services.fastapi_code_generator.models import User
-    db_gen = get_sync_db()
-    db = next(db_gen)
-    try:
-        result = db.query(User).filter(User.id == user_id).first()
-    finally:
-        db.close()
-    if not result:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
-    return result
+    from uuid import UUID
+
+    async for db in get_db():
+        try:
+            result = await db.execute(select(User).where(User.id == UUID(user_id)))
+            user = result.scalar_one_or_none()
+            if not user:
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+            return user
+        finally:
+            await db.close()
 
 
 class PermissionMiddleware(BaseHTTPMiddleware):

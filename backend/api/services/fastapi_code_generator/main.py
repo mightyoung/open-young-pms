@@ -1,5 +1,10 @@
-"""FastAPI main application — generated from PRD."""
+"""FastAPI main application — generated from PRD.
 
+NOTE: This file is a standalone generated app. The actual running application
+is at backend/main.py. This file is not imported and is kept for reference only.
+"""
+
+import os
 from contextlib import asynccontextmanager
 from datetime import datetime
 
@@ -23,13 +28,8 @@ from api.services.fastapi_code_generator.routers import (
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup and shutdown events."""
-    # Startup
-    try:
-        init_db()
-    except Exception as e:
-        print(f"DB init skipped: {e}")
+    await init_db()
     yield
-    # Shutdown
     print("Shutting down...")
 
 
@@ -42,12 +42,15 @@ app = FastAPI(
 
 # ── Middleware ────────────────────────────────────────────────
 
+_cors_origins = os.getenv("CORS_ORIGINS", "").split(",") if os.getenv("CORS_ORIGINS") else []
+if not _cors_origins:
+    _cors_origins = ["http://localhost:5173", "http://localhost:3000"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
 )
 
 
