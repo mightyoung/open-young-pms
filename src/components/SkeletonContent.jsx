@@ -35,7 +35,7 @@ function SkeletonTable({ rows = 5, cols = 4 }) {
       loading
       rowKey="key"
       pagination={false}
-      columns={Array.from({ length: cols }).map((_, i) => ({
+      columns={Array.from({ length: cols }).map(_ => ({
         title: <Skeleton.Input active size="small" style={{ width: 60 }} />,
         render: () => <Skeleton.Input active size="small" style={{ width: '80%' }} />,
       }))}

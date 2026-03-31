@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Menu, Search, RefreshCw, Filter, Bell, User } from 'lucide-react'
+import { Menu, Search, RefreshCw, Filter, Bell } from 'lucide-react'
 import { Badge, Dropdown } from 'antd'
 import { currentUser } from '../data'
 

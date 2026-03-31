@@ -4,13 +4,7 @@
  */
 import React, { useState, useRef, useEffect } from 'react'
 import { Input, Button, Avatar, Spin, List } from 'antd'
-import {
-  RobotOutlined,
-  UserOutlined,
-  SendOutlined,
-  BulbOutlined,
-  StarOutlined,
-} from '@ant-design/icons'
+import { RobotOutlined, UserOutlined, SendOutlined, StarOutlined } from '@ant-design/icons'
 import { api } from '../api'
 import { PageHeader } from '../components/PMSComponents'
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { colors } from '../styles/theme'
 import { Card, Row, Col, Statistic, Typography, Select, Table, Tag, Progress } from 'antd'
 import {
@@ -19,7 +19,7 @@ export default function ReportStats() {
   const [recent, setRecent] = useState([])
   const [loading, setLoading] = useState(true)
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true)
     try {
       const res = await api.get('/reports/summary', { params: { period } })
@@ -31,11 +31,11 @@ export default function ReportStats() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [period])
 
   useEffect(() => {
     load()
-  }, [period])
+  }, [load])
 
   const statsData = [
     {
