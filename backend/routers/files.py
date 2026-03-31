@@ -1,7 +1,6 @@
 """File upload and download endpoints."""
 
 from typing import Optional
-from uuid import UUID
 
 from fastapi import APIRouter, Depends, UploadFile, Query
 from fastapi.responses import FileResponse

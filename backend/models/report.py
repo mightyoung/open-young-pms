@@ -4,7 +4,6 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import Column, DateTime, ForeignKey, String, Text, Index
-from sqlalchemy.orm import relationship
 
 from api.services.fastapi_code_generator.database import Base, GUID
 

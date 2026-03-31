@@ -7,7 +7,6 @@ Will be removed in a future release after routes are consolidated.
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from api.services.fastapi_code_generator.auth import get_current_user
-from api.services.fastapi_code_generator.database import get_db
 from api.response import ApiResponse
 from api.services import rag_service
 import uuid

@@ -1,6 +1,6 @@
 """Permission service — RBAC checking and project/issue filtering."""
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from api.services.fastapi_code_generator.models import User

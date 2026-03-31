@@ -3,7 +3,7 @@
 import os
 from typing import AsyncGenerator
 
-from sqlalchemy import create_engine, String
+from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.types import TypeDecorator, CHAR
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine

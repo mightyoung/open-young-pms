@@ -1,9 +1,7 @@
 """WBS任务管理路由."""
-import uuid
 from datetime import datetime, date
-from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -69,7 +67,7 @@ async def create_task(
             root_result = await db.execute(
                 select(func.count(WBSTask.id)).where(
                     WBSTask.project_id == data.project_id,
-                    WBSTask.parent_id == None,
+                    WBSTask.parent_id.is_(None),
                 )
             )
             root_count = root_result.scalar() or 0

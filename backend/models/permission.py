@@ -1,7 +1,6 @@
 """Permission models — extend User with project-level permissions."""
 
 from datetime import datetime
-from typing import Optional
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, JSON, String
 from sqlalchemy.orm import Mapped, mapped_column
 

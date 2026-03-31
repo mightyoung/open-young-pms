@@ -7,8 +7,7 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from models.task import Task as WBSTask, TaskComment as WBSTaskComment
-from schemas.task import TaskCreate, TaskUpdate, TaskResponse, GanttTask, KanbanBoard, CommentCreate, CommentResponse, UserBrief
+from models.task import Task as WBSTask
 
 
 class TaskService:
@@ -40,7 +39,7 @@ class TaskService:
             root_result = await self.db.execute(
                 select(func.count(WBSTask.id)).where(
                     WBSTask.project_id == project_id,
-                    WBSTask.parent_id == None,
+                    WBSTask.parent_id.is_(None),
                 )
             )
             root_count = root_result.scalar() or 0

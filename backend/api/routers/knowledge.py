@@ -2,7 +2,6 @@
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from typing import Optional
-from api.services.fastapi_code_generator.models import User
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.response import ApiResponse
 import uuid

@@ -1,12 +1,11 @@
 """监测看板路由 — 驾驶舱 + 统计图表"""
-from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select, func, and_, desc
+from fastapi import APIRouter, Depends
+from sqlalchemy import select, func, and_
 from datetime import datetime, timedelta
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.auth import get_current_user
-from api.services.fastapi_code_generator.models import HazardReport, Task, Report, User
+from api.services.fastapi_code_generator.models import HazardReport, Task, Report
 from api.response import ApiResponse
-import calendar
 
 router = APIRouter(prefix="/dashboard", tags=["监测看板"])
 

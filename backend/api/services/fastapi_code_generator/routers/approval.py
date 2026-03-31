@@ -1,12 +1,11 @@
 """审批流路由 — 模板管理 + 执行引擎"""
 from fastapi import APIRouter, Depends, Body
-from sqlalchemy import select, desc, func, and_
+from sqlalchemy import select, desc, func
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.models import ApprovalFlow, ApprovalInstance, ApprovalTask
 from api.response import ApiResponse
 from datetime import datetime
-import uuid
 
 router = APIRouter(prefix="/approval", tags=["审批流"])
 

@@ -1,8 +1,7 @@
 """通知模型 — 扩展已生成的 NotificationSetting."""
 
-from datetime import datetime
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, Text, JSON, UniqueConstraint
+from sqlalchemy import Boolean, Column, ForeignKey, String, UniqueConstraint
 
 from api.services.fastapi_code_generator.database import Base
 

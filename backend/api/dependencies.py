@@ -8,9 +8,6 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from api.exceptions import (
     ERR_INTERNAL,
-    ERR_FORBIDDEN,
-    ERR_TOKEN_EXPIRED,
-    ERR_TOKEN_INVALID,
 )
 from api.response import ApiResponse, BusinessException
 

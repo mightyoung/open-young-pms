@@ -5,7 +5,6 @@ from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import ValidationError
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -15,7 +14,7 @@ from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import (
     HazardReport, HazardRectification, HazardTransfer,
     RectificationPhoto, Notification,
-    User, Project,
+    User,
 )
 from api.response import ApiResponse, PaginatedResponse, BusinessException
 from api.exceptions import ERR_NOT_FOUND

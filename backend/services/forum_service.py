@@ -1,15 +1,11 @@
 import re
 import uuid
-from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import select, func, desc
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from models.forum import ForumPost, ForumReply, ForumLike, ForumFavorite
-from api.services.fastapi_code_generator.models import User
-from schemas.forum import PostCreate, ReplyCreate
 from schemas.response import PageResult
 
 

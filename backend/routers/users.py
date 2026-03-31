@@ -1,6 +1,5 @@
 """用户管理路由."""
 
-from uuid import UUID
 from fastapi import APIRouter, Depends
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession

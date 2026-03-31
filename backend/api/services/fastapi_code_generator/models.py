@@ -8,8 +8,8 @@ from api.services.fastapi_code_generator.database import Base
 from datetime import datetime
 from typing import Optional
 from sqlalchemy import (
-    Boolean, Column, DateTime, Enum, ForeignKey, Integer,
-    JSON, Numeric, Float, Date, String, Text, UniqueConstraint, Index,
+    Boolean, Column, DateTime, ForeignKey, Integer,
+    JSON, Numeric, Float, Date, String, Text, Index,
 )
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship

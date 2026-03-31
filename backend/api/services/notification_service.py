@@ -1,6 +1,4 @@
 """通知服务 — 统一通知入口"""
-from datetime import datetime
-from typing import Optional
 
 
 class NotificationService:

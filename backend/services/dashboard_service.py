@@ -1,11 +1,9 @@
 """监测看板服务."""
 import uuid
-from datetime import datetime, timedelta
-from typing import Optional
+from datetime import datetime
 
-from sqlalchemy import select, func, and_, or_
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from models.task import Task as WBSTask
 from models.report import Report as ReportModel
@@ -133,7 +131,7 @@ class DashboardService:
         used_hours = float(result.scalar() or 0)
         utilization = used_hours / project.budget * 100
 
-        rules = TRAFFIC_LIGHT_RULES["budget"]
+        _rules = TRAFFIC_LIGHT_RULES["budget"]
         if utilization <= 80:
             return "green"
         elif utilization <= 95:

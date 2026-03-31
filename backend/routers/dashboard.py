@@ -1,5 +1,4 @@
 """监测看板路由."""
-import uuid
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -9,13 +8,6 @@ from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.models import User
 from services.dashboard_service import DashboardService
-from schemas.dashboard import (
-    TrafficLight,
-    ProjectCockpit,
-    EarlyWarning,
-    DepartmentOverview,
-    CompanyOverview,
-)
 from api.response import ApiResponse
 
 router = APIRouter(prefix="/dashboard", tags=["监测看板"])

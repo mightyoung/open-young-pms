@@ -1,6 +1,6 @@
 """扫码巡检路由（独立版 v2）"""
 from fastapi import APIRouter, Depends, Body
-from sqlalchemy import select, desc, func, and_
+from sqlalchemy import select, desc, func
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.models import InspectionPointV2, InspectionRecordV2

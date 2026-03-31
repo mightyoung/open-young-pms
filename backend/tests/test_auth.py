@@ -5,7 +5,8 @@ from datetime import timedelta
 from unittest.mock import MagicMock
 from uuid import uuid4
 
-import sys, os
+import sys
+import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 

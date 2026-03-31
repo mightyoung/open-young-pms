@@ -1,7 +1,7 @@
 """审批流 Pydantic Schemas."""
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict
 
 
 class UserBrief(BaseModel):

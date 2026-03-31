@@ -4,18 +4,17 @@ from typing import Optional
 from uuid import UUID
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.database import get_db
-from api.services.fastapi_code_generator.models import Project, Phase, Milestone, User
+from api.services.fastapi_code_generator.models import Project, Phase, User
 from api.services.fastapi_code_generator.schemas import (
     ProjectCreate, ProjectUpdate, ProjectResponse,
-    PhaseCreate, PhaseResponse,
-    PaginatedResponse,
+    PhaseCreate, PaginatedResponse,
 )
 
 router = APIRouter()

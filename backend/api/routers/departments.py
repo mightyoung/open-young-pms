@@ -72,7 +72,7 @@ async def list_departments(
         query = query.where(Department.company_id == company_id)
     if parent_id is not None:
         if parent_id == "":
-            query = query.where(Department.parent_id == None)
+            query = query.where(Department.parent_id.is_(None))
         else:
             query = query.where(Department.parent_id == parent_id)
 

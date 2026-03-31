@@ -1,0 +1,25 @@
+# Ruff linter config for PMS backend
+
+line-length = 120
+target-version = "py313"
+
+[lint]
+select = [
+    "F",     # Pyflakes (F401 unused imports, F821 undefined, F841 unused vars)
+    "E",     # Pycodestyle errors
+]
+ignore = [
+    "E501",  # line too long — FastAPI Depends() creates long signatures
+    "E502",  # backslash redundant at line end
+    "E712",  # boolean comparison to True/False — legacy code style
+    "E701",  # multiple statements on one line — legacy code style
+    "E402",  # module-level import not at top — acceptable in routers
+    "F821",  # undefined name — forward refs ("User") in models are valid
+    "E741",  # ambiguous variable name — single-letter `l` in list comprehensions
+]
+
+[lint.per-file-ignores]
+"tests/*" = ["F401", "F811"]  # unused imports OK in tests
+"__init__.py" = ["F401", "F403"]  # __init__ often re-exports
+"models/*" = ["F821"]  # forward references in SQLAlchemy models
+"api/services/fastapi_code_generator/auth.py" = ["F821"]  # "User" forward ref

@@ -91,9 +91,9 @@ async def my_tasks(status: str = None, page: int = 1, page_size: int = 20,
     items = []
     for task in rows:
         inst = (await db.execute(select(ApprovalInstance).where(ApprovalInstance.id == task.instance_id))).scalar_one_or_none()
-        flow = None
+        _flow = None
         if inst:
-            flow = (await db.execute(select(ApprovalFlow).where(ApprovalFlow.id == inst.flow_id))).scalar_one_or_none()
+            _flow = (await db.execute(select(ApprovalFlow).where(ApprovalFlow.id == inst.flow_id))).scalar_one_or_none()
         initiator = None
         if inst and inst.initiator_id:
             initiator = (await db.execute(select(User).where(User.id == inst.initiator_id))).scalar_one_or_none()

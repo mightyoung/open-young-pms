@@ -1,12 +1,11 @@
 """数据服务层 — 统一数据入口 + 数据治理"""
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from typing import Optional, Any
+from typing import Optional
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.models import User
 from api.response import ApiResponse
 from datetime import datetime
-import uuid
 
 router = APIRouter(prefix="/data", tags=["数据服务"])
 
@@ -159,7 +158,6 @@ async def get_master_users(
     """用户主数据查询"""
     from api.services.fastapi_code_generator.database import get_db
     from sqlalchemy import select, func
-    from api.services.fastapi_code_generator.models import User
     
     db_gen = get_db()
     db = await db_gen.__anext__()

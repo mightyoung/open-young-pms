@@ -4,13 +4,11 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import User
 from services.approval_service import ApprovalService
-from models.approval import ApprovalInstance, ApprovalRecord, ApprovalFlow
 from schemas.approval import (
     FlowCreate, FlowUpdate, FlowResponse, InstanceStart,
     InstanceResponse, InstanceDetailResponse, TaskResponse,

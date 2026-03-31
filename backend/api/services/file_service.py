@@ -3,7 +3,6 @@ import io
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from fastapi import HTTPException, UploadFile
 from PIL import Image

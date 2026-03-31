@@ -97,7 +97,6 @@ async def get_report_stats(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    from schemas.report import ReportStats
     stats = await report_service.get_report_stats(
         db=db,
         project_id=project_id,

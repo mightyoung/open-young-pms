@@ -1,6 +1,5 @@
 """监测看板数据模型."""
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel
 

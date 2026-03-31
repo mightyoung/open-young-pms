@@ -1,6 +1,5 @@
 """报告管理路由 — generated from PRD 第十五章."""
 
-from uuid import UUID
 from fastapi import APIRouter, Depends, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession

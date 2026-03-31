@@ -1,6 +1,5 @@
 """Database configuration and session management."""
 
-from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 from sqlalchemy import create_engine

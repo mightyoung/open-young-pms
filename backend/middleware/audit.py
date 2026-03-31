@@ -3,7 +3,7 @@
 from functools import wraps
 from typing import Callable
 
-from fastapi import Request, Response
+from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 
 

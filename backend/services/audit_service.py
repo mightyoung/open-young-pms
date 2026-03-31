@@ -10,7 +10,7 @@ from sqlalchemy import select, desc, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.audit import AuditLog
-from schemas.audit import AuditLogResponse, AuditLogDetail, UserActivityItem, ResourceHistoryItem
+from schemas.audit import AuditLogResponse, UserActivityItem, ResourceHistoryItem
 from schemas.response import PageResult
 
 

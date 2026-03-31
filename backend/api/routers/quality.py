@@ -9,7 +9,6 @@ from api.services.fastapi_code_generator.schemas import (
     QualityStandardCreate, QualityInspectionCreate,
 )
 from api.response import ApiResponse
-from typing import Optional
 
 router = APIRouter(prefix="/quality", tags=["质量管理"])
 

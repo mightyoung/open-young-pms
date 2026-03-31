@@ -2,7 +2,6 @@
 import os
 import re
 import uuid
-from typing import Optional
 import httpx
 
 # ── 配置 ──────────────────────────────────────────────

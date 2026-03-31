@@ -1,6 +1,5 @@
 """扫码巡检路由 — generated from PRD 第八章."""
 
-from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,7 +8,7 @@ from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import InspectionPoint, Inspection, User
 from api.services.fastapi_code_generator.schemas import (
-    InspectionPointCreate, InspectionSubmitRequest, InspectionResponse,
+    InspectionPointCreate, InspectionSubmitRequest,
 )
 
 router = APIRouter()

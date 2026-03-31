@@ -7,14 +7,12 @@ from database import get_db
 from schemas.organization import (
     DepartmentCreate,
     DepartmentUpdate,
-    DepartmentTreeNode,
     DepartmentResponse,
     UserDepartmentAssign,
     UserOrganizationResponse,
 )
 from schemas.response import ApiResponse
 from services.organization_service import org_service
-from middleware.permission import get_current_user_from_request
 from api.services.fastapi_code_generator.models import User
 from services.permission_service import has_permission
 
@@ -112,8 +110,6 @@ async def get_department_users(
     if not await org_service.can_view_department(db, current_user, department_id):
         raise HTTPException(status_code=403, detail="无权限访问该部门")
 
-    from sqlalchemy import select
-    from api.services.fastapi_code_generator.models import User as UserModel
     users = await org_service.get_department_users(db, department_id)
     return ApiResponse.ok([
         {"id": u.id, "username": u.username, "full_name": u.full_name, "email": u.email}

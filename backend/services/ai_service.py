@@ -1,6 +1,5 @@
 """AI 服务 — 通义千问 + RAG"""
 import os
-from typing import Optional
 
 import httpx
 

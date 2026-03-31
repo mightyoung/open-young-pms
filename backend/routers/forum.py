@@ -7,7 +7,7 @@ from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import User
 from services.forum_service import forum_service
 from schemas.forum import PostCreate, ReplyCreate, PostResponse, ReplyResponse, UserBrief
-from schemas.response import ApiResponse, PageResult
+from schemas.response import ApiResponse
 from middleware.exception import ApiException
 
 router = APIRouter()
@@ -125,7 +125,7 @@ async def create_reply(
     post = await forum_service.get_post_detail(db, post_id)
     if not post:
         raise ApiException(code="B0001", message="帖子不存在")
-    mentioned = reply_data.reply_to_id  # will be set by extract_mentions
+    _mentioned = reply_data.reply_to_id  # will be set by extract_mentions
     reply = await forum_service.create_reply(
         db=db,
         post_id=post_id,

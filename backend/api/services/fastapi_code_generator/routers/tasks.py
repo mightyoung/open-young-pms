@@ -1,16 +1,15 @@
 """任务管理路由 — generated from PRD 第七/十一章."""
 
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.database import get_db
-from api.services.fastapi_code_generator.models import Task, TaskComment, User
+from api.services.fastapi_code_generator.models import Task, User
 from api.services.fastapi_code_generator.schemas import TaskCreate, TaskUpdate, TaskResponse
 from api.response import ApiResponse
 

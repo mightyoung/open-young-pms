@@ -1,7 +1,5 @@
 """Permission API — user permissions, role management."""
 
-from typing import Annotated
-from uuid import UUID
 import uuid
 
 from fastapi import APIRouter, Depends, status
@@ -12,7 +10,7 @@ from api.services.fastapi_code_generator.models import User
 from api.services.fastapi_code_generator.auth import get_current_user
 from services.permission_service import get_user_permissions
 from models.permission import Role
-from schemas import ApiResponse, ErrorCode, PaginationParams, PageResult
+from schemas import ApiResponse, ErrorCode, PageResult
 from middleware.exception import ApiException
 
 router = APIRouter(prefix="/users/me", tags=["权限"])

@@ -1,8 +1,7 @@
 import uuid
 from datetime import datetime
-from typing import Optional, List
 
-from sqlalchemy import Column, String, Text, Integer, DateTime, Date, ForeignKey, JSON
+from sqlalchemy import Column, String, Text, Integer, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 
 from api.services.fastapi_code_generator.database import Base, GUID

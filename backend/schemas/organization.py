@@ -1,6 +1,6 @@
 """Organization Pydantic schemas."""
 
-from typing import Optional, ForwardRef
+from typing import Optional
 from pydantic import BaseModel, ConfigDict
 
 

@@ -1,7 +1,6 @@
 """知识库服务 — 向量存储（pgvector）+ 文本分块"""
 import re
 import uuid
-from typing import Optional
 
 from services.ai_service import ai_service
 
@@ -81,7 +80,6 @@ class KnowledgeService:
                             },
                         )
 
-                from api.services.fastapi_code_generator.database import engine
 
                 self._vector_store = PgVectorStore(engine.connect().__enter__())
             except Exception as e:

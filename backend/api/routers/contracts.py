@@ -7,8 +7,6 @@ from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.models import Contract
 from api.services.fastapi_code_generator.schemas import ContractCreate
 from api.response import ApiResponse
-from datetime import datetime
-from typing import Optional
 
 router = APIRouter(prefix="/contracts", tags=["合同管理"])
 

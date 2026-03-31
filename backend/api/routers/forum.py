@@ -5,7 +5,6 @@ from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.models import ForumPost, ForumReply, ForumLike
 from api.response import ApiResponse
-from datetime import datetime
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/forum", tags=["论坛"])

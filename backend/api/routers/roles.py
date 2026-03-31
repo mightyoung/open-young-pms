@@ -4,11 +4,10 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 
-from api.response import ApiResponse, PaginatedResponse
-from api.exceptions import ERR_NOT_FOUND, ERR_FORBIDDEN
+from api.response import ApiResponse
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.database import get_db
-from api.services.fastapi_code_generator.models import Role, UserRole, User
+from api.services.fastapi_code_generator.models import Role, User
 
 router = APIRouter(prefix="/roles", tags=["角色权限"])
 

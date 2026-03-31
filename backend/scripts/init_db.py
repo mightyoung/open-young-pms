@@ -1,8 +1,6 @@
 """初始化数据库 — 生成随手拍安全员和组织架构数据."""
 
 import asyncio
-import uuid
-from datetime import datetime
 
 from sqlalchemy import select
 from api.services.fastapi_code_generator.database import AsyncSessionLocal
@@ -103,7 +101,7 @@ async def seed_data():
                 department_id=safety_dept.id,
                 role_id=safety_role.id if safety_role else None,
                 username=name,
-                email=f"{{name}}@example.com",
+                email="{name}@example.com",
                 hashed_password=hash_password("password123"),
                 full_name=name,
                 is_active=True,
@@ -118,7 +116,7 @@ async def seed_data():
                 department_id=dept.id,
                 role_id=roles["site_staff"].id,
                 username=dept_name[:4] + "_admin",
-                email=f"{{dept_name[:4]}}_admin@example.com",
+                email="{dept_name[:4]}_admin@example.com",
                 hashed_password=hash_password("password123"),
                 full_name=admin_name,
                 is_active=True,
@@ -127,12 +125,12 @@ async def seed_data():
 
         await db.commit()
         print("Seed data inserted successfully!")
-        print(f"  - Company: 1")
+        print("  - Company: 1")
         print(f"  - Roles: {len(roles)}")
         print(f"  - Departments: {len(DEPARTMENTS) + 1}")
         print(f"  - Safety staff: {len(FULL_TIME_SAFETY_STAFF)}")
         print(f"  - Dept admin users: {len(DEPARTMENTS)}")
-        print(f"  Default password: password123")
+        print("  Default password: password123")
 
 
 if __name__ == "__main__":

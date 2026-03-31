@@ -1,9 +1,9 @@
 """Unit tests for Pydantic response schemas."""
 
-import pytest
 from datetime import datetime
 
-import sys, os
+import sys
+import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 

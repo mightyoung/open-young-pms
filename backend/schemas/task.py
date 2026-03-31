@@ -1,5 +1,5 @@
 """WBS任务 Pydantic Schemas."""
-from datetime import datetime, date
+from datetime import datetime
 from typing import Optional
 from uuid import UUID
 from pydantic import BaseModel, Field, ConfigDict
