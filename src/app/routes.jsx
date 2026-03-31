@@ -1,0 +1,66 @@
+import React, { Suspense, lazy } from 'react'
+import { Navigate, useRoutes } from 'react-router-dom'
+import AuthenticatedRoute from '../components/auth/AuthenticatedRoute'
+import PublicRoute from '../components/auth/PublicRoute'
+import MainLayout from './MainLayout'
+import SkeletonContent from '../components/SkeletonContent'
+import LoginPage from '../pages/Login'
+import { DEFAULT_AUTH_ROUTE } from './route-map'
+
+// Lazy-loaded feature pages — each becomes a separate chunk
+const DashboardPage = lazy(() => import('../features/dashboard/pages/DashboardPage'))
+const UsersPage = lazy(() => import('../features/users/pages/UsersPage'))
+
+function NotFoundPage() {
+  return <Navigate to={DEFAULT_AUTH_ROUTE} replace />
+}
+
+function PageLoader() {
+  return <SkeletonContent />
+}
+
+export function AppRoutes() {
+  return useRoutes([
+    {
+      path: '/login',
+      element: (
+        <PublicRoute>
+          <LoginPage />
+        </PublicRoute>
+      ),
+    },
+    {
+      path: '/',
+      element: (
+        <AuthenticatedRoute>
+          <MainLayout />
+        </AuthenticatedRoute>
+      ),
+      children: [
+        { index: true, element: <Navigate to={DEFAULT_AUTH_ROUTE} replace /> },
+        {
+          path: 'dashboard',
+          element: (
+            <Suspense fallback={<PageLoader />}>
+              <DashboardPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'users',
+          element: (
+            <Suspense fallback={<PageLoader />}>
+              <UsersPage />
+            </Suspense>
+          ),
+        },
+      ],
+    },
+    {
+      path: '*',
+      element: <NotFoundPage />,
+    },
+  ])
+}
+
+export default AppRoutes
