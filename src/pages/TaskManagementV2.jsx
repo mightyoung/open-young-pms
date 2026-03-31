@@ -6,58 +6,30 @@ import {
   Tag,
   Space,
   Modal,
-  Form,
-  Input,
-  Select,
-  InputNumber,
-  DatePicker,
   Row,
   Col,
   Typography,
   Progress,
   Badge,
-  Tooltip,
   Tree,
-  Divider,
-  message,
   Alert,
-  List,
   Avatar,
   Tabs,
 } from 'antd'
 import {
   Plus,
-  Edit2,
-  Trash2,
   CheckCircle2,
-  Clock,
   User,
   Calendar,
   FolderTree,
-  GitBranch,
   AlertTriangle,
   Link2,
-  PlayCircle,
-  PauseCircle,
   Zap,
 } from 'lucide-react'
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  ScatterChart,
-  Scatter,
-} from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
 import { calculateCriticalPath, findResourceConflicts, wbsToTree } from '../utils/wbs'
 
-const { Title, Text } = Typography
-const { TextArea } = Input
-const { RangePicker } = DatePicker
+const { Text } = Typography
 
 const COLORS = {
   primary: '#115cb9',
@@ -248,20 +220,12 @@ export default function TaskManagementV2() {
   const [activeTab, setActiveTab] = useState('wbs')
   const [tasks] = useState(MOCK_TASKS)
   const [showConflict, setShowConflict] = useState(false)
-  const [selectedTask, setSelectedTask] = useState(null)
 
   const criticalIds = useMemo(() => calculateCriticalPath(tasks), [tasks])
   const criticalTasks = tasks.filter(t => criticalIds.includes(t.id))
   const conflicts = useMemo(() => findResourceConflicts(tasks, TEAM_MEMBERS), [tasks])
 
   const wbsTreeData = useMemo(() => wbsToTree(WBS_ITEMS), [])
-
-  const ganttData = tasks.map(t => ({
-    ...t,
-    start: new Date(t.startDate).getTime(),
-    end: new Date(t.endDate).getTime(),
-    critical: criticalIds.includes(t.id),
-  }))
 
   const resourceData = TEAM_MEMBERS.map(member => ({
     name: member,

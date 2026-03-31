@@ -7,7 +7,6 @@ import {
   Button,
   Tabs,
   Progress,
-  Badge,
   Space,
   Modal,
   Form,
@@ -16,11 +15,6 @@ import {
   Statistic,
   Row,
   Col,
-  List,
-  Avatar,
-  Tooltip,
-  Drawer,
-  Descriptions,
   Alert,
   Divider,
   Typography,
@@ -30,20 +24,15 @@ import {
   DatabaseOutlined,
   SafetyCertificateOutlined,
   NodeIndexOutlined,
-  KeyOutlined,
   LockOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   ExclamationCircleOutlined,
-  RobotOutlined,
-  SearchOutlined,
-  PlusOutlined,
   ReloadOutlined,
 } from '@ant-design/icons'
 import { api } from '../api'
 
 const { Text, Title } = Typography
-const { TabPane } = Tabs
 
 // ── 配色 ───────────────────────────────────────────────────
 const C = {
@@ -93,7 +82,7 @@ function BusinessView() {
 
   useEffect(() => {
     load(tab, page)
-  }, [tab])
+  }, [tab, page])
 
   const userCols = [
     {
@@ -293,14 +282,10 @@ function GovernanceView() {
   const [sensitive, setSensitive] = useState([])
   const [selectedEntity, setSelectedEntity] = useState(null)
   const [fields, setFields] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [maskOpen, setMaskOpen] = useState(false)
-  const [maskValue, setMaskValue] = useState('')
+  const [_maskValue, setMaskValue] = useState('')
   const [maskResult, setMaskResult] = useState(null)
-  const [validateOpen, setValidateOpen] = useState(false)
-  const [validateData, setValidateData] = useState(null)
+  const [_validateData, setValidateData] = useState(null)
   const [validateResult, setValidateResult] = useState(null)
-  const [form] = Form.useForm()
 
   const loadScore = async () => {
     const res = await api.get('/data/quality/score')
@@ -342,7 +327,7 @@ function GovernanceView() {
       if (selectedEntity) loadFields(selectedEntity)
     }
     if (tab === 'security') loadSensitive()
-  }, [tab])
+  }, [tab, selectedEntity])
 
   // 质量评分卡片
   const renderScoreCard = () => {
@@ -681,7 +666,7 @@ function GovernanceView() {
               <Form.Item label={<Text style={{ color: C.muted }}>实体</Text>}>
                 <Select
                   options={sensitive.map(s => ({ value: s.entity, label: s.entity }))}
-                  onChange={v => setMaskValue('')}
+                  onChange={_v => setMaskValue('')}
                 />
               </Form.Item>
               <Form.Item label={<Text style={{ color: C.muted }}>字段</Text>}>

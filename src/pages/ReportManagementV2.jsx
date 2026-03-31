@@ -6,37 +6,23 @@ import {
   Tag,
   Space,
   Modal,
-  Form,
-  Input,
-  Select,
-  DatePicker,
   Row,
   Col,
   Typography,
   Progress,
-  Badge,
-  Tooltip,
   Divider,
   message,
   Alert,
   List,
-  Avatar,
-  Statistic,
   Tabs,
-  Collapse,
-  Steps,
 } from 'antd'
 import {
-  Plus,
   Edit2,
   FileText,
   Clock,
   Star,
-  BarChart3,
   CheckCircle2,
-  AlertTriangle,
   Download,
-  Printer,
   Send,
   Eye,
   ClipboardList,
@@ -45,23 +31,7 @@ import {
   Calendar,
   Template,
 } from 'lucide-react'
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  Radar,
-} from 'recharts'
+import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts'
 import {
   generateReportContent,
   scoreReportQuality,
@@ -69,9 +39,6 @@ import {
 } from '../utils/reportAutomation'
 
 const { Title, Text } = Typography
-const { TextArea } = Input
-const { RangePicker } = DatePicker
-const { Panel } = Collapse
 
 const COLORS = {
   primary: '#115cb9',
@@ -188,7 +155,6 @@ export default function ReportManagementV2() {
   const [showClipboardList, setShowClipboardList] = useState(false)
   const [showAutoModal, setShowAutoModal] = useState(false)
   const [previewReport, setPreviewReport] = useState(null)
-  const [form] = Form.useForm()
 
   const stats = useMemo(
     () => ({
@@ -208,7 +174,7 @@ export default function ReportManagementV2() {
     {
       title: '报告名称',
       dataIndex: 'title',
-      render: (v, r) => (
+      render: (v, _r) => (
         <Space>
           <FileText size={14} color={COLORS.primary} />
           {v}

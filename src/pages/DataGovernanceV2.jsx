@@ -14,26 +14,18 @@ import {
   Typography,
   Progress,
   Badge,
-  Tooltip,
   Divider,
-  message,
   Alert,
   List,
-  Avatar,
-  Statistic,
   Tabs,
   Collapse,
-  Steps,
-  Popconfirm,
 } from 'antd'
 import {
   Plus,
   Edit2,
   Database,
   Shield,
-  CheckCircle2,
   AlertTriangle,
-  Download,
   Lock,
   Unlock,
   Key,
@@ -42,31 +34,21 @@ import {
   FileText,
   BarChart3,
   Settings,
-  Trash2,
 } from 'lucide-react'
 import {
-  AreaChart,
-  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   ResponsiveContainer,
   BarChart,
   Bar,
-  PieChart,
-  Pie,
   Cell,
   RadarChart,
   PolarGrid,
   PolarAngleAxis,
   Radar,
 } from 'recharts'
-import {
-  calculateQualityScore,
-  getQualityLevel,
-  SECURITY_LEVELS,
-  DEFAULT_DATA_ASSETS,
-} from '../utils/dataQuality'
+import { getQualityLevel, SECURITY_LEVELS, DEFAULT_DATA_ASSETS } from '../utils/dataQuality'
 
 const { Title, Text } = Typography
 const { Search } = Input
@@ -205,7 +187,7 @@ export default function DataGovernanceV2() {
     {
       title: '数据资产',
       dataIndex: 'name',
-      render: (v, r) => (
+      render: (v, _r) => (
         <Space>
           <FolderOpen size={14} color={COLORS.primary} />
           {v}
@@ -219,7 +201,7 @@ export default function DataGovernanceV2() {
       dataIndex: 'quality',
       width: 140,
       render: v => {
-        const { level, color } = getQualityLevel(v)
+        const { _level, color } = getQualityLevel(v)
         return (
           <Space>
             <Progress percent={v} size="small" style={{ width: 70 }} strokeColor={color} />
@@ -271,10 +253,10 @@ export default function DataGovernanceV2() {
       title: '字段名',
       dataIndex: 'fieldName',
       width: 140,
-      render: (v, r) => (
+      render: (v, _r) => (
         <Space>
           {v}
-          {r.isKey && <Key size={12} color={COLORS.warning} />}
+          {_r.isKey && <Key size={12} color={COLORS.warning} />}
         </Space>
       ),
     },

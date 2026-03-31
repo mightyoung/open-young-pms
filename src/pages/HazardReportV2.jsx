@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useCallback } from 'react'
 import {
   Card,
   Form,
   Input,
   Select,
-  DatePicker,
   Button,
   Upload,
-  Modal,
   message,
   Steps,
   Tag,
@@ -15,14 +13,9 @@ import {
   Typography,
   Row,
   Col,
-  Divider,
-  Radio,
   List,
   Avatar,
   Badge,
-  Tooltip,
-  Progress,
-  Timeline,
   Alert,
   Tabs,
 } from 'antd'
@@ -31,17 +24,14 @@ import {
   MapPin,
   Send,
   Clock,
-  User,
   CheckCircle2,
   AlertTriangle,
-  EnvironmentOutlined,
   Trophy,
   Star,
   Users,
   History,
   Lightbulb,
   CheckCircle,
-  XCircle,
   PlayCircle,
 } from 'lucide-react'
 import {
@@ -54,17 +44,11 @@ import {
   PieChart,
   Pie,
   Cell,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarSeries,
-  Radar,
 } from 'recharts'
 import { getCurrentPosition, isInsideGeofence, DEFAULT_GEOFENCES } from '../utils/geofence'
 
-const { Title, Text, Paragraph } = Typography
+const { Text } = Typography
 const { TextArea } = Input
-const { RangePicker } = DatePicker
 
 const COLORS = {
   primary: '#115cb9',
@@ -205,7 +189,7 @@ export default function HazardReportV2() {
   const [activeTab, setActiveTab] = useState('report')
   const [step, setStep] = useState(0)
   const [form] = Form.useForm()
-  const [images, setImages] = useState([])
+  const [_images, setImages] = useState([])
   const [location, setLocation] = useState(null)
   const [gpsLoading, setGpsLoading] = useState(false)
   const [geofenceStatus, setGeofenceStatus] = useState(null)
