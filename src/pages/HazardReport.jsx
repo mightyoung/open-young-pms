@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { colors } from '../styles/theme'
-import { message, Upload } from 'antd'
-import { Upload as UploadIcon, MapPin, X, Camera, Save, Send, AlertTriangle } from 'lucide-react'
+import { message } from 'antd'
+import { MapPin, X, Camera, Save, Send, AlertTriangle } from 'lucide-react'
 import { api } from '../api'
 
-const D = {
+const _D = {
   bg: '#f5f7fa',
   surface: '#f5f7fa',
   card: '#ffffff',
@@ -168,6 +168,7 @@ export default function HazardReport({ onSuccess, onCancel }) {
         saveDraft()
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // ── 提交 ──────────────────────────────────────────────

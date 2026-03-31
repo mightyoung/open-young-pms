@@ -2,13 +2,12 @@
  * 隐患管理页 - 基于 Stitch Azure Ethos 设计系统
  * 更新时间: 2026-03-30
  */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   Row,
   Col,
   Button,
   Select,
-  Space,
   Table,
   Tag,
   message,
@@ -25,7 +24,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons'
 import { api } from '../api'
-import { PageHeader, StatusBadge, Tabs, SearchInput } from '../components/PMSComponents'
+import { PageHeader, StatusBadge, SearchInput } from '../components/PMSComponents'
 
 const STATUS_MAP = {
   pending: { label: '待处理', bg: '#fef3c7', color: '#92400e' },
@@ -58,7 +57,7 @@ export default function HazardManagement() {
   const [page, setPage] = useState(1)
   const [searchText, setSearchText] = useState('')
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true)
     try {
       const params = { page, page_size: 20 }
@@ -74,11 +73,11 @@ export default function HazardManagement() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters, page])
 
   useEffect(() => {
     load()
-  }, [filters, page])
+  }, [load])
 
   const handleVerify = async id => {
     try {
@@ -92,7 +91,7 @@ export default function HazardManagement() {
   }
 
   // 统计各状态数量
-  const statusCounts = Object.entries(STATUS_MAP).reduce((acc, [k, v]) => {
+  const statusCounts = Object.entries(STATUS_MAP).reduce((acc, [k, _v]) => {
     acc[k] = data.filter(d => d.status === k).length
     return acc
   }, {})

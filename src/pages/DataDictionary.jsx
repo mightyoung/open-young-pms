@@ -14,9 +14,7 @@ import {
   Col,
   Typography,
   Tabs,
-  Divider,
   Tooltip,
-  Descriptions,
 } from 'antd'
 import {
   PlusOutlined,
@@ -25,8 +23,6 @@ import {
   DeleteOutlined,
   BookOutlined,
   TagOutlined,
-  LockOutlined,
-  CheckCircleOutlined,
 } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 

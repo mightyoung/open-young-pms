@@ -14,7 +14,7 @@ export default function NotificationSettings() {
     task_enabled: true,
     frequency: 'realtime',
   })
-  const [loading, setLoading] = useState(true)
+  const [_loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function NotificationSettings() {
     try {
       await api.put('/notification-settings', settings)
       message.success('设置已保存')
-    } catch (e) {
+    } catch {
       message.error('保存失败')
     } finally {
       setSaving(false)

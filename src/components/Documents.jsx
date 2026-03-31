@@ -6,9 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Input, Button, Tooltip, Typography, Empty } from 'antd'
 import {
   Search,
-  Plus,
-  Upload,
-  ArrowUpDown,
   Folder,
   FileText,
   ChevronRight,
@@ -344,7 +341,7 @@ export default function Documents() {
   const [foldersOpen, setFoldersOpen] = useState({ 1: true, 2: false, 3: false })
   const [search, setSearch] = useState('')
 
-  const doc = DOC_CONTENT[selected]
+  const _doc = DOC_CONTENT[selected]
 
   const toggleFolder = id => {
     setFoldersOpen(prev => ({ ...prev, [id]: !prev[id] }))

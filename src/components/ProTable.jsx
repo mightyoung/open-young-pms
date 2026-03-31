@@ -1,6 +1,6 @@
 import React from 'react'
-import { Table, Button, Dropdown, Popconfirm, Space, message } from 'antd'
-import { MoreOutlined, EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Table, Button, Dropdown, Popconfirm, Space } from 'antd'
+import { MoreOutlined, DeleteOutlined } from '@ant-design/icons'
 import { colors, radius } from '../styles/theme'
 
 /**

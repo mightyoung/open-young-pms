@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { colors } from '../styles/theme'
-import { Card, Row, Col, Statistic, Typography, Select, DatePicker } from 'antd'
+import { Card, Row, Col, Statistic, Typography, DatePicker } from 'antd'
 import {
   AlertOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
   WarningOutlined,
-  RiseOutlined,
-  FallOutlined,
 } from '@ant-design/icons'
 import { api } from '../api'
 import SkeletonContent from '../components/SkeletonContent'
@@ -26,7 +24,7 @@ import {
 } from 'recharts'
 
 const { Title, Text } = Typography
-const { RangePicker } = DatePicker
+const { RangePicker: _RangePicker } = DatePicker
 
 const COLORS = [
   colors.danger,

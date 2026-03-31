@@ -2,12 +2,11 @@
  * 知识库页 - 基于 Stitch Azure Ethos 设计系统
  * 更新时间: 2026-03-30
  */
-import React, { useState, useEffect } from 'react'
-import { Card, Button, Input, List, Space, Tag, Modal, Form, message } from 'antd'
+import React, { useState, useEffect, useCallback } from 'react'
+import { Button, Input, List, Space, Tag, Modal, Form, message } from 'antd'
 import {
   BookOutlined,
   PlusOutlined,
-  SearchOutlined,
   FileTextOutlined,
   SafetyOutlined,
   TrophyOutlined,
@@ -33,7 +32,7 @@ export default function KnowledgeBase() {
   const [createOpen, setCreateOpen] = useState(false)
   const [form] = Form.useForm()
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true)
     try {
       const params = {}
@@ -46,11 +45,11 @@ export default function KnowledgeBase() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [keyword, category])
 
   useEffect(() => {
     load()
-  }, [keyword, category])
+  }, [load])
 
   const handleCreate = async () => {
     try {
@@ -72,7 +71,7 @@ export default function KnowledgeBase() {
   ]
 
   // 统计数据
-  const stats = Object.entries(CATEGORY_MAP).reduce((acc, [k, v]) => {
+  const stats = Object.entries(CATEGORY_MAP).reduce((acc, [k, _v]) => {
     acc[k] = docs.filter(d => d.category === k).length
     return acc
   }, {})

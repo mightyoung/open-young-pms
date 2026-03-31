@@ -1,10 +1,8 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Row, Col, Card, Progress, Typography, Tag, Table, Badge, Tooltip, Button } from 'antd'
 import {
   AreaChart,
   Area,
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -14,16 +12,7 @@ import {
   Pie,
   Cell,
 } from 'recharts'
-import {
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  DollarSign,
-  TrendingUp,
-  ArrowUpRight,
-  ArrowDownRight,
-  Zap,
-} from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Clock, DollarSign, TrendingUp, Zap } from 'lucide-react'
 
 const { Title, Text } = Typography
 
@@ -329,7 +318,7 @@ const AlertList = () => (
     }
     style={{ borderRadius: 12, height: '100%' }}
   >
-    {ALERTS.map((alert, i) => (
+    {ALERTS.map(alert => (
       <div
         key={alert.id}
         style={{

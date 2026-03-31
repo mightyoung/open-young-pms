@@ -28,7 +28,7 @@ export default function Organization() {
           type: n.type,
         }))
       setTreeData(convert(data))
-    } catch (e) {
+    } catch {
       message.error('加载组织架构失败')
     } finally {
       setLoading(false)
@@ -56,7 +56,7 @@ export default function Organization() {
       await api.delete(`/departments/${node.key}`)
       message.success('已删除')
       loadTree()
-    } catch (e) {
+    } catch {
       message.error('删除失败')
     }
   }
@@ -72,12 +72,12 @@ export default function Organization() {
       message.success(editingNode ? '已更新' : '已创建')
       setModalOpen(false)
       loadTree()
-    } catch (e) {
+    } catch {
       message.error('操作失败')
     }
   }
 
-  const renderTreeNodes = data =>
+  const _renderTreeNodes = data =>
     data.map(item => {
       if (item.children) {
         return (
@@ -96,7 +96,7 @@ export default function Organization() {
               </span>
             }
           >
-            {renderTreeNodes(item.children)}
+            {_renderTreeNodes(item.children)}
           </Tree.TreeNode>
         )
       }

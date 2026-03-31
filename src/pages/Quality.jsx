@@ -13,17 +13,12 @@ import {
   Row,
   Col,
   Typography,
-  Divider,
-  Timeline,
   Tabs,
-  Progress,
-  Avatar,
 } from 'antd'
 import {
   PlusOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
-  SafetyOutlined,
   FileTextOutlined,
   CheckOutlined,
   EditOutlined,

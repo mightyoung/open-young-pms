@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import EmptyState from '../components/EmptyState'
 import { colors } from '../styles/theme'
-import { Card, Table, Tag, Button, Select, Space, Empty, Drawer, Descriptions } from 'antd'
+import { Card, Table, Tag, Button, Select, Space, Drawer, Descriptions } from 'antd'
 import { FileTextOutlined, SearchOutlined } from '@ant-design/icons'
 import { api } from '../api'
 import SkeletonContent from '../components/SkeletonContent'
@@ -34,25 +34,28 @@ export default function AuditLogs() {
   const [page, setPage] = useState(1)
   const [detail, setDetail] = useState(null)
 
-  const load = async (p = 1) => {
-    setLoading(true)
-    try {
-      const params = { page: p, page_size: 20 }
-      if (action) params.action = action
-      if (entityType) params.entity_type = entityType
-      const res = await api.get('/audit/logs', { params })
-      const items = res.items || res.data?.items || []
-      setData(items)
-      setTotal(res.total || res.data?.total || 0)
-      setPage(p)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const load = useCallback(
+    async (p = 1) => {
+      setLoading(true)
+      try {
+        const params = { page: p, page_size: 20 }
+        if (action) params.action = action
+        if (entityType) params.entity_type = entityType
+        const res = await api.get('/audit/logs', { params })
+        const items = res.items || res.data?.items || []
+        setData(items)
+        setTotal(res.total || res.data?.total || 0)
+        setPage(p)
+      } finally {
+        setLoading(false)
+      }
+    },
+    [action, entityType]
+  )
 
   useEffect(() => {
     load()
-  }, [action, entityType])
+  }, [load])
 
   const columns = [
     {

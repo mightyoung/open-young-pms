@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import EmptyState from '../components/EmptyState'
 import { colors } from '../styles/theme'
-import { Card, List, Empty, Popconfirm, message, Button, Tag } from 'antd'
+import { List, Popconfirm, message, Button, Tag } from 'antd'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { api } from '../api'
 import SkeletonContent from '../components/SkeletonContent'

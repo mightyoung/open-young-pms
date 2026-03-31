@@ -15,19 +15,9 @@ import {
   Typography,
   Divider,
   Tabs,
-  Progress,
-  Slider,
   Timeline,
 } from 'antd'
-import {
-  PlusOutlined,
-  WarningOutlined,
-  CheckCircleOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  AlertTriangleOutlined,
-  EyeOutlined,
-} from '@ant-design/icons'
+import { PlusOutlined, WarningOutlined, EditOutlined } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 
 const { Title, Text } = Typography

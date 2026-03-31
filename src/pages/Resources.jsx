@@ -2,7 +2,7 @@
  * 资源调度页 - 基于 Stitch Azure Ethos 设计系统
  * 更新时间: 2026-03-30
  */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   Table,
   Tag,
@@ -24,7 +24,7 @@ import {
   CarOutlined,
 } from '@ant-design/icons'
 import { api } from '../api'
-import { PageHeader, StatusBadge, Tabs } from '../components/PMSComponents'
+import { PageHeader, StatusBadge } from '../components/PMSComponents'
 
 const STATUS_MAP = {
   available: { label: '可用', bg: '#dcfce7', color: '#166534' },
@@ -53,9 +53,9 @@ export default function Resources() {
   const [filters, setFilters] = useState({})
   const [form] = Form.useForm()
   const [modalVisible, setModalVisible] = useState(false)
-  const [tab, setTab] = useState('all')
+  const [_tab, _setTab] = useState('all')
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true)
     try {
       const params = {}
@@ -68,11 +68,11 @@ export default function Resources() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
 
   useEffect(() => {
     load()
-  }, [filters])
+  }, [load])
 
   const handleCreate = async () => {
     try {

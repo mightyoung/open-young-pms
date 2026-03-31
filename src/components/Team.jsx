@@ -3,9 +3,9 @@
  * 包含团队统计、成员网格、工作分布图表
  */
 import React, { useState } from 'react'
-import { Row, Col, Avatar, Tag, Tooltip, Typography } from 'antd'
+import { Row, Col, Avatar, Tooltip, Typography } from 'antd'
 import { motion } from 'framer-motion'
-import { Users, Wifi, Clock, CheckCircle2, Star, TrendingUp, ChevronDown } from 'lucide-react'
+import { Users, Wifi, Clock, CheckCircle2 } from 'lucide-react'
 
 const { Text } = Typography
 
