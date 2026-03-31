@@ -1,27 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import EmptyState from '../components/EmptyState'
-import SkeletonContent from '../components/SkeletonContent'
 import { colors } from '../styles/theme'
-import {
-  Card,
-  Typography,
-  Button,
-  Avatar,
-  Space,
-  Input,
-  Divider,
-  Tag,
-  message,
-  Empty,
-  Spin,
-} from 'antd'
+import { Card, Typography, Button, Avatar, Space, Input, Divider, Tag, message, Spin } from 'antd'
 import { ArrowLeftOutlined, LikeOutlined, LikeFilled, CommentOutlined } from '@ant-design/icons'
 import { api } from '../api'
 
 const { Title, Text } = Typography
 
-const TYPE_MAP = { safety: '安全生产', quality: '质量缺陷', environment: '环境问题' }
-const STATUS_MAP = {
+const _TYPE_MAP = { safety: '安全生产', quality: '质量缺陷', environment: '环境问题' }
+const _STATUS_MAP = {
   pending: '待处理',
   assigned: '已指派',
   rectifying: '整改中',
@@ -40,7 +27,7 @@ export default function ForumDetail() {
   const [replyContent, setReplyContent] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  const load = async () => {
+  const load = useCallback(async () => {
     if (!postId) {
       setLoading(false)
       return
@@ -55,17 +42,17 @@ export default function ForumDetail() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [postId])
 
   useEffect(() => {
     load()
-  }, [postId])
+  }, [load])
 
   const handleLike = async () => {
     try {
       await api.post('/forum/like', { target_type: 'post', target_id: postId })
       setPost(p => (p ? { ...p, like_count: (p.like_count || 0) + 1, is_liked: true } : p))
-    } catch (e) {
+    } catch {
       message.error('点赞失败')
     }
   }
@@ -81,7 +68,7 @@ export default function ForumDetail() {
       message.success('回复成功')
       setReplyContent('')
       load() // 刷新
-    } catch (e) {
+    } catch {
       message.error('回复失败')
     } finally {
       setSubmitting(false)

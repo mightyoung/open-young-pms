@@ -9,7 +9,6 @@ import {
   Form,
   Input,
   Select,
-  DatePicker,
   InputNumber,
   Row,
   Col,
@@ -20,21 +19,10 @@ import {
   Popconfirm,
   message,
 } from 'antd'
-import { Plus, Edit2, Trash2, UserPlus, Eye, Filter, Download, ProjectIcon } from 'lucide-react'
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-} from 'recharts'
+import { Plus, Edit2, Trash2, Eye, Download } from 'lucide-react'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
 
 const { Title, Text } = Typography
-const { TextArea } = Input
-const { RangePicker } = DatePicker
 
 const COLORS = {
   primary: '#115cb9',
@@ -144,9 +132,9 @@ const MOCK_PROJECTS = [
 
 const PROJECT_TYPES = ['产线改造', '设备采购安装', '厂房建设', '技术研发', '其他']
 const PROJECT_IDENTITY = ['甲方', '乙方']
-const PROJECT_STATUS = ['筹备中', '进行中', '暂停', '已完成', '已取消']
+const _PROJECT_STATUS = ['筹备中', '进行中', '暂停', '已完成', '已取消']
 const DEPARTMENTS = ['技术研发部', '工程建设部', '采购部', '质量安全部', '财务部', '综合部']
-const PRIORITIES = { high: '高', medium: '中', critical: '紧急' }
+const _PRIORITIES = { high: '高', medium: '中', critical: '紧急' }
 
 // 预算执行趋势
 const BUDGET_TREND = [

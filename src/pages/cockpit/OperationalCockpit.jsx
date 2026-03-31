@@ -3,28 +3,14 @@ import {
   Row,
   Col,
   Card,
-  Progress,
   Typography,
   Tag,
   Button,
   Select,
   Badge,
-  List,
   Avatar,
-  Input,
   Divider,
-  Switch,
-  Tooltip,
 } from 'antd'
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  ResponsiveContainer,
-} from 'recharts'
 import {
   Monitor,
   MessageSquare,
@@ -33,19 +19,13 @@ import {
   AlertTriangle,
   CheckCircle2,
   Clock,
-  Send,
   Wifi,
-  WifiOff,
   ChevronDown,
   Zap,
-  User,
   Bell,
-  Settings,
-  LogOut,
 } from 'lucide-react'
 
 const { Title, Text, Paragraph } = Typography
-const { TextArea } = Input
 
 const COLORS = {
   primary: '#115cb9',
@@ -184,7 +164,7 @@ const MessageStream = () => (
     bodyStyle={{ padding: 0 }}
   >
     <div style={{ maxHeight: 300, overflow: 'auto' }}>
-      {MESSAGES.map((msg, i) => (
+      {MESSAGES.map((msg) => (
         <div
           key={msg.id}
           style={{
@@ -219,9 +199,9 @@ const MessageStream = () => (
           </div>
           {msg.extracted.length > 0 && (
             <div style={{ marginLeft: 36, display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-              {msg.extracted.map((tag, j) => (
+              {msg.extracted.map((tag) => (
                 <Tag
-                  key={j}
+                  key={tag}
                   color={msg.type === 'danger' ? 'red' : 'orange'}
                   style={{ fontSize: 10 }}
                 >
@@ -281,8 +261,8 @@ const WeeklyReportGenerator = () => (
         <CheckCircle2 size={12} style={{ marginRight: 4 }} />
         已完成
       </div>
-      {WEEKLY_REPORT.completed.map((item, i) => (
-        <div key={i} style={{ fontSize: 13, color: COLORS.text, paddingLeft: 16, marginBottom: 4 }}>
+      {WEEKLY_REPORT.completed.map((item, _i) => (
+        <div key={_i} style={{ fontSize: 13, color: COLORS.text, paddingLeft: 16, marginBottom: 4 }}>
           ✓ {item}
         </div>
       ))}
@@ -293,9 +273,9 @@ const WeeklyReportGenerator = () => (
         <Clock size={12} style={{ marginRight: 4 }} />
         待完成
       </div>
-      {WEEKLY_REPORT.pending.map((item, i) => (
+      {WEEKLY_REPORT.pending.map((item, _i) => (
         <div
-          key={i}
+          key={_i}
           style={{ fontSize: 13, color: COLORS.textMuted, paddingLeft: 16, marginBottom: 4 }}
         >
           ○ {item}
@@ -332,9 +312,9 @@ const ECOPending = () => (
     }
     style={{ borderRadius: 12 }}
   >
-    {ECO_LIST.map((eco, i) => (
+    {ECO_LIST.map((eco, _i) => (
       <div
-        key={i}
+        key={_i}
         style={{
           padding: 12,
           marginBottom: 8,
@@ -382,9 +362,9 @@ const MaterialRadar = () => (
     }
     style={{ borderRadius: 12 }}
   >
-    {MATERIAL_STATUS.map((mat, i) => (
+    {MATERIAL_STATUS.map((mat, _i) => (
       <div
-        key={i}
+        key={_i}
         style={{
           display: 'flex',
           alignItems: 'center',

@@ -1,17 +1,5 @@
-import React, { useState } from 'react'
-import {
-  Row,
-  Col,
-  Card,
-  Progress,
-  Typography,
-  Tag,
-  Button,
-  Alert,
-  Tooltip,
-  Badge,
-  Timeline,
-} from 'antd'
+import React from 'react'
+import { Row, Col, Card, Progress, Typography, Tag, Alert, Badge } from 'antd'
 import {
   BarChart,
   Bar,
@@ -28,18 +16,7 @@ import {
   PolarRadiusAxis,
   Radar,
 } from 'recharts'
-import {
-  AlertTriangle,
-  Users,
-  CheckCircle2,
-  Clock,
-  DollarSign,
-  TrendingUp,
-  Warning,
-  Zap,
-  Calendar,
-  HardDrive,
-} from 'lucide-react'
+import { AlertTriangle, Zap, Calendar, HardDrive } from 'lucide-react'
 
 const { Title, Text } = Typography
 

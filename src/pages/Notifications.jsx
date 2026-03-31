@@ -2,8 +2,8 @@
  * 通知中心页 - 基于 Stitch Azure Ethos 设计系统
  * 更新时间: 2026-03-30
  */
-import React, { useState, useEffect } from 'react'
-import { Card, Tag, Button, Badge, Empty, Space } from 'antd'
+import React, { useState, useEffect, useCallback } from 'react'
+import { Tag, Button } from 'antd'
 import {
   CheckOutlined,
   BellOutlined,
@@ -13,7 +13,7 @@ import {
   MessageOutlined,
 } from '@ant-design/icons'
 import { api } from '../api'
-import { PageHeader, Tabs, EmptyState } from '../components/PMSComponents'
+import { PageHeader, EmptyState } from '../components/PMSComponents'
 
 const TYPE_MAP = {
   task: { label: '任务', icon: <FileTextOutlined />, bg: '#dbeafe', color: '#1e40af' },
@@ -39,7 +39,7 @@ export default function Notifications() {
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('all')
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true)
     try {
       const params = { page: 1, page_size: 50 }
@@ -53,18 +53,18 @@ export default function Notifications() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [tab])
 
   useEffect(() => {
     load()
-  }, [tab])
+  }, [load])
 
   const markAllRead = async () => {
     try {
       await api.post('/notifications/mark-all-read')
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
       setUnreadCount(0)
-    } catch (e) {}
+    } catch {}
   }
 
   const markRead = async record => {
@@ -73,7 +73,7 @@ export default function Notifications() {
       await api.post(`/notifications/${record.id}/read`)
       setNotifications(prev => prev.map(n => (n.id === record.id ? { ...n, is_read: true } : n)))
       setUnreadCount(prev => Math.max(0, prev - 1))
-    } catch (e) {}
+    } catch {}
   }
 
   // 筛选通知

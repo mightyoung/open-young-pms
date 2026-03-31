@@ -19,25 +19,9 @@ import {
   Statistic,
   Divider,
   Steps,
-  Avatar,
-  Skeleton,
 } from 'antd'
+import { Plus, CheckCircle2, Download, Printer, Send, Edit2, Eye } from 'lucide-react'
 import {
-  Plus,
-  FileText,
-  CheckCircle2,
-  Clock,
-  User,
-  Calendar,
-  Download,
-  Printer,
-  Send,
-  Edit2,
-  Eye,
-} from 'lucide-react'
-import {
-  AreaChart,
-  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -50,7 +34,7 @@ import {
 } from 'recharts'
 import { measureText } from '../utils/pretextMeasure'
 
-const { Title, Text, Paragraph } = Typography
+const { Title, Text } = Typography
 const { RangePicker } = DatePicker
 
 const COLORS = {
@@ -185,7 +169,7 @@ export default function ReportCenter() {
   })
 
   // Pretext: pre-compute text heights for virtual scrolling optimization
-  const reportTextMetrics = useMemo(() => {
+  const _reportTextMetrics = useMemo(() => {
     return filteredReports.map(report => {
       const titleMetrics = measureText(report.title, '500 14px Inter, sans-serif', 280)
       const milestoneMetrics = measureText(report.milestone, '14px Inter, sans-serif', 140)
@@ -237,7 +221,6 @@ export default function ReportCenter() {
       key: 'title',
       width: 300,
       render: (text, record) => {
-        const metrics = reportTextMetrics.find(m => m.id === record.id)
         return (
           <Space>
             {getTypeBadge(record.type)}

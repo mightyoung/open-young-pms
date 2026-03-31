@@ -14,19 +14,14 @@ import {
   Row,
   Col,
   Typography,
-  Avatar,
-  Timeline,
   Divider,
-  Tabs,
 } from 'antd'
 import {
   PlusOutlined,
-  FileTextOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
   SendOutlined,
   EyeOutlined,
-  EditOutlined,
 } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 
@@ -133,7 +128,7 @@ const MOCK_REPORTS = [
   },
 ]
 
-const AUTO_RULES = [
+const _AUTO_RULES = [
   {
     type: 'daily',
     trigger: '每日 18:00',
@@ -171,7 +166,7 @@ export default function Reports() {
   const [selected, setSelected] = useState(null)
   const [step, setStep] = useState(0)
   const [form] = Form.useForm()
-  const [reports, setReports] = useState(MOCK_REPORTS)
+  const [reports, _setReports] = useState(MOCK_REPORTS)
 
   const filtered = tab === 'all' ? reports : reports.filter(r => r.type === tab)
   const stats = {

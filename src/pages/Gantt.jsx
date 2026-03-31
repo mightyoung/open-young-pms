@@ -15,18 +15,9 @@ import {
   Typography,
   Progress,
   Tooltip,
-  Divider,
   Tree,
 } from 'antd'
-import {
-  PlusOutlined,
-  CheckOutlined,
-  ClockCircleOutlined,
-  FolderOutlined,
-  CalendarOutlined,
-  UserOutlined,
-  EditOutlined,
-} from '@ant-design/icons'
+import { PlusOutlined, ClockCircleOutlined, FolderOutlined, EditOutlined } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 
 const { Title, Text } = Typography
@@ -317,7 +308,7 @@ function GanttChart({ data }) {
     cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1)
   }
   const allTasks = []
-  const flatten = (nodes, path = '') => {
+  const flatten = (nodes, _path = '') => {
     nodes.forEach(n => {
       if (n.children) {
         flatten(n.children, n.name)
@@ -386,7 +377,7 @@ function GanttChart({ data }) {
 
 export default function Gantt() {
   const [tab, setTab] = useState('gantt')
-  const [tasks, setTasks] = useState(MOCK_TASKS)
+  const [tasks, _setTasks] = useState(MOCK_TASKS)
   const [modalOpen, setModalOpen] = useState(false)
   const [form] = Form.useForm()
 

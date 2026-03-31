@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import EmptyState from '../components/EmptyState'
-import { Card, List, Tag, Button, Input, Modal, Form, message, Empty } from 'antd'
+import { List, Tag, Button, Input, Modal, Form, message } from 'antd'
 import { PlusOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons'
 import { api } from '../api'
 import SkeletonContent from '../components/SkeletonContent'
@@ -9,7 +9,7 @@ const { TextArea } = Input
 
 export default function Forum() {
   const [posts, setPosts] = useState([])
-  const [total, setTotal] = useState(0)
+  const [_total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('all')
   const [postModalOpen, setPostModalOpen] = useState(false)
@@ -18,23 +18,23 @@ export default function Forum() {
   const [replyContent, setReplyContent] = useState('')
   const [form] = Form.useForm()
 
-  const loadPosts = async () => {
+  const loadPosts = useCallback(async () => {
     setLoading(true)
     try {
       const res = await api.get('/forum/posts', { params: { tab, page: 1, page_size: 20 } })
       const items = res?.items || res?.data?.items || []
       setPosts(items)
       setTotal(res?.total || res?.data?.total || 0)
-    } catch (e) {
+    } catch {
       message.error('加载帖子失败')
     } finally {
       setLoading(false)
     }
-  }
+  }, [tab])
 
   useEffect(() => {
     loadPosts()
-  }, [tab])
+  }, [loadPosts])
 
   const handlePost = async () => {
     try {
@@ -44,7 +44,7 @@ export default function Forum() {
       setPostModalOpen(false)
       form.resetFields()
       loadPosts()
-    } catch (e) {
+    } catch {
       message.error('发布失败')
     }
   }
@@ -63,7 +63,7 @@ export default function Forum() {
             : p
         )
       )
-    } catch (e) {
+    } catch {
       message.error('操作失败')
     }
   }
@@ -73,7 +73,7 @@ export default function Forum() {
     try {
       const res = await api.get(`/forum/posts/${post.id}`)
       setSelectedPost(res?.data || res)
-    } catch (e) {}
+    } catch {}
     setDetailModalOpen(true)
   }
 
@@ -84,7 +84,7 @@ export default function Forum() {
       message.success('回帖成功')
       setReplyContent('')
       openDetail({ ...selectedPost, id: selectedPost.id })
-    } catch (e) {
+    } catch {
       message.error('回帖失败')
     }
   }

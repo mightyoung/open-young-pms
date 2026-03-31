@@ -4,7 +4,6 @@ import {
   Form,
   Input,
   Select,
-  DatePicker,
   Button,
   Upload,
   Modal,
@@ -15,20 +14,9 @@ import {
   Typography,
   Row,
   Col,
-  Divider,
   Radio,
 } from 'antd'
-import {
-  Camera,
-  MapPin,
-  Send,
-  Clock,
-  User,
-  CheckCircle2,
-  AlertTriangle,
-  ExclamationCircle,
-  EnvironmentOutlined,
-} from 'lucide-react'
+import { Camera, MapPin, Send, CheckCircle2, EnvironmentOutlined } from 'lucide-react'
 import {
   AreaChart,
   Area,
@@ -43,7 +31,6 @@ import {
 
 const { Title, Text, Paragraph } = Typography
 const { TextArea } = Input
-const { RangePicker } = DatePicker
 
 const COLORS = {
   primary: '#115cb9',
