@@ -1,6 +1,6 @@
 """任务管理路由 — generated from PRD 第七/十一章."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -59,8 +59,8 @@ async def update_task(
     for key, value in data.model_dump(exclude_unset=True).items():
         setattr(task, key, value)
     if data.status == "done" and not task.completed_at:
-        task.completed_at = datetime.utcnow()
-    task.updated_at = datetime.utcnow()
+        task.completed_at = datetime.now(timezone.utc)
+    task.updated_at = datetime.now(timezone.utc)
     await db.commit()
     return {"message": "更新成功"}
 

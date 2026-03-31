@@ -83,8 +83,8 @@ async def mark_as_read(
 
     notification.is_read = True
     notification.read_at = Notification.__table__.c.read_at.type.python_type()
-    from datetime import datetime
-    notification.read_at = datetime.utcnow()
+    from datetime import datetime, timezone
+    notification.read_at = datetime.now(timezone.utc)
     await db.commit()
     return ApiResponse.ok(message="已标记为已读")
 
@@ -94,14 +94,14 @@ async def mark_all_as_read(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    from datetime import datetime
+    from datetime import datetime, timezone
     await db.execute(
         update(Notification)
         .where(
             Notification.user_id == str(current_user.id),
             Notification.is_read == False,
         )
-        .values(is_read=True, read_at=datetime.utcnow())
+        .values(is_read=True, read_at=datetime.now(timezone.utc))
     )
     await db.commit()
     return ApiResponse.ok(message="全部已标记为已读")
@@ -164,13 +164,13 @@ async def update_notification_settings(
     setting = result.scalar_one_or_none()
 
     import uuid
-    from datetime import datetime
+    from datetime import datetime, timezone
 
     if not setting:
         setting = NotificationSetting(
             id=str(uuid.uuid4()),
             user_id=str(current_user.id),
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
         )
         db.add(setting)
 

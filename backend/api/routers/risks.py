@@ -7,7 +7,7 @@ from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.models import Risk, ResourceItem
 from api.services.fastapi_code_generator.schemas import RiskCreate, RiskUpdate, ResourceItemCreate, ResourceItemUpdate
 from api.response import ApiResponse
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter(prefix="/risks", tags=["风险管理"])
 
@@ -67,7 +67,7 @@ async def update_risk(risk_id: str, data: RiskUpdate, db: AsyncSession = Depends
     if not r: return ApiResponse.error("R0001", "风险不存在")
     for key, val in data.model_dump(exclude_unset=True).items():
         setattr(r, key, val)
-    if data.status == "resolved": r.resolved_at = datetime.utcnow()
+    if data.status == "resolved": r.resolved_at = datetime.now(timezone.utc)
     await db.commit()
     return ApiResponse.ok({"id": str(r.id)})
 

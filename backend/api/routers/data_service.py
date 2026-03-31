@@ -5,7 +5,7 @@ from typing import Optional
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.models import User
 from api.response import ApiResponse
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter(prefix="/data", tags=["数据服务"])
 
@@ -224,7 +224,7 @@ async def get_quality_score(entity_type: str = None, current_user=Depends(get_cu
         "overall_score": 100,
         "entity_scores": {k: 100 for k in DATA_QUALITY_RULES},
         "total_rules": total_rules,
-        "last_check": datetime.utcnow().isoformat(),
+        "last_check": datetime.now(timezone.utc).isoformat(),
     })
 
 

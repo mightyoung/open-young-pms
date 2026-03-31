@@ -1,5 +1,5 @@
 """监测看板路由."""
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -98,6 +98,6 @@ async def get_real_time_data(
     summary = {
         "total_projects": len(projects),
         "active_projects": sum(1 for p in projects if p.status == "active"),
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
     }
     return ApiResponse.ok(summary)

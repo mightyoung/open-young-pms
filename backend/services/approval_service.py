@@ -1,6 +1,6 @@
 """审批流服务."""
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from sqlalchemy import select
@@ -122,14 +122,14 @@ class ApprovalService:
 
         record.action = "approve"
         record.comment = comment
-        record.created_at = datetime.utcnow()
+        record.created_at = datetime.now(timezone.utc)
 
         current_node = self._get_node_by_id(instance)
         is_last = self._is_last_node(current_node)
 
         if is_last:
             instance.status = "approved"
-            instance.finished_at = datetime.utcnow()
+            instance.finished_at = datetime.now(timezone.utc)
         else:
             next_node = self._get_next_node(instance, current_node)
             if next_node:
@@ -162,10 +162,10 @@ class ApprovalService:
 
         record.action = "reject"
         record.comment = comment
-        record.created_at = datetime.utcnow()
+        record.created_at = datetime.now(timezone.utc)
 
         instance.status = "rejected"
-        instance.finished_at = datetime.utcnow()
+        instance.finished_at = datetime.now(timezone.utc)
 
         await self.db.commit()
         await self.db.refresh(instance)
@@ -179,7 +179,7 @@ class ApprovalService:
             raise ValueError("当前状态不允许取消")
 
         instance.status = "cancelled"
-        instance.finished_at = datetime.utcnow()
+        instance.finished_at = datetime.now(timezone.utc)
         await self.db.commit()
         await self.db.refresh(instance)
         return instance

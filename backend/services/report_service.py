@@ -2,7 +2,7 @@
 
 import json
 import uuid
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -55,7 +55,7 @@ class ReportService:
                     setattr(report, key, json.dumps(value, ensure_ascii=False))
                 else:
                     setattr(report, key, value)
-        report.updated_at = datetime.utcnow()
+        report.updated_at = datetime.now(timezone.utc)
         await db.commit()
         await db.refresh(report)
         return report
@@ -75,13 +75,13 @@ class ReportService:
         if report.status not in ("draft", "rejected"):
             raise ValueError(f"Cannot submit report with status: {report.status}")
         report.status = "submitted"
-        report.submitted_at = datetime.utcnow()
+        report.submitted_at = datetime.now(timezone.utc)
 
         submit_record = ReportSubmit(
             id=str(uuid.uuid4()),
             report_id=report_id,
             submitted_by=author_id,
-            submitted_at=datetime.utcnow(),
+            submitted_at=datetime.now(timezone.utc),
         )
         db.add(submit_record)
         await db.commit()
@@ -102,7 +102,7 @@ class ReportService:
         if report.status != "submitted":
             raise ValueError(f"Cannot approve report with status: {report.status}")
         report.status = "approved"
-        report.approved_at = datetime.utcnow()
+        report.approved_at = datetime.now(timezone.utc)
         report.approved_by = approver_id
         report.approval_comment = comment
         await db.commit()

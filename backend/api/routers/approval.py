@@ -5,7 +5,7 @@ from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.models import ApprovalFlow, ApprovalInstance, ApprovalTask, User
 from api.response import ApiResponse
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter(prefix="/approval", tags=["审批流"])
 
@@ -125,7 +125,7 @@ async def approve_task(task_id: str, agree: bool = True, comment: str = None,
     task.status = "done"
     task.approve_type = "agree" if agree else "reject"
     task.comment = comment
-    task.completed_at = datetime.utcnow()
+    task.completed_at = datetime.now(timezone.utc)
     inst = (await db.execute(select(ApprovalInstance).where(ApprovalInstance.id == task.instance_id))).scalar_one_or_none()
     if inst:
         pending = (await db.execute(select(func.count(ApprovalTask.id)).where(
@@ -133,10 +133,10 @@ async def approve_task(task_id: str, agree: bool = True, comment: str = None,
             ApprovalTask.status == "pending"))).scalar() or 0
         if pending == 0 and inst.status == "pending":
             inst.status = "approved"
-            inst.finished_at = datetime.utcnow()
+            inst.finished_at = datetime.now(timezone.utc)
         elif not agree:
             inst.status = "rejected"
-            inst.finished_at = datetime.utcnow()
+            inst.finished_at = datetime.now(timezone.utc)
     await db.commit()
     return ApiResponse.ok({"result": "通过" if agree else "驳回"})
 
@@ -149,10 +149,10 @@ async def return_task(task_id: str, comment: str = None, db=Depends(get_db), cur
     task.status = "done"
     task.approve_type = "return"
     task.comment = comment
-    task.completed_at = datetime.utcnow()
+    task.completed_at = datetime.now(timezone.utc)
     inst = (await db.execute(select(ApprovalInstance).where(ApprovalInstance.id == task.instance_id))).scalar_one_or_none()
     if inst:
         inst.status = "returned"
-        inst.finished_at = datetime.utcnow()
+        inst.finished_at = datetime.now(timezone.utc)
     await db.commit()
     return ApiResponse.ok({"result": "已退回"})

@@ -1,6 +1,6 @@
 """监测看板服务."""
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -42,7 +42,7 @@ class DashboardService:
         self.db = db
 
     async def get_traffic_light(self, project_id: str) -> TrafficLight:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         progress_light = await self._calc_progress_light(project_id)
         quality_light = await self._calc_quality_light(project_id)
@@ -68,7 +68,7 @@ class DashboardService:
         result = await self.db.execute(
             select(WBSTask).where(
                 WBSTask.project_id == project_id,
-                WBSTask.planned_end < datetime.utcnow(),
+                WBSTask.planned_end < datetime.now(timezone.utc),
                 WBSTask.status != "completed",
             )
         )
@@ -151,7 +151,7 @@ class DashboardService:
             1
             for t in tasks
             if t.planned_end
-            and t.planned_end < datetime.utcnow()
+            and t.planned_end < datetime.now(timezone.utc)
             and t.status != "completed"
         )
 
@@ -240,7 +240,7 @@ class DashboardService:
             .where(
                 WBSTask.project_id == project_id,
                 WBSTask.planned_end.isnot(None),
-                WBSTask.planned_end >= datetime.utcnow(),
+                WBSTask.planned_end >= datetime.now(timezone.utc),
                 WBSTask.status != "completed",
             )
             .order_by(WBSTask.planned_end)
@@ -268,7 +268,7 @@ class DashboardService:
 
     async def get_early_warnings(self, project_id: str = None) -> list[EarlyWarning]:
         warnings = []
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         query = select(HazardReport).where(
             HazardReport.status.in_(["pending", "assigned", "confirmed", "rectifying", "pushed"])

@@ -1,7 +1,7 @@
 """监测看板路由 — 驾驶舱 + 统计图表"""
 from fastapi import APIRouter, Depends
 from sqlalchemy import select, func, and_
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.models import HazardReport, Task, Report
@@ -16,7 +16,7 @@ async def dashboard_summary(
     db=Depends(get_db), current_user=Depends(get_current_user),
 ):
     """驾驶舱汇总数据"""
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     if period == "week":
         start_date = now - timedelta(days=7)
     elif period == "month":
@@ -76,7 +76,7 @@ async def hazard_trend(
     db=Depends(get_db), current_user=Depends(get_current_user),
 ):
     """随手拍趋势（按日统计）"""
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     days = 30 if period == "month" else 7
 
     result = []
@@ -143,7 +143,7 @@ async def task_trend(
     db=Depends(get_db), current_user=Depends(get_current_user),
 ):
     """任务完成趋势"""
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     days = 30 if period == "month" else 7
 
     result = []

@@ -1,6 +1,6 @@
 """随手拍隐患上报路由 — generated from PRD v1.2 第十二章."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID
 
@@ -137,7 +137,7 @@ async def assign_hazard_report(
     report.status = "assigned"
     report.assigned_to_id = data.assigned_to_id
     report.assigned_by_id = current_user.id
-    report.updated_at = datetime.utcnow()
+    report.updated_at = datetime.now(timezone.utc)
     
     notif = Notification(
         user_id=data.assigned_to_id,
@@ -180,7 +180,7 @@ async def transfer_hazard_report(
     
     report.assigned_to_id = data.to_user_id
     report.status = "assigned"
-    report.updated_at = datetime.utcnow()
+    report.updated_at = datetime.now(timezone.utc)
     
     notif = Notification(
         user_id=data.to_user_id,
@@ -217,8 +217,8 @@ async def confirm_hazard_report(
     report.hazard_type = data.hazard_type
     report.status = "confirmed"
     report.confirmed_by_id = current_user.id
-    report.confirmed_at = datetime.utcnow()
-    report.updated_at = datetime.utcnow()
+    report.confirmed_at = datetime.now(timezone.utc)
+    report.updated_at = datetime.now(timezone.utc)
     await db.commit()
     return {"message": "确认成功", "status": report.status}
 
@@ -238,7 +238,7 @@ async def reject_hazard_report(
     
     report.status = "rejected"
     report.reject_reason = reason
-    report.updated_at = datetime.utcnow()
+    report.updated_at = datetime.now(timezone.utc)
     
     notif = Notification(
         user_id=report.reporter_id,
@@ -281,8 +281,8 @@ async def push_hazard_report(
     db.add(rectification)
     
     report.status = "pushed"
-    report.pushed_at = datetime.utcnow()
-    report.updated_at = datetime.utcnow()
+    report.pushed_at = datetime.now(timezone.utc)
+    report.updated_at = datetime.now(timezone.utc)
     
     notif = Notification(
         user_id=data.handler_id,
@@ -320,7 +320,7 @@ async def submit_rectification(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="您不是此隐患的整改责任人")
     
     rectification.status = "submitted"
-    rectification.submitted_at = datetime.utcnow()
+    rectification.submitted_at = datetime.now(timezone.utc)
     
     # 保存整改照片
     for photo_url in data.photos:
@@ -335,7 +335,7 @@ async def submit_rectification(
     result2 = await db.execute(select(HazardReport).where(HazardReport.id == report_id))
     report = result2.scalar_one()
     report.status = "pending_acceptance"
-    report.updated_at = datetime.utcnow()
+    report.updated_at = datetime.now(timezone.utc)
     
     # 通知安全员验收
     notif = Notification(
@@ -371,13 +371,13 @@ async def accept_rectification(
     rectification.acceptance_status = "accepted"
     rectification.acceptance_comment = comment
     rectification.accepted_by_id = current_user.id
-    rectification.accepted_at = datetime.utcnow()
+    rectification.accepted_at = datetime.now(timezone.utc)
     rectification.status = "accepted"
     
     result2 = await db.execute(select(HazardReport).where(HazardReport.id == report_id))
     report = result2.scalar_one()
     report.status = "closed"
-    report.updated_at = datetime.utcnow()
+    report.updated_at = datetime.now(timezone.utc)
     
     await db.commit()
     return {"message": "验收通过，隐患处置完毕"}
@@ -401,13 +401,13 @@ async def reject_rectification(
     rectification.acceptance_status = "rejected"
     rectification.acceptance_comment = comment
     rectification.accepted_by_id = current_user.id
-    rectification.accepted_at = datetime.utcnow()
+    rectification.accepted_at = datetime.now(timezone.utc)
     rectification.status = "rectifying"  # 退回重新整改
     
     result2 = await db.execute(select(HazardReport).where(HazardReport.id == report_id))
     report = result2.scalar_one()
     report.status = "rectifying"
-    report.updated_at = datetime.utcnow()
+    report.updated_at = datetime.now(timezone.utc)
     
     notif = Notification(
         user_id=rectification.handler_id,
@@ -473,7 +473,7 @@ async def save_draft(
     draft = HazardReport(
         reporter_id=str(current_user.id),
         is_draft=True,
-        auto_saved_at=datetime.utcnow(),
+        auto_saved_at=datetime.now(timezone.utc),
         title=data.title[:300] if data.title else "草稿",
         description=data.description or "",
         hazard_type=data.hazard_type,

@@ -5,7 +5,7 @@ from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.models import InspectionPoint, Inspection
 from api.response import ApiResponse
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter(prefix="/inspection", tags=["扫码巡检"])
 
@@ -59,7 +59,7 @@ async def create_record(point_id: str, result: str = "ok", notes: str = None,
 @router.get("/stats")
 async def inspection_stats(db=Depends(get_db), current_user=Depends(get_current_user)):
     total = (await db.execute(select(func.count(InspectionPoint.id)))).scalar() or 0
-    today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
     today_cnt = (await db.execute(select(func.count(Inspection.id)).where(Inspection.inspected_at >= today))).scalar() or 0
     abnormal = (await db.execute(select(func.count(Inspection.id)).where(Inspection.result == "issue_found"))).scalar() or 0
     return ApiResponse.ok({"total_points": total, "today_checked": today_cnt,

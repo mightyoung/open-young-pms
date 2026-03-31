@@ -6,7 +6,7 @@ is at backend/main.py. This file is not imported and is kept for reference only.
 
 import os
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -60,7 +60,7 @@ app.add_middleware(
 async def global_exception(request: Request, exc: Exception):
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"detail": str(exc), "timestamp": datetime.utcnow().isoformat()},
+        content={"detail": str(exc), "timestamp": datetime.now(timezone.utc).isoformat()},
     )
 
 
@@ -80,7 +80,7 @@ app.include_router(notifications_router, prefix="/api/v1/notifications", tags=["
 
 @app.get("/health", tags=["健康检查"])
 async def health():
-    return {"status": "UP", "timestamp": datetime.utcnow().isoformat()}
+    return {"status": "UP", "timestamp": datetime.now(timezone.utc).isoformat()}
 
 
 @app.get("/", tags=["根"])

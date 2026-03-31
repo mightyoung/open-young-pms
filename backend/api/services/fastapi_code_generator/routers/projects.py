@@ -2,7 +2,7 @@
 
 from typing import Optional
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select, func
@@ -90,7 +90,7 @@ async def update_project(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="项目不存在")
     for key, value in data.model_dump(exclude_unset=True).items():
         setattr(project, key, value)
-    project.updated_at = datetime.utcnow()
+    project.updated_at = datetime.now(timezone.utc)
     await db.commit()
     return {"message": "更新成功"}
 

@@ -1,6 +1,6 @@
 """ID 自动生成服务"""
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 _COUNTER_FILE = Path("./data/counters.json")
@@ -22,7 +22,7 @@ def _save_counters(c: dict):
 
 def generate_hazard_no() -> str:
     """生成隐患编号: ISSUE-YYYYMMDD-XXX"""
-    today = datetime.utcnow().strftime("%Y%m%d")
+    today = datetime.now(timezone.utc).strftime("%Y%m%d")
     counters = _load_counters()
 
     if counters.get("date") != today:
@@ -36,7 +36,7 @@ def generate_hazard_no() -> str:
 
 def generate_report_no(report_type: str) -> str:
     """生成报告编号: REPORT-YYYYMMDD-XXX"""
-    today = datetime.utcnow().strftime("%Y%m%d")
+    today = datetime.now(timezone.utc).strftime("%Y%m%d")
     counters = _load_counters()
 
     key = f"{report_type}_seq"

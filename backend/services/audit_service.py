@@ -3,7 +3,7 @@
 import csv
 import io
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from sqlalchemy import select, desc, and_
@@ -37,7 +37,7 @@ class AuditService:
             detail=detail or {},
             ip_address=ip_address,
             user_agent=user_agent,
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
         )
         self.db.add(entry)
         await self.db.commit()
@@ -174,7 +174,7 @@ class AuditService:
         )
 
     async def get_user_activities(self, user_id: str, days: int = 7) -> list:
-        since = datetime.utcnow() - timedelta(days=days)
+        since = datetime.now(timezone.utc) - timedelta(days=days)
         query = (
             select(AuditLog)
             .where(AuditLog.operator_id == user_id)

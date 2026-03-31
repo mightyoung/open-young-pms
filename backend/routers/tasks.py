@@ -1,5 +1,5 @@
 """WBS任务管理路由."""
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, func
@@ -130,12 +130,12 @@ async def update_task(
         elif value is not None:
             setattr(task, key, value)
     
-    task.updated_at = datetime.utcnow()
+    task.updated_at = datetime.now(timezone.utc)
     
     if data.status == "completed" and task.status != "completed":
-        task.actual_end = datetime.utcnow()
+        task.actual_end = datetime.now(timezone.utc)
     elif data.status == "in_progress" and task.status == "pending":
-        task.actual_start = datetime.utcnow()
+        task.actual_start = datetime.now(timezone.utc)
     
     await db.commit()
     await db.refresh(task)
@@ -267,7 +267,7 @@ async def assign_task(
         raise HTTPException(status_code=404, detail="任务不存在")
     
     task.assignee_id = assignee_id
-    task.updated_at = datetime.utcnow()
+    task.updated_at = datetime.now(timezone.utc)
     await db.commit()
     await db.refresh(task)
     return _task_to_response(task)
@@ -291,12 +291,12 @@ async def update_progress(
     task.progress = progress
     if progress == 100 and task.status != "completed":
         task.status = "completed"
-        task.actual_end = datetime.utcnow()
+        task.actual_end = datetime.now(timezone.utc)
     elif progress > 0 and task.status == "pending":
         task.status = "in_progress"
-        task.actual_start = datetime.utcnow()
+        task.actual_start = datetime.now(timezone.utc)
     
-    task.updated_at = datetime.utcnow()
+    task.updated_at = datetime.now(timezone.utc)
     await db.commit()
     await db.refresh(task)
     return _task_to_response(task)
@@ -325,7 +325,7 @@ async def add_dependency(
     if str(depends_on_id) not in deps:
         deps.append(str(depends_on_id))
         task.dependencies = deps
-        task.updated_at = datetime.utcnow()
+        task.updated_at = datetime.now(timezone.utc)
         await db.commit()
         await db.refresh(task)
     
@@ -351,9 +351,9 @@ async def get_critical_path(
     
     def calc_earliest(task: WBSTask) -> datetime:
         if not task.dependencies:
-            return task.planned_start or datetime.utcnow()
+            return task.planned_start or datetime.now(timezone.utc)
         max_end = max(
-            (task_map[dep_id].planned_end or datetime.utcnow())
+            (task_map[dep_id].planned_end or datetime.now(timezone.utc))
             for dep_id in task.dependencies
             if dep_id in task_map
         )
@@ -365,7 +365,7 @@ async def get_critical_path(
             return task.planned_end or project_end
         return min((c.planned_start or project_end) for c in children)
     
-    project_end = max((t.planned_end or datetime.utcnow() for t in tasks if t.planned_end), default=datetime.utcnow())
+    project_end = max((t.planned_end or datetime.now(timezone.utc) for t in tasks if t.planned_end), default=datetime.now(timezone.utc))
     
     critical = []
     for t in tasks:

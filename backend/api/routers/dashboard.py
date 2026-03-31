@@ -1,7 +1,7 @@
 """监测看板路由"""
 from fastapi import APIRouter, Depends
 from sqlalchemy import select, func, and_
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.models import HazardReport, Task, Report
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/dashboard", tags=["监测看板"])
 
 @router.get("/summary")
 async def dashboard_summary(period: str = "month", db=Depends(get_db), current_user=Depends(get_current_user)):
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     start = now - timedelta(days=7 if period == "week" else (30 if period == "month" else 365))
     hazard_total = (await db.execute(select(func.count(HazardReport.id)))).scalar() or 0
     hazard_recent = (await db.execute(select(func.count(HazardReport.id)).where(HazardReport.created_at >= start))).scalar() or 0
@@ -32,7 +32,7 @@ async def dashboard_summary(period: str = "month", db=Depends(get_db), current_u
 
 @router.get("/hazard-trend")
 async def hazard_trend(period: str = "month", db=Depends(get_db), current_user=Depends(get_current_user)):
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     days = 7 if period == "week" else 30
     result = []
     for i in range(days-1, -1, -1):
@@ -64,7 +64,7 @@ async def hazard_by_status(db=Depends(get_db), current_user=Depends(get_current_
 
 @router.get("/task-trend")
 async def task_trend(period: str = "month", db=Depends(get_db), current_user=Depends(get_current_user)):
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     days = 7 if period == "week" else 30
     result = []
     for i in range(days-1, -1, -1):

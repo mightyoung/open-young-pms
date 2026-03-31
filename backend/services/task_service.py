@@ -1,6 +1,6 @@
 """WBS任务服务."""
 import uuid
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from typing import Optional
 
 from sqlalchemy import select, func
@@ -75,12 +75,12 @@ class TaskService:
             if value is not None and hasattr(task, key):
                 setattr(task, key, value)
 
-        task.updated_at = datetime.utcnow()
+        task.updated_at = datetime.now(timezone.utc)
 
         if kwargs.get("status") == "completed" and task.status != "completed":
-            task.actual_end = datetime.utcnow()
+            task.actual_end = datetime.now(timezone.utc)
         elif kwargs.get("status") == "in_progress" and task.status == "pending":
-            task.actual_start = datetime.utcnow()
+            task.actual_start = datetime.now(timezone.utc)
 
         await self.db.commit()
         await self.db.refresh(task)
@@ -199,7 +199,7 @@ class TaskService:
         if not task:
             raise ValueError("任务不存在")
         task.assignee_id = assignee_id
-        task.updated_at = datetime.utcnow()
+        task.updated_at = datetime.now(timezone.utc)
         await self.db.commit()
         await self.db.refresh(task)
         return task
@@ -214,11 +214,11 @@ class TaskService:
         task.progress = progress
         if progress == 100:
             task.status = "completed"
-            task.actual_end = datetime.utcnow()
+            task.actual_end = datetime.now(timezone.utc)
         elif progress > 0 and task.status == "pending":
             task.status = "in_progress"
-            task.actual_start = datetime.utcnow()
-        task.updated_at = datetime.utcnow()
+            task.actual_start = datetime.now(timezone.utc)
+        task.updated_at = datetime.now(timezone.utc)
         await self.db.commit()
         await self.db.refresh(task)
         return task
@@ -237,7 +237,7 @@ class TaskService:
         if depends_on_id not in deps:
             deps.append(depends_on_id)
             task.dependencies = deps
-            task.updated_at = datetime.utcnow()
+            task.updated_at = datetime.now(timezone.utc)
             await self.db.commit()
             await self.db.refresh(task)
         return task
@@ -254,16 +254,16 @@ class TaskService:
 
         def calc_earliest(task: WBSTask) -> datetime:
             if not task.dependencies:
-                return task.planned_start or datetime.utcnow()
+                return task.planned_start or datetime.now(timezone.utc)
             return max(
-                (task_map[dep_id].planned_end or datetime.utcnow())
+                (task_map[dep_id].planned_end or datetime.now(timezone.utc))
                 for dep_id in task.dependencies
                 if dep_id in task_map
             )
 
         project_end = max(
-            (t.planned_end or datetime.utcnow() for t in tasks if t.planned_end),
-            default=datetime.utcnow()
+            (t.planned_end or datetime.now(timezone.utc) for t in tasks if t.planned_end),
+            default=datetime.now(timezone.utc)
         )
         critical = []
         for t in tasks:
@@ -271,7 +271,7 @@ class TaskService:
                 critical.append(str(t.id))
                 continue
             earliest = calc_earliest(t)
-            if earliest >= (t.planned_end or datetime.utcnow()):
+            if earliest >= (t.planned_end or datetime.now(timezone.utc)):
                 critical.append(str(t.id))
         return critical
 

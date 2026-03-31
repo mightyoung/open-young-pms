@@ -5,7 +5,7 @@ from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.models import InspectionPointV2, InspectionRecordV2
 from api.response import ApiResponse
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter(prefix="/inspection", tags=["扫码巡检"])
 
@@ -121,7 +121,7 @@ async def inspection_stats(
 ):
     """巡检统计"""
     total_points = (await db.execute(select(func.count(InspectionPointV2.id)))).scalar() or 0
-    today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
 
     today_q = select(func.count(InspectionRecordV2.id)).where(
         InspectionRecordV2.checked_at >= today

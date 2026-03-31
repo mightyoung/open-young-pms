@@ -1,7 +1,7 @@
 """通知服务."""
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from sqlalchemy import select
@@ -31,7 +31,7 @@ class NotificationService:
             title=title,
             content=content or "",
             data=data or {},
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
         )
         self.db.add(notification)
         await self.db.commit()

@@ -1,7 +1,7 @@
 """文件上传服务 — 支持本地存储和 MinIO"""
 import io
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import HTTPException, UploadFile
@@ -25,7 +25,7 @@ async def save_upload(file: UploadFile, subfolder: str = "photos") -> dict:
         raise HTTPException(status_code=400, detail="不支持的图片格式")
 
     ext = file.filename.split(".")[-1] if file.filename else "jpg"
-    timestamp = datetime.utcnow()
+    timestamp = datetime.now(timezone.utc)
     file_id = f"{timestamp.strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex[:8]}"
     filename = f"{file_id}.{ext}"
 

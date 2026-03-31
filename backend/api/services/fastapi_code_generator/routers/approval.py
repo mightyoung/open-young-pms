@@ -5,7 +5,7 @@ from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.models import ApprovalFlow, ApprovalInstance, ApprovalTask
 from api.response import ApiResponse
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter(prefix="/approval", tags=["审批流"])
 
@@ -180,7 +180,7 @@ async def approve_task(
     task.status = "done"
     task.approve_type = "agree" if agree else "reject"
     task.comment = comment
-    task.completed_at = datetime.utcnow()
+    task.completed_at = datetime.now(timezone.utc)
 
     # 更新实例状态
     inst_result = await db.execute(select(ApprovalInstance).where(ApprovalInstance.id == task.instance_id))
@@ -198,10 +198,10 @@ async def approve_task(
             if pending == 0:
                 if inst.status == "pending":
                     inst.status = "approved"
-                    inst.finished_at = datetime.utcnow()
+                    inst.finished_at = datetime.now(timezone.utc)
         else:
             inst.status = "rejected"
-            inst.finished_at = datetime.utcnow()
+            inst.finished_at = datetime.now(timezone.utc)
 
     await db.commit()
     return ApiResponse.ok({
@@ -224,13 +224,13 @@ async def return_task(
     task.status = "done"
     task.approve_type = "return"
     task.comment = comment
-    task.completed_at = datetime.utcnow()
+    task.completed_at = datetime.now(timezone.utc)
 
     inst_result = await db.execute(select(ApprovalInstance).where(ApprovalInstance.id == task.instance_id))
     inst = inst_result.scalar_one_or_none()
     if inst:
         inst.status = "returned"
-        inst.finished_at = datetime.utcnow()
+        inst.finished_at = datetime.now(timezone.utc)
 
     await db.commit()
     return ApiResponse.ok({"result": "已退回"})

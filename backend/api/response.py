@@ -1,5 +1,5 @@
 """统一 API 响应格式 — 所有接口统一使用此格式返回"""
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Generic, TypeVar, Optional
 from pydantic import BaseModel, ConfigDict
 
@@ -22,7 +22,7 @@ class ApiResponse(BaseModel, Generic[T]):
             code="A0000",
             message=message,
             data=data,
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc).isoformat() + "Z",
         )
 
     @classmethod
@@ -31,7 +31,7 @@ class ApiResponse(BaseModel, Generic[T]):
             code=code,
             message=message,
             data={"detail": detail} if detail else None,
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc).isoformat() + "Z",
         )
 
 
@@ -62,7 +62,7 @@ class PaginatedResponse(BaseModel, Generic[T]):
             page=page,
             page_size=page_size,
             pages=(total + page_size - 1) // page_size,
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc).isoformat() + "Z",
         )
 
 

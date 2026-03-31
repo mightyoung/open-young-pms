@@ -75,8 +75,8 @@ async def create_document(
 ):
     """创建文档"""
     doc_id = str(uuid.uuid4())
-    from datetime import datetime
-    now = datetime.utcnow().isoformat() + "Z"
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc).isoformat() + "Z"
     doc = {
         "id": doc_id,
         "title": doc_in.title,
@@ -112,14 +112,14 @@ async def update_document(
     doc = _knowledge_docs.get(doc_id)
     if not doc:
         return ApiResponse.error("K0001", "文档不存在")
-    from datetime import datetime
+    from datetime import datetime, timezone
     if doc_in.title is not None:
         doc["title"] = doc_in.title
     if doc_in.content is not None:
         doc["content"] = doc_in.content
     if doc_in.category is not None:
         doc["category"] = doc_in.category
-    doc["updated_at"] = datetime.utcnow().isoformat() + "Z"
+    doc["updated_at"] = datetime.now(timezone.utc).isoformat() + "Z"
     _knowledge_docs[doc_id] = doc
     return ApiResponse.ok(_doc_to_dict(doc))
 
