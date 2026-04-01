@@ -61,8 +61,14 @@ export const api = {
   },
   notifications: {
     list: (params = {}) => get('/notifications', { params }),
+    unreadCount: () => get('/notifications/unread-count'),
     markRead: id => post(`/notifications/${id}/read`),
     markAllRead: () => post('/notifications/read-all'),
+    remove: id => del(`/notifications/${id}`),
+    settings: {
+      get: () => get('/notifications/settings'),
+      update: data => put('/notifications/settings', data),
+    },
   },
   roles: {
     list: () => get('/roles'),

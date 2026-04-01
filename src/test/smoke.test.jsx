@@ -233,4 +233,15 @@ describe('API client', () => {
     expect(typeof tasksApi.stats).toBe('function')
     expect(typeof tasksApi.criticalPath).toBe('function')
   })
+
+  it('api.notifications covers all backend router endpoints', async () => {
+    const { api } = await import('../api')
+    expect(typeof api.notifications.list).toBe('function')
+    expect(typeof api.notifications.unreadCount).toBe('function')
+    expect(typeof api.notifications.markRead).toBe('function')
+    expect(typeof api.notifications.markAllRead).toBe('function')
+    expect(typeof api.notifications.remove).toBe('function')
+    expect(typeof api.notifications.settings.get).toBe('function')
+    expect(typeof api.notifications.settings.update).toBe('function')
+  })
 })
