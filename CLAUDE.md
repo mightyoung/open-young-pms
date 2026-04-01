@@ -53,6 +53,8 @@ src/
 - `src/hooks/` — Reusable behavioral logic. No business data fetching.
 - `src/utils/` — Pure utility functions. No side effects.
 
+**Mobile projects**: `mobile/` is the tracked UniApp (Vue) mobile project. `pms-uniapp/` is gitignored — experimental/alternative copy. Only `mobile/` receives commits.
+
 ### Backend Directory Structure
 
 ```
@@ -61,13 +63,13 @@ backend/
 │   ├── routers/        # Layer 3 — New modular routers (data_service, knowledge, quality...)
 │   └── services/
 │       ├── fastapi_code_generator/  # Layer 1 — Auto-generated routers + models + auth
-│       │   ├── auth.py     # JWT: get_current_user(), require_role()
+│       │   ├── auth.py     # JWT: get_current_user(), require_role(), decode_token() (single source of truth)
 │       │   ├── database.py # PostgreSQL only (no SQLite)
 │       │   └── models.py  # SQLAlchemy models (User, Project, Task, etc.)
 │       └── ...
 ├── routers/            # Layer 2 — Legacy hand-written routers (dashboard, approval, forum...)
 ├── middleware/
-│   └── permission.py   # JWT validation middleware, injects user into request.state
+│   └── permission.py   # JWT validation middleware; imports decode_token from auth.py (no duplicate)
 ├── models/             # Legacy SQLAlchemy models (task, audit, permission...)
 ├── schemas/            # Pydantic schemas
 └── main.py            # FastAPI app entry. Routers registered in three layers.
@@ -97,6 +99,7 @@ backend/
 - Demo login: `admin` / `admin123` (frontend-only mock, only works when backend is unreachable).
 - 401 responses automatically trigger logout via `setUnauthorizedHandler` in `client.js`.
 - Backend `get_current_user()` requires valid JWT + user exists in DB — **no demo/fallback users**.
+- `auth.py` is the single source of truth for `decode_token`; both `PermissionMiddleware` and the `get_current_user` dependency reuse it via ContextVar caching.
 
 ### UI Stack
 - **Ant Design v5** — UI components
@@ -126,7 +129,7 @@ backend/
 ## Build Output
 
 Production build → `dist/`:
-- `vendor-react`, `vendor-antd` (~920KB gzip:289KB), `vendor-charts`, `vendor-framer`
+- `vendor-react`, `vendor-antd` (~285KB gzip), `vendor-charts`, `vendor-framer`
 - `DashboardPage-*.js`, `UsersPage-*.js` — lazy-loaded feature chunks
 - `index-*.js` — main entry (~40KB gzip)
 
