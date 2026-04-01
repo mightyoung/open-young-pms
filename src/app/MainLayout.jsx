@@ -140,7 +140,7 @@ export default function MainLayout() {
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(prev => !prev)}
           />
-          <Text type="secondary">第一批迁移：login / dashboard / users</Text>
+          <Text type="secondary">PMS 管理系统</Text>
         </Header>
         <Content style={{ minHeight: 0 }}>
           <Outlet />

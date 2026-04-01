@@ -5,11 +5,10 @@ from typing import Callable
 
 from fastapi import HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
 from sqlalchemy import select
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from api.services.fastapi_code_generator.auth import set_cached_user
+from api.services.fastapi_code_generator.auth import decode_token, set_cached_user
 
 SECRET_KEY = os.getenv("JWT_SECRET", os.getenv("JWT_SECRET_KEY", ""))
 if not SECRET_KEY:
@@ -18,13 +17,6 @@ if not SECRET_KEY:
 ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
 _bearer = HTTPBearer(auto_error=False)
-
-
-def decode_token(token: str) -> dict:
-    try:
-        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except JWTError as e:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Token invalid: {e}")
 
 
 async def get_current_user_from_request(request: Request):
