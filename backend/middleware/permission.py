@@ -9,6 +9,8 @@ from jose import JWTError, jwt
 from sqlalchemy import select
 from starlette.middleware.base import BaseHTTPMiddleware
 
+from api.services.fastapi_code_generator.auth import set_cached_user
+
 SECRET_KEY = os.getenv("JWT_SECRET", os.getenv("JWT_SECRET_KEY", ""))
 if not SECRET_KEY:
     raise RuntimeError("JWT_SECRET or JWT_SECRET_KEY environment variable must be set")
@@ -55,7 +57,14 @@ async def get_current_user_from_request(request: Request):
 
 
 class PermissionMiddleware(BaseHTTPMiddleware):
-    """Inject user into request.state for every authenticated route."""
+    """Inject user into request.state and cache for every authenticated route.
+
+    On successful auth: sets request.state.user and caches in _cached_user ContextVar
+    so that get_current_user() dependency can reuse without re-decoding JWT or re-querying DB.
+
+    Raises 401 for /api/* routes on auth failure (backward-compatible protection for
+    routes that don't explicitly declare Depends(get_current_user)).
+    """
 
     EXEMPT_PATHS = {
         "/", "/docs", "/openapi.json", "/redoc",
@@ -66,11 +75,14 @@ class PermissionMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable):
         if request.url.path in self.EXEMPT_PATHS or request.url.path.startswith("/uploads"):
             return await call_next(request)
+
         try:
             user = await get_current_user_from_request(request)
             request.state.user = user
+            set_cached_user(user)  # enable get_current_user dependency to short-circuit
         except HTTPException:
             if request.url.path.startswith("/api/"):
                 raise
             return await call_next(request)
+
         return await call_next(request)

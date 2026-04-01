@@ -1,6 +1,7 @@
 """JWT authentication — strict mode: no demo/fallback users."""
 
 import os
+from contextvars import ContextVar
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from uuid import UUID
@@ -24,6 +25,17 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", "480"))
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
+# Caches the authenticated user from PermissionMiddleware for reuse by get_current_user,
+# avoiding a redundant JWT decode + DB query on every authenticated request.
+_cached_user: ContextVar[Optional["User"]] = ContextVar("cached_user", default=None)
+
+
+def decode_token(token: str) -> dict:
+    try:
+        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except JWTError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Token invalid: {e}")
+
 
 def verify_password(plain: str, hashed: str) -> bool:
     return pwd_context.verify(plain, hashed)
@@ -40,11 +52,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-def decode_token(token: str) -> dict:
-    try:
-        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except JWTError as e:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Token invalid: {e}")
+def set_cached_user(user: "User") -> None:
+    """Called by PermissionMiddleware after successfully loading the user."""
+    _cached_user.set(user)
 
 
 async def get_current_user(
@@ -53,12 +63,20 @@ async def get_current_user(
 ) -> "User":
     """Extract and validate current user from JWT.
 
-    Shares the request's db session when used as a route dependency.
+    Short-circuits using the user cached by PermissionMiddleware when available,
+    avoiding a redundant JWT decode + DB query on every authenticated request.
+
     Raises 401 if token is invalid or user does not exist in database.
     No demo/fallback users — authentication must be explicit.
     """
     from api.services.fastapi_code_generator.models import User
 
+    # Fast path: user was already loaded by PermissionMiddleware
+    cached = _cached_user.get()
+    if cached is not None:
+        return cached
+
+    # Slow path: decode and validate
     payload = decode_token(credentials.credentials)
     user_id = payload.get("sub")
     if not user_id:
