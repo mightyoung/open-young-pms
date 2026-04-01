@@ -78,8 +78,8 @@ backend/
 
 **Backend router layers (defined in main.py):**
 - Layer 1 (`api.services.fastapi_code_generator.routers`) — Auto-generated CRUD: auth, users, projects, hazard_reports, inspections, reports, notifications. Do not edit directly.
-- Layer 2 (`routers/`) — Legacy canonical: dashboard, approval, audit, tasks, files, forum, reports, notifications, websocket, organization, permission, AI (V2). These are the real implementations.
-- Layer 3 (`api/routers/`) — New modular: upload, roles, data_service, knowledge, quality, contracts, notification_settings, export, forum (API), companies, departments, risks, ai_chat. Incrementally replacing Layer 2.
+- Layer 2 (`routers/`) — Legacy canonical: dashboard, approval, audit, tasks, files, forum, reports, notifications, websocket, organization, permission, AI (V2). **Frozen: do not add new endpoints here.**
+- Layer 3 (`api/routers/`) — **Canonical for all new development**: upload, roles, data_service, knowledge, quality, contracts, notification_settings, export, forum (API), companies, departments, risks, ai_chat. All new backend endpoints must be placed here.
 
 **⚠️ Dual implementations exist (to be resolved in P3):**
 - Forum: `routers/forum.py` (增强) + `api/routers/forum.py` (API)
@@ -118,8 +118,8 @@ backend/
 4. Add domain API methods in `src/api/<feature>.js`
 
 ### Adding a new API endpoint (backend)
-1. Determine which layer the router belongs to (Layer 2 or 3)
-2. Create router in `routers/` or `api/routers/`
+1. All new endpoints go into Layer 3 (`api/routers/`) — Layer 2 is frozen
+2. Create router in `api/routers/`
 3. Use `from api.services.fastapi_code_generator.auth import get_current_user, require_role`
 4. Use `from api.services.fastapi_code_generator.database import get_db`
 5. Register in `backend/main.py` under the correct layer comment block
