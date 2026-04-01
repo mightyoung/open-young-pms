@@ -20,6 +20,7 @@ cd backend
 pip install -r requirements.txt
 cp .env.example .env   # fill in JWT_SECRET
 ruff check .           # Python lint (0 errors required in CI)
+ruff format .          # Format code (run before committing)
 pytest tests/ -v       # All backend tests (36 passing)
 
 uvicorn main:app --reload --port 8001  # Backend API
