@@ -3,8 +3,185 @@
  * These catch import/compile errors, not business logic.
  */
 
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
 
+// ---------------------------------------------------------------------------
+// API errors
+// ---------------------------------------------------------------------------
+describe('API errors', () => {
+  it('ApiError hierarchy — status and code properties', async () => {
+    const {
+      ApiError,
+      UnauthorizedError,
+      ForbiddenError,
+      ServerError,
+      NetworkError,
+      BusinessError,
+    } = await import('../api/errors')
+
+    const apiErr = new ApiError('test', { status: 500, code: 'E999' })
+    expect(apiErr.message).toBe('test')
+    expect(apiErr.status).toBe(500)
+    expect(apiErr.code).toBe('E999')
+    expect(apiErr.name).toBe('ApiError')
+
+    const unauth = new UnauthorizedError()
+    expect(unauth.status).toBe(401)
+    expect(unauth.message).toBe('登录状态已失效')
+
+    const forbidden = new ForbiddenError()
+    expect(forbidden.status).toBe(403)
+
+    const server = new ServerError()
+    expect(server.status).toBe(undefined) // ServerError does not set explicit status
+    expect(server.message).toBe('服务器错误，请稍后重试')
+
+    const network = new NetworkError()
+    expect(network.name).toBe('NetworkError')
+
+    const biz = new BusinessError('自定义错误')
+    expect(biz.message).toBe('自定义错误')
+    expect(biz.name).toBe('BusinessError')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// API adapters
+// ---------------------------------------------------------------------------
+describe('API adapters', () => {
+  it('normalizeApiResponse handles all response shapes', async () => {
+    const { normalizeApiResponse } = await import('../api/adapters')
+
+    // Backend canonical shape (success)
+    expect(normalizeApiResponse({ code: 'A0000', data: { id: 1 } })).toMatchObject({
+      ok: true,
+      data: { id: 1 },
+    })
+
+    // Backend canonical shape (error)
+    expect(normalizeApiResponse({ code: 'B0001', message: '资源不存在' })).toMatchObject({
+      ok: false,
+      code: 'B0001',
+      message: '资源不存在',
+    })
+
+    // Alternative success shape
+    expect(normalizeApiResponse({ success: true, data: [1, 2, 3] })).toMatchObject({
+      ok: true,
+      data: [1, 2, 3],
+    })
+
+    // Error object is treated as data (ok: true)
+    expect(normalizeApiResponse(new Error('network'))).toMatchObject({ ok: true })
+
+    // Raw null/undefined
+    expect(normalizeApiResponse(null)).toMatchObject({ ok: true, data: null })
+    expect(normalizeApiResponse(undefined)).toMatchObject({ ok: true })
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Route config
+// ---------------------------------------------------------------------------
+describe('Route config', () => {
+  it('route-map exports and getMenuKeyByPath', async () => {
+    const routeMap = await import('../app/route-map')
+    expect(routeMap.ROUTE_META).toBeDefined()
+    expect(routeMap.ROUTE_META.dashboard.path).toBe('/dashboard')
+    expect(routeMap.DEFAULT_AUTH_ROUTE).toBe('/dashboard')
+    expect(typeof routeMap.getMenuKeyByPath).toBe('function')
+
+    // Exact matches
+    expect(routeMap.getMenuKeyByPath('/dashboard')).toBe('dashboard')
+    expect(routeMap.getMenuKeyByPath('/users')).toBe('users')
+
+    // Nested routes
+    expect(routeMap.getMenuKeyByPath('/dashboard/settings')).toBe('dashboard')
+
+    // Unknown routes fall back to dashboard
+    expect(routeMap.getMenuKeyByPath('/unknown')).toBe('dashboard')
+    expect(routeMap.getMenuKeyByPath('/')).toBe('dashboard')
+  })
+
+  it('menu.config.js exports MENU_ITEMS as pure data', async () => {
+    const menu = await import('../app/menu.config')
+    expect(Array.isArray(menu.MENU_ITEMS)).toBe(true)
+    expect(menu.MENU_ITEMS.length).toBeGreaterThan(0)
+
+    // iconKey is a string (not a component), confirming pure data design
+    for (const item of menu.MENU_ITEMS) {
+      expect(typeof item.iconKey).toBe('string')
+      expect(typeof item.key).toBe('string')
+      expect(typeof item.label).toBe('string')
+      expect(typeof item.path).toBe('string')
+    }
+  })
+
+  it('icon-map.js resolves iconKey strings to components', async () => {
+    const { resolveIcon } = await import('../app/icon-map')
+    const { DashboardOutlined, TeamOutlined } = await import('@ant-design/icons')
+
+    expect(resolveIcon('DashboardOutlined')).toBe(DashboardOutlined)
+    expect(resolveIcon('TeamOutlined')).toBe(TeamOutlined)
+    expect(resolveIcon('NonExistent')).toBe(null)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Auth session (localStorage)
+// ---------------------------------------------------------------------------
+describe('Auth session', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  afterEach(() => {
+    localStorage.clear()
+  })
+
+  it('getToken / setToken round-trip', async () => {
+    const { getToken, setToken } = await import('../app/auth-session')
+    expect(getToken()).toBe(null)
+    setToken('tok_abc123')
+    expect(getToken()).toBe('tok_abc123')
+    setToken(null)
+    expect(getToken()).toBe(null)
+  })
+
+  it('saveSession / loadSession round-trip', async () => {
+    const { saveSession, loadSession, clearSession } = await import('../app/auth-session')
+
+    saveSession({ token: 'tok_xyz', user: { id: '1', username: 'alice', full_name: 'Alice' } })
+    const loaded = loadSession()
+    expect(loaded.token).toBe('tok_xyz')
+    expect(loaded.user.username).toBe('alice')
+
+    clearSession()
+    expect(loadSession().token).toBe(null)
+  })
+
+  it('getStoredUser / setStoredUser handle invalid JSON gracefully', async () => {
+    const { getStoredUser, setStoredUser } = await import('../app/auth-session')
+    localStorage.setItem('user', 'not-json')
+    expect(getStoredUser()).toBe(null)
+    setStoredUser({ username: 'bob' })
+    expect(getStoredUser().username).toBe('bob')
+  })
+
+  it('getRememberedUser / saveRememberedUser / clearRememberedUser', async () => {
+    const { getRememberedUser, saveRememberedUser, clearRememberedUser } =
+      await import('../app/auth-session')
+    expect(getRememberedUser()).toBe('')
+    saveRememberedUser('admin')
+    expect(getRememberedUser()).toBe('admin')
+    clearRememberedUser()
+    expect(getRememberedUser()).toBe('')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// API client
+// ---------------------------------------------------------------------------
 describe('API client', () => {
   it('client.js exports request methods', async () => {
     const client = await import('../api/client')
@@ -15,42 +192,18 @@ describe('API client', () => {
     expect(typeof client.del).toBe('function')
   })
 
-  it('errors.js exports error classes', async () => {
+  it('client.js exports setUnauthorizedHandler', async () => {
+    const { setUnauthorizedHandler } = await import('../api/client')
+    expect(typeof setUnauthorizedHandler).toBe('function')
+  })
+
+  it('errors.js exports all error classes', async () => {
     const errors = await import('../api/errors')
     expect(errors.ApiError).toBeDefined()
     expect(errors.UnauthorizedError).toBeDefined()
     expect(errors.BusinessError).toBeDefined()
-  })
-
-  it('adapters.js normalizeApiResponse works', async () => {
-    const { normalizeApiResponse } = await import('../api/adapters')
-    expect(normalizeApiResponse({ code: 'A0000', data: {} })).toMatchObject({ ok: true })
-    expect(normalizeApiResponse({ code: 'B0001', data: {} })).toMatchObject({ ok: false })
-    expect(normalizeApiResponse({ success: true, data: {} })).toMatchObject({ ok: true })
-  })
-})
-
-describe('Route config', () => {
-  it('route-map.js exports ROUTE_META and DEFAULT_AUTH_ROUTE', async () => {
-    const routeMap = await import('../app/route-map')
-    expect(routeMap.ROUTE_META).toBeDefined()
-    expect(routeMap.DEFAULT_AUTH_ROUTE).toBe('/dashboard')
-    expect(typeof routeMap.getMenuKeyByPath).toBe('function')
-  })
-
-  it('menu.config.js exports MENU_ITEMS array', async () => {
-    const menu = await import('../app/menu.config')
-    expect(Array.isArray(menu.MENU_ITEMS)).toBe(true)
-    expect(menu.MENU_ITEMS.length).toBeGreaterThan(0)
-  })
-})
-
-describe('Auth session', () => {
-  it('auth-session.js exports session functions', async () => {
-    const session = await import('../app/auth-session')
-    expect(typeof session.getToken).toBe('function')
-    expect(typeof session.saveSession).toBe('function')
-    expect(typeof session.clearSession).toBe('function')
-    expect(typeof session.loadSession).toBe('function')
+    expect(errors.ServerError).toBeDefined()
+    expect(errors.NetworkError).toBeDefined()
+    expect(errors.ForbiddenError).toBeDefined()
   })
 })
