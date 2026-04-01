@@ -35,4 +35,10 @@ export const MENU_ITEMS = [
     path: ROUTE_META.notifications.path,
     iconKey: 'BellOutlined',
   },
+  {
+    key: ROUTE_META.reports.key,
+    label: ROUTE_META.reports.label,
+    path: ROUTE_META.reports.path,
+    iconKey: 'FileTextOutlined',
+  },
 ]

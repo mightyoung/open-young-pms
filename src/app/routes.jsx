@@ -13,6 +13,7 @@ const UsersPage = lazy(() => import('../features/users/pages/UsersPage'))
 const ProjectsPage = lazy(() => import('../features/projects/pages/ProjectsPage'))
 const TasksPage = lazy(() => import('../features/tasks/pages/TasksPage'))
 const NotificationsPage = lazy(() => import('../features/notifications/pages/NotificationsPage'))
+const ReportsPage = lazy(() => import('../features/reports/pages/ReportsPage'))
 
 function NotFoundPage() {
   return <Navigate to={DEFAULT_AUTH_ROUTE} replace />
@@ -78,6 +79,14 @@ export function AppRoutes() {
           element: (
             <Suspense fallback={<PageLoader />}>
               <NotificationsPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'reports',
+          element: (
+            <Suspense fallback={<PageLoader />}>
+              <ReportsPage />
             </Suspense>
           ),
         },

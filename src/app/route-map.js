@@ -24,6 +24,11 @@ export const ROUTE_META = {
     path: '/notifications',
     label: '消息通知',
   },
+  reports: {
+    key: 'reports',
+    path: '/reports',
+    label: '报告中心',
+  },
 }
 
 export const DEFAULT_AUTH_ROUTE = ROUTE_META.dashboard.path
