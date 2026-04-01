@@ -32,6 +32,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Bundle size baseline
+        run: npm run bundle-check
+
       - name: Run smoke tests
         run: npm run test
 
