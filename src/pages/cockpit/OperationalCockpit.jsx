@@ -1,16 +1,5 @@
 import React, { useState } from 'react'
-import {
-  Row,
-  Col,
-  Card,
-  Typography,
-  Tag,
-  Button,
-  Select,
-  Badge,
-  Avatar,
-  Divider,
-} from 'antd'
+import { Row, Col, Card, Typography, Tag, Button, Select, Badge, Avatar, Divider } from 'antd'
 import {
   Monitor,
   MessageSquare,
@@ -164,7 +153,7 @@ const MessageStream = () => (
     bodyStyle={{ padding: 0 }}
   >
     <div style={{ maxHeight: 300, overflow: 'auto' }}>
-      {MESSAGES.map((msg) => (
+      {MESSAGES.map(msg => (
         <div
           key={msg.id}
           style={{
@@ -199,7 +188,7 @@ const MessageStream = () => (
           </div>
           {msg.extracted.length > 0 && (
             <div style={{ marginLeft: 36, display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-              {msg.extracted.map((tag) => (
+              {msg.extracted.map(tag => (
                 <Tag
                   key={tag}
                   color={msg.type === 'danger' ? 'red' : 'orange'}
@@ -262,7 +251,10 @@ const WeeklyReportGenerator = () => (
         已完成
       </div>
       {WEEKLY_REPORT.completed.map((item, _i) => (
-        <div key={_i} style={{ fontSize: 13, color: COLORS.text, paddingLeft: 16, marginBottom: 4 }}>
+        <div
+          key={_i}
+          style={{ fontSize: 13, color: COLORS.text, paddingLeft: 16, marginBottom: 4 }}
+        >
           ✓ {item}
         </div>
       ))}
