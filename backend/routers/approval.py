@@ -1,4 +1,5 @@
 """审批流路由."""
+
 from typing import Optional
 
 from fastapi import APIRouter, Depends
@@ -10,9 +11,16 @@ from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import User
 from services.approval_service import ApprovalService
 from schemas.approval import (
-    FlowCreate, FlowUpdate, FlowResponse, InstanceStart,
-    InstanceResponse, InstanceDetailResponse, TaskResponse,
-    ApprovalRecordResponse, UserBrief, FlowBrief,
+    FlowCreate,
+    FlowUpdate,
+    FlowResponse,
+    InstanceStart,
+    InstanceResponse,
+    InstanceDetailResponse,
+    TaskResponse,
+    ApprovalRecordResponse,
+    UserBrief,
+    FlowBrief,
 )
 from schemas.response import ApiResponse
 
@@ -115,35 +123,35 @@ async def get_instance(
         detail = await svc.get_instance_detail(instance_id)
         inst = detail["instance"]
         flow = detail["flow"]
-        initiator_result = await db.execute(
-            select(User).where(User.id == inst.initiator_id)
-        )
+        initiator_result = await db.execute(select(User).where(User.id == inst.initiator_id))
         initiator = initiator_result.scalar_one_or_none()
         records = []
         for r in detail["records"]:
-            approver_result = await db.execute(
-                select(User).where(User.id == r.approver_id)
-            )
+            approver_result = await db.execute(select(User).where(User.id == r.approver_id))
             approver = approver_result.scalar_one_or_none()
-            records.append(ApprovalRecordResponse(
-                id=r.id,
-                node_name=r.node_name,
-                approver=_user_brief(approver),
-                action=r.action,
-                comment=r.comment,
-                created_at=r.created_at,
-            ))
-        return ApiResponse.ok(InstanceDetailResponse(
-            id=inst.id,
-            flow=FlowBrief(id=flow.id, name=flow.name, code=flow.code, version=flow.version),
-            entity_type=inst.entity_type,
-            entity_id=inst.entity_id,
-            status=inst.status,
-            initiator=_user_brief(initiator),
-            current_node_name=detail["current_node_name"],
-            records=records,
-            created_at=inst.created_at,
-        ))
+            records.append(
+                ApprovalRecordResponse(
+                    id=r.id,
+                    node_name=r.node_name,
+                    approver=_user_brief(approver),
+                    action=r.action,
+                    comment=r.comment,
+                    created_at=r.created_at,
+                )
+            )
+        return ApiResponse.ok(
+            InstanceDetailResponse(
+                id=inst.id,
+                flow=FlowBrief(id=flow.id, name=flow.name, code=flow.code, version=flow.version),
+                entity_type=inst.entity_type,
+                entity_id=inst.entity_id,
+                status=inst.status,
+                initiator=_user_brief(initiator),
+                current_node_name=detail["current_node_name"],
+                records=records,
+                created_at=inst.created_at,
+            )
+        )
     except ValueError as e:
         return ApiResponse.error(404, str(e))
 
@@ -158,18 +166,18 @@ async def get_instance_history(
     records = await svc.get_instance_history(instance_id)
     items = []
     for r in records:
-        approver_result = await db.execute(
-            select(User).where(User.id == r.approver_id)
-        )
+        approver_result = await db.execute(select(User).where(User.id == r.approver_id))
         approver = approver_result.scalar_one_or_none()
-        items.append(ApprovalRecordResponse(
-            id=r.id,
-            node_name=r.node_name,
-            approver=_user_brief(approver),
-            action=r.action,
-            comment=r.comment,
-            created_at=r.created_at,
-        ))
+        items.append(
+            ApprovalRecordResponse(
+                id=r.id,
+                node_name=r.node_name,
+                approver=_user_brief(approver),
+                action=r.action,
+                comment=r.comment,
+                created_at=r.created_at,
+            )
+        )
     return ApiResponse.ok(items)
 
 
@@ -182,21 +190,21 @@ async def get_my_pending_tasks(
     tasks = await svc.get_pending_tasks(str(current_user.id))
     items = []
     for t in tasks:
-        initiator_result = await db.execute(
-            select(User).where(User.id == t["initiator_id"])
-        )
+        initiator_result = await db.execute(select(User).where(User.id == t["initiator_id"]))
         initiator = initiator_result.scalar_one_or_none()
-        items.append(TaskResponse(
-            id=t["id"],
-            instance_id=t["instance_id"],
-            node_name=t["node_name"],
-            status=t["status"],
-            flow_name=t["flow_name"],
-            entity_type=t["entity_type"],
-            entity_id=t["entity_id"],
-            initiator=_user_brief(initiator),
-            created_at=t["created_at"],
-        ))
+        items.append(
+            TaskResponse(
+                id=t["id"],
+                instance_id=t["instance_id"],
+                node_name=t["node_name"],
+                status=t["status"],
+                flow_name=t["flow_name"],
+                entity_type=t["entity_type"],
+                entity_id=t["entity_id"],
+                initiator=_user_brief(initiator),
+                created_at=t["created_at"],
+            )
+        )
     return ApiResponse.ok(items)
 
 

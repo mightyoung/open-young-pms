@@ -1,4 +1,5 @@
 """监测看板数据模型."""
+
 from datetime import datetime
 
 from pydantic import BaseModel
@@ -6,6 +7,7 @@ from pydantic import BaseModel
 
 class TrafficLight(BaseModel):
     """红绿灯"""
+
     progress: str
     quality: str
     safety: str
@@ -15,6 +17,7 @@ class TrafficLight(BaseModel):
 
 class ProjectCockpit(BaseModel):
     """项目驾驶舱"""
+
     project_id: str
     project_name: str
     progress: int
@@ -29,6 +32,7 @@ class ProjectCockpit(BaseModel):
 
 class EarlyWarning(BaseModel):
     """预警"""
+
     id: str
     type: str
     level: str
@@ -41,6 +45,7 @@ class EarlyWarning(BaseModel):
 
 class DepartmentOverview(BaseModel):
     """部门总览"""
+
     department_id: str
     department_name: str
     project_count: int
@@ -52,5 +57,6 @@ class DepartmentOverview(BaseModel):
 
 class CompanyOverview(BaseModel):
     """公司总览"""
+
     company_overview: dict
     departments: list

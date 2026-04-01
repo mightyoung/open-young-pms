@@ -1,4 +1,5 @@
 """知识库路由 — 文档管理与搜索"""
+
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from typing import Optional
@@ -47,25 +48,27 @@ async def list_documents(
 ):
     """文档列表"""
     items = list(_knowledge_docs.values())
-    
+
     # 过滤
     if keyword:
         items = [d for d in items if keyword.lower() in d["title"].lower()]
     if category:
         items = [d for d in items if d["category"] == category]
-    
+
     total = len(items)
     # 分页
     start = (page - 1) * page_size
     end = start + page_size
     page_items = items[start:end]
-    
-    return ApiResponse.ok({
-        "items": [_doc_to_dict(d) for d in page_items],
-        "total": total,
-        "page": page,
-        "page_size": page_size,
-    })
+
+    return ApiResponse.ok(
+        {
+            "items": [_doc_to_dict(d) for d in page_items],
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+        }
+    )
 
 
 @router.post("/documents")
@@ -76,6 +79,7 @@ async def create_document(
     """创建文档"""
     doc_id = str(uuid.uuid4())
     from datetime import datetime, timezone
+
     now = datetime.now(timezone.utc).isoformat() + "Z"
     doc = {
         "id": doc_id,
@@ -113,6 +117,7 @@ async def update_document(
     if not doc:
         return ApiResponse.error("K0001", "文档不存在")
     from datetime import datetime, timezone
+
     if doc_in.title is not None:
         doc["title"] = doc_in.title
     if doc_in.content is not None:

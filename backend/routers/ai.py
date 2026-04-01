@@ -1,4 +1,5 @@
 """AI 助手路由"""
+
 import uuid
 from typing import Optional
 
@@ -30,9 +31,7 @@ async def chat(
 
     context_chunks = []
     if req.use_rag:
-        context_chunks = await ai_service._retrieve_docs(
-            req.message, str(current_user.id), req.project_id
-        )
+        context_chunks = await ai_service._retrieve_docs(req.message, str(current_user.id), req.project_id)
         context = ai_service._build_context(context_chunks)
     else:
         context = None
@@ -44,12 +43,14 @@ async def chat(
     history.append({"role": "assistant", "content": answer})
     _sessions[session_id] = history
 
-    return ApiResponse.ok({
-        "session_id": session_id,
-        "answer": answer,
-        "sources": [c.metadata for c in context_chunks],
-        "context_used": len(context_chunks) > 0,
-    })
+    return ApiResponse.ok(
+        {
+            "session_id": session_id,
+            "answer": answer,
+            "sources": [c.metadata for c in context_chunks],
+            "context_used": len(context_chunks) > 0,
+        }
+    )
 
 
 @router.get("/chat/history/{session_id}")
@@ -91,12 +92,14 @@ async def search_knowledge(
         user_id=str(current_user.id),
         project_id=project_id,
     )
-    return ApiResponse.ok({
-        "results": [
-            {"id": r.id, "content": r.content, "source": r.metadata.get("source", ""), "similarity": r.similarity}
-            for r in results
-        ]
-    })
+    return ApiResponse.ok(
+        {
+            "results": [
+                {"id": r.id, "content": r.content, "source": r.metadata.get("source", ""), "similarity": r.similarity}
+                for r in results
+            ]
+        }
+    )
 
 
 @router.post("/chat/analyze-hazard")

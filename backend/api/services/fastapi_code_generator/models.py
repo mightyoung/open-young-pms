@@ -8,12 +8,21 @@ from api.services.fastapi_code_generator.database import Base
 from datetime import datetime
 from typing import Optional
 from sqlalchemy import (
-    Boolean, Column, DateTime, ForeignKey, Integer,
-    JSON, Numeric, Float, Date, String, Text, Index,
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    JSON,
+    Numeric,
+    Float,
+    Date,
+    String,
+    Text,
+    Index,
 )
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
 
 
 class Company(Base):
@@ -49,7 +58,9 @@ class Role(Base):
     __tablename__ = "roles"
 
     id: Mapped[str] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
-    name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)  # super_admin / company_admin / dept_leader / project_manager / site_staff
+    name: Mapped[str] = mapped_column(
+        String(50), unique=True, nullable=False
+    )  # super_admin / company_admin / dept_leader / project_manager / site_staff
     label: Mapped[str] = mapped_column(String(100), nullable=False)
     permissions: Mapped[dict] = mapped_column(JSON, default=dict)
     is_system: Mapped[bool] = mapped_column(Boolean, default=False)  # 系统内置角色不可删除
@@ -77,10 +88,10 @@ class User(Base):
     company: Mapped["Company"] = relationship(back_populates="users")
     department: Mapped[Optional["Department"]] = relationship(back_populates="users")
     role: Mapped["Role"] = relationship(back_populates="users")
-    
 
 
 # ── Project Management ─────────────────────────────────────────
+
 
 class Project(Base):
     __tablename__ = "projects"
@@ -132,7 +143,9 @@ class Milestone(Base):
     name: Mapped[str] = mapped_column(String(200), nullable=False)
     due_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     status: Mapped[str] = mapped_column(String(20), default="pending")  # pending / achieved / delayed
-    quality_status: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)  # pending_review / approved / rejected
+    quality_status: Mapped[Optional[str]] = mapped_column(
+        String(20), nullable=True
+    )  # pending_review / approved / rejected
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     project: Mapped["Project"] = relationship(back_populates="milestones")
@@ -178,6 +191,7 @@ class TaskComment(Base):
 
 # ── Hazard Reporting (随手拍) ─────────────────────────────────
 
+
 class HazardReport(Base):
     __tablename__ = "hazard_reports"
 
@@ -187,12 +201,16 @@ class HazardReport(Base):
     hazard_type: Mapped[str] = mapped_column(String(30), nullable=False)  # safety / quality / environment
     urgency: Mapped[str] = mapped_column(String(20), default="normal")  # urgent / important / normal
     level: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)  # general / major (after confirmed)
-    factor: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)  # human / equipment / environment / management
+    factor: Mapped[Optional[str]] = mapped_column(
+        String(30), nullable=True
+    )  # human / equipment / environment / management
     title: Mapped[str] = mapped_column(String(300), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     location: Mapped[str] = mapped_column(String(300), nullable=False)
     photos: Mapped[list] = mapped_column(JSON, default=list)  # list of photo URLs
-    status: Mapped[str] = mapped_column(String(20), default="pending")  # pending / assigned / confirmed / pushed / rectifying / pending_acceptance / closed / rejected
+    status: Mapped[str] = mapped_column(
+        String(20), default="pending"
+    )  # pending / assigned / confirmed / pushed / rectifying / pending_acceptance / closed / rejected
     assigned_to_id: Mapped[Optional[uuid.UUID]] = mapped_column(GUID, ForeignKey("users.id"), nullable=True)
     assigned_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(GUID, ForeignKey("users.id"), nullable=True)
     confirmed_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(GUID, ForeignKey("users.id"), nullable=True)
@@ -211,12 +229,17 @@ class HazardReport(Base):
 
     reporter: Mapped["User"] = relationship(foreign_keys=[reporter_id])
     project: Mapped[Optional["Project"]] = relationship(back_populates="hazard_reports")
-    rectifications: Mapped[list["HazardRectification"]] = relationship(back_populates="hazard_report", cascade="all, delete-orphan")
-    transfer_logs: Mapped[list["HazardTransfer"]] = relationship(back_populates="hazard_report", cascade="all, delete-orphan")
+    rectifications: Mapped[list["HazardRectification"]] = relationship(
+        back_populates="hazard_report", cascade="all, delete-orphan"
+    )
+    transfer_logs: Mapped[list["HazardTransfer"]] = relationship(
+        back_populates="hazard_report", cascade="all, delete-orphan"
+    )
 
 
 class HazardTransfer(Base):
     """记录隐患在专职安全员之间的转派日志"""
+
     __tablename__ = "hazard_transfers"
 
     id: Mapped[str] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
@@ -238,7 +261,9 @@ class HazardRectification(Base):
     dept_admin_id: Mapped[str] = mapped_column(GUID, nullable=False)  # 兼职安全环保管理员（接收下推的人）
     due_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     requirement: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    status: Mapped[str] = mapped_column(String(20), default="pending")  # pending / rectifying / submitted / accepted / rejected
+    status: Mapped[str] = mapped_column(
+        String(20), default="pending"
+    )  # pending / rectifying / submitted / accepted / rejected
     submitted_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     acceptance_status: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)  # accepted / rejected
     acceptance_comment: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
@@ -248,7 +273,9 @@ class HazardRectification(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     hazard_report: Mapped["HazardReport"] = relationship(back_populates="rectifications")
-    photos: Mapped[list["RectificationPhoto"]] = relationship(back_populates="rectification", cascade="all, delete-orphan")
+    photos: Mapped[list["RectificationPhoto"]] = relationship(
+        back_populates="rectification", cascade="all, delete-orphan"
+    )
 
 
 class RectificationPhoto(Base):
@@ -264,6 +291,7 @@ class RectificationPhoto(Base):
 
 
 # ── Inspection (扫码巡检) ────────────────────────────────────
+
 
 class InspectionPoint(Base):
     __tablename__ = "inspection_points"
@@ -347,12 +375,11 @@ class Report(Base):
     approved_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-    __table_args__ = (
-        Index("ix_report_project_period", "project_id", "type", "period_start"),
-    )
+    __table_args__ = (Index("ix_report_project_period", "project_id", "type", "period_start"),)
 
 
 # ── Approvals (通用审批流) ────────────────────────────────────
+
 
 class ApprovalNode(Base):
     __tablename__ = "approval_nodes"
@@ -370,6 +397,7 @@ class ApprovalNode(Base):
 
 
 # ── Notifications ─────────────────────────────────────────────
+
 
 class Notification(Base):
     __tablename__ = "notifications"
@@ -393,6 +421,7 @@ class Notification(Base):
 
 
 # ── Role & Permission ─────────────────────────────────────────
+
 
 class UserRole(Base):
     __tablename__ = "user_roles"

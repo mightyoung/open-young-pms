@@ -5,7 +5,10 @@ import asyncio
 from sqlalchemy import select
 from api.services.fastapi_code_generator.database import AsyncSessionLocal
 from api.services.fastapi_code_generator.models import (
-    Company, Department, Role, User,
+    Company,
+    Department,
+    Role,
+    User,
     # 随手拍专职安全员
 )
 from api.services.fastapi_code_generator.auth import hash_password
@@ -51,7 +54,9 @@ DEPARTMENTS = [
 
 ROLE_PERMISSIONS = {
     "super_admin": {{"all": True}},
-    "company_admin": {{"projects": ["create", "read", "update", "delete"], "hazards": ["assign", "confirm", "push", "accept"]}},
+    "company_admin": {
+        {"projects": ["create", "read", "update", "delete"], "hazards": ["assign", "confirm", "push", "accept"]}
+    },
     "dept_leader": {{"projects": ["read", "update"], "reports": ["approve"]}},
     "safety_staff": {{"hazards": ["confirm", "push", "accept", "transfer"], "inspections": ["submit"]}},
     "project_manager": {{"projects": ["create", "read", "update"], "tasks": ["create", "read", "update"]}},

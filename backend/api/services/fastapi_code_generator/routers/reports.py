@@ -38,24 +38,26 @@ async def get_report_summary(
         query = query.where(Report.project_id == project_id)
     result = await db.execute(query)
     reports = result.scalars().all()
-    
+
     total = len(reports)
-    submitted = sum(1 for r in reports if r.status in ('submitted', 'approved'))
-    approved = sum(1 for r in reports if r.status == 'approved')
-    rejected = sum(1 for r in reports if r.status == 'rejected')
-    pending = sum(1 for r in reports if r.status == 'pending')
-    
+    submitted = sum(1 for r in reports if r.status in ("submitted", "approved"))
+    approved = sum(1 for r in reports if r.status == "approved")
+    rejected = sum(1 for r in reports if r.status == "rejected")
+    pending = sum(1 for r in reports if r.status == "pending")
+
     by_type = {}
     for r in reports:
-        t = getattr(r, 'report_type', 'other') or 'other'
+        t = getattr(r, "report_type", "other") or "other"
         by_type[t] = by_type.get(t, 0) + 1
-    
-    return ApiResponse.ok({
-        "total": total,
-        "submitted": submitted,
-        "approved": approved,
-        "rejected": rejected,
-        "pending": pending,
-        "pass_rate": round(approved / submitted * 100, 1) if submitted > 0 else 0,
-        "by_type": by_type,
-    })
+
+    return ApiResponse.ok(
+        {
+            "total": total,
+            "submitted": submitted,
+            "approved": approved,
+            "rejected": rejected,
+            "pending": pending,
+            "pass_rate": round(approved / submitted * 100, 1) if submitted > 0 else 0,
+            "by_type": by_type,
+        }
+    )

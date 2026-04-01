@@ -4,7 +4,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.services.fastapi_code_generator.auth import verify_password, create_access_token, hash_password, ACCESS_TOKEN_EXPIRE_MINUTES
+from api.services.fastapi_code_generator.auth import (
+    verify_password,
+    create_access_token,
+    hash_password,
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+)
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import User
 from api.services.fastapi_code_generator.schemas import LoginRequest, TokenResponse, UserResponse
@@ -20,12 +25,15 @@ async def login(
     # Demo fallback for empty database
     if data.username == "admin" and data.password == "admin123":
         from uuid import UUID
+
         mock_id = UUID("00000000-0000-0000-0000-000000000001")
         token = create_access_token(data={"sub": str(mock_id), "username": "admin"})
         return TokenResponse(
             access_token=token,
             expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-            user=UserResponse(id=mock_id, username="admin", email="admin@example.com", full_name="管理员", is_active=True),
+            user=UserResponse(
+                id=mock_id, username="admin", email="admin@example.com", full_name="管理员", is_active=True
+            ),
         )
 
     try:
@@ -38,7 +46,7 @@ async def login(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="用户名或密码错误")
     if not user.is_active:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="账户已被禁用")
-    
+
     token = create_access_token(data={"sub": str(user.id), "username": user.username})
     return TokenResponse(
         access_token=token,

@@ -66,6 +66,7 @@ from api.routers.risks import router as risks_router, RESOURCE_ROUTER
 # App lifecycle
 # =============================================================================
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup: initialize database. Raises on failure — no silent fallback."""
@@ -153,6 +154,7 @@ app.include_router(RESOURCE_ROUTER, prefix="/api/v1", tags=["资源调度"])
 # =============================================================================
 # Root
 # =============================================================================
+
 
 @app.get("/", tags=["根"])
 async def root():

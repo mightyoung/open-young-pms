@@ -32,9 +32,7 @@ async def list_notifications(
     if unread_only:
         query = query.where(Notification.is_read == False)
 
-    count_q = select(func.count()).select_from(Notification).where(
-        Notification.user_id == str(current_user.id)
-    )
+    count_q = select(func.count()).select_from(Notification).where(Notification.user_id == str(current_user.id))
     if unread_only:
         count_q = count_q.where(Notification.is_read == False)
     total = (await db.execute(count_q)).scalar() or 0
@@ -43,13 +41,15 @@ async def list_notifications(
     rows = (await db.execute(query)).scalars().all()
 
     items = [NotificationResponse.model_validate(r) for r in rows]
-    return ApiResponse.ok(PageResult(
-        items=items,
-        total=total,
-        page=pagination.page,
-        page_size=pagination.page_size,
-        has_more=(pagination.page * pagination.page_size) < total,
-    ))
+    return ApiResponse.ok(
+        PageResult(
+            items=items,
+            total=total,
+            page=pagination.page,
+            page_size=pagination.page_size,
+            has_more=(pagination.page * pagination.page_size) < total,
+        )
+    )
 
 
 @router.get("/unread-count", response_model=ApiResponse[UnreadCountResponse])
@@ -57,9 +57,13 @@ async def get_unread_count(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    count_q = select(func.count()).select_from(Notification).where(
-        Notification.user_id == str(current_user.id),
-        Notification.is_read == False,
+    count_q = (
+        select(func.count())
+        .select_from(Notification)
+        .where(
+            Notification.user_id == str(current_user.id),
+            Notification.is_read == False,
+        )
     )
     total = (await db.execute(count_q)).scalar() or 0
     return ApiResponse.ok(UnreadCountResponse(unread_count=total))
@@ -84,6 +88,7 @@ async def mark_as_read(
     notification.is_read = True
     notification.read_at = Notification.__table__.c.read_at.type.python_type()
     from datetime import datetime, timezone
+
     notification.read_at = datetime.now(timezone.utc)
     await db.commit()
     return ApiResponse.ok(message="已标记为已读")
@@ -95,6 +100,7 @@ async def mark_all_as_read(
     current_user: User = Depends(get_current_user),
 ):
     from datetime import datetime, timezone
+
     await db.execute(
         update(Notification)
         .where(
@@ -131,24 +137,24 @@ async def get_notification_settings(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(NotificationSetting).where(NotificationSetting.user_id == str(current_user.id))
-    )
+    result = await db.execute(select(NotificationSetting).where(NotificationSetting.user_id == str(current_user.id)))
     setting = result.scalar_one_or_none()
     if not setting:
-        return ApiResponse.ok(NotificationSettingResponse(
-            id="",
-            user_id=str(current_user.id),
-            issue_assign=True,
-            issue_verify=True,
-            reply_like=True,
-            mention=True,
-            approval=True,
-            system=True,
-            in_app=True,
-            email=False,
-            push=False,
-        ))
+        return ApiResponse.ok(
+            NotificationSettingResponse(
+                id="",
+                user_id=str(current_user.id),
+                issue_assign=True,
+                issue_verify=True,
+                reply_like=True,
+                mention=True,
+                approval=True,
+                system=True,
+                in_app=True,
+                email=False,
+                push=False,
+            )
+        )
     return ApiResponse.ok(NotificationSettingResponse.model_validate(setting))
 
 
@@ -158,9 +164,7 @@ async def update_notification_settings(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(NotificationSetting).where(NotificationSetting.user_id == str(current_user.id))
-    )
+    result = await db.execute(select(NotificationSetting).where(NotificationSetting.user_id == str(current_user.id)))
     setting = result.scalar_one_or_none()
 
     import uuid

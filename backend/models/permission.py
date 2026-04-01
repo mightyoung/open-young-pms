@@ -10,6 +10,7 @@ from api.services.fastapi_code_generator.database import Base
 def _patch_user_model():
     """Add project-level permission columns to User model."""
     from api.services.fastapi_code_generator.models import User
+
     if not hasattr(User, "assigned_projects"):
         User.assigned_projects = Column(JSON, default=list)
     if not hasattr(User, "managed_projects"):

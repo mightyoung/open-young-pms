@@ -1,4 +1,5 @@
 """WBS任务服务."""
+
 import uuid
 from datetime import datetime, date, timezone
 from typing import Optional
@@ -17,8 +18,7 @@ class TaskService:
         self.db = db
 
     async def create_task(
-        self, project_id: str, title: str, created_by: str,
-        parent_id: Optional[str] = None, **kwargs
+        self, project_id: str, title: str, created_by: str, parent_id: Optional[str] = None, **kwargs
     ) -> WBSTask:
         if parent_id:
             parent_result = await self.db.execute(select(WBSTask).where(WBSTask.id == parent_id))
@@ -124,7 +124,9 @@ class TaskService:
                     "id": str(t.assignee.id),
                     "username": t.assignee.username,
                     "full_name": t.assignee.full_name,
-                } if t.assignee else None,
+                }
+                if t.assignee
+                else None,
                 "children": [to_dict(c) for c in tasks if str(c.parent_id) == str(t.id)],
             }
 
@@ -157,7 +159,9 @@ class TaskService:
                     "id": str(t.assignee.id),
                     "username": t.assignee.username,
                     "full_name": t.assignee.full_name,
-                } if t.assignee else None,
+                }
+                if t.assignee
+                else None,
                 "dependencies": t.dependencies or [],
             }
             for t in tasks
@@ -175,22 +179,26 @@ class TaskService:
         columns = {"pending": [], "in_progress": [], "completed": [], "cancelled": []}
         for t in tasks:
             if t.status in columns:
-                columns[t.status].append({
-                    "id": str(t.id),
-                    "title": t.title,
-                    "wbs_code": t.wbs_code,
-                    "level": t.level,
-                    "progress": t.progress,
-                    "status": t.status,
-                    "planned_start": t.planned_start,
-                    "planned_end": t.planned_end,
-                    "assignee": {
-                        "id": str(t.assignee.id),
-                        "username": t.assignee.username,
-                        "full_name": t.assignee.full_name,
-                    } if t.assignee else None,
-                    "children": [],
-                })
+                columns[t.status].append(
+                    {
+                        "id": str(t.id),
+                        "title": t.title,
+                        "wbs_code": t.wbs_code,
+                        "level": t.level,
+                        "progress": t.progress,
+                        "status": t.status,
+                        "planned_start": t.planned_start,
+                        "planned_end": t.planned_end,
+                        "assignee": {
+                            "id": str(t.assignee.id),
+                            "username": t.assignee.username,
+                            "full_name": t.assignee.full_name,
+                        }
+                        if t.assignee
+                        else None,
+                        "children": [],
+                    }
+                )
         return {k: {"tasks": v, "count": len(v)} for k, v in columns.items()}
 
     async def assign_task(self, task_id: str, assignee_id: str) -> WBSTask:
@@ -263,7 +271,7 @@ class TaskService:
 
         project_end = max(
             (t.planned_end or datetime.now(timezone.utc) for t in tasks if t.planned_end),
-            default=datetime.now(timezone.utc)
+            default=datetime.now(timezone.utc),
         )
         critical = []
         for t in tasks:

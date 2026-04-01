@@ -12,22 +12,30 @@ from sqlalchemy.orm import selectinload
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import (
-    HazardReport, HazardRectification, HazardTransfer,
-    RectificationPhoto, Notification,
+    HazardReport,
+    HazardRectification,
+    HazardTransfer,
+    RectificationPhoto,
+    Notification,
     User,
 )
 from api.response import ApiResponse, PaginatedResponse, BusinessException
 from api.exceptions import ERR_NOT_FOUND
 from api.services.fastapi_code_generator.schemas import (
-    HazardReportCreate, HazardReportResponse,
-    HazardAssignRequest, HazardConfirmRequest, HazardPushRequest,
-    HazardTransferRequest, RectificationSubmitRequest,
+    HazardReportCreate,
+    HazardReportResponse,
+    HazardAssignRequest,
+    HazardConfirmRequest,
+    HazardPushRequest,
+    HazardTransferRequest,
+    RectificationSubmitRequest,
 )
 
 router = APIRouter()
 
 
 # ── 上报 ────────────────────────────────────────────────────
+
 
 @router.post("", response_model=HazardReportResponse, status_code=status.HTTP_201_CREATED)
 async def create_hazard_report(
@@ -49,7 +57,7 @@ async def create_hazard_report(
     )
     db.add(report)
     await db.flush()
-    
+
     # 通知安全保障部
     notif = Notification(
         user_id=str(current_user.id),  # TODO: 改为安全保障部负责人
@@ -77,9 +85,7 @@ async def list_hazard_reports(
 ):
     """查询隐患列表（支持分页和过滤）。GET /api/v1/hazards"""
     query = (
-        select(HazardReport)
-        .options(selectinload(HazardReport.rectifications))
-        .where(HazardReport.is_draft == False)
+        select(HazardReport).options(selectinload(HazardReport.rectifications)).where(HazardReport.is_draft == False)
     )
     if status:
         query = query.where(HazardReport.status == status)
@@ -87,15 +93,15 @@ async def list_hazard_reports(
         query = query.where(HazardReport.hazard_type == hazard_type)
     if project_id:
         query = query.where(HazardReport.project_id == project_id)
-    
+
     count_q = select(func.count()).select_from(query.subquery())
     total = (await db.execute(count_q)).scalar() or 0
-    
+
     query = query.order_by(HazardReport.created_at.desc())
     query = query.offset((page - 1) * page_size).limit(page_size)
     rows = (await db.execute(query)).scalars().all()
     items = [HazardReportResponse.model_validate(r) for r in rows]
-    
+
     return PaginatedResponse.ok(items, total, page, page_size)
 
 
@@ -119,6 +125,7 @@ async def get_hazard_report(
 
 # ── 分配 ────────────────────────────────────────────────────
 
+
 @router.post("/{report_id}/assign")
 async def assign_hazard_report(
     report_id: UUID,
@@ -133,12 +140,12 @@ async def assign_hazard_report(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="隐患不存在")
     if report.status != "pending":
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="只能分配待分配的隐患")
-    
+
     report.status = "assigned"
     report.assigned_to_id = data.assigned_to_id
     report.assigned_by_id = current_user.id
     report.updated_at = datetime.now(timezone.utc)
-    
+
     notif = Notification(
         user_id=data.assigned_to_id,
         type="hazard_assigned",
@@ -154,6 +161,7 @@ async def assign_hazard_report(
 
 # ── 转派 ────────────────────────────────────────────────────
 
+
 @router.post("/{report_id}/transfer")
 async def transfer_hazard_report(
     report_id: UUID,
@@ -168,7 +176,7 @@ async def transfer_hazard_report(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="隐患不存在")
     if report.status not in ("assigned", "confirmed"):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="当前状态不允许转派")
-    
+
     # 记录转派日志
     transfer = HazardTransfer(
         hazard_report_id=report.id,
@@ -177,11 +185,11 @@ async def transfer_hazard_report(
         reason=data.reason,
     )
     db.add(transfer)
-    
+
     report.assigned_to_id = data.to_user_id
     report.status = "assigned"
     report.updated_at = datetime.now(timezone.utc)
-    
+
     notif = Notification(
         user_id=data.to_user_id,
         type="hazard_transferred",
@@ -197,6 +205,7 @@ async def transfer_hazard_report(
 
 # ── 确认/驳回 ──────────────────────────────────────────────
 
+
 @router.post("/{report_id}/confirm")
 async def confirm_hazard_report(
     report_id: UUID,
@@ -211,7 +220,7 @@ async def confirm_hazard_report(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="隐患不存在")
     if str(report.assigned_to_id) != str(current_user.id):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="此隐患不在您的处理范围内")
-    
+
     report.level = data.level
     report.factor = data.factor
     report.hazard_type = data.hazard_type
@@ -235,11 +244,11 @@ async def reject_hazard_report(
     report = result.scalar_one_or_none()
     if not report:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="隐患不存在")
-    
+
     report.status = "rejected"
     report.reject_reason = reason
     report.updated_at = datetime.now(timezone.utc)
-    
+
     notif = Notification(
         user_id=report.reporter_id,
         type="hazard_rejected",
@@ -255,6 +264,7 @@ async def reject_hazard_report(
 
 # ── 下推 ────────────────────────────────────────────────────
 
+
 @router.post("/{report_id}/push")
 async def push_hazard_report(
     report_id: UUID,
@@ -269,7 +279,7 @@ async def push_hazard_report(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="隐患不存在")
     if report.status != "confirmed":
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="只能下推已确认的隐患")
-    
+
     rectification = HazardRectification(
         hazard_report_id=report.id,
         handler_id=data.handler_id,
@@ -279,11 +289,11 @@ async def push_hazard_report(
         status="pending",
     )
     db.add(rectification)
-    
+
     report.status = "pushed"
     report.pushed_at = datetime.now(timezone.utc)
     report.updated_at = datetime.now(timezone.utc)
-    
+
     notif = Notification(
         user_id=data.handler_id,
         type="hazard_pushed",
@@ -298,6 +308,7 @@ async def push_hazard_report(
 
 
 # ── 整改提交 ───────────────────────────────────────────────
+
 
 @router.post("/{report_id}/rectify")
 async def submit_rectification(
@@ -318,10 +329,10 @@ async def submit_rectification(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="无待整改任务")
     if str(rectification.handler_id) != str(current_user.id):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="您不是此隐患的整改责任人")
-    
+
     rectification.status = "submitted"
     rectification.submitted_at = datetime.now(timezone.utc)
-    
+
     # 保存整改照片
     for photo_url in data.photos:
         photo = RectificationPhoto(
@@ -330,13 +341,13 @@ async def submit_rectification(
             caption=data.notes,
         )
         db.add(photo)
-    
+
     # 更新隐患状态
     result2 = await db.execute(select(HazardReport).where(HazardReport.id == report_id))
     report = result2.scalar_one()
     report.status = "pending_acceptance"
     report.updated_at = datetime.now(timezone.utc)
-    
+
     # 通知安全员验收
     notif = Notification(
         user_id=report.assigned_to_id or report.confirmed_by_id,
@@ -353,6 +364,7 @@ async def submit_rectification(
 
 # ── 验收 ────────────────────────────────────────────────────
 
+
 @router.post("/{report_id}/accept")
 async def accept_rectification(
     report_id: UUID,
@@ -361,24 +373,22 @@ async def accept_rectification(
     current_user: User = Depends(get_current_user),
 ):
     """专职安全员验收通过。POST /api/v1/hazards/{id}/accept"""
-    result = await db.execute(
-        select(HazardRectification).where(HazardRectification.hazard_report_id == report_id)
-    )
+    result = await db.execute(select(HazardRectification).where(HazardRectification.hazard_report_id == report_id))
     rectification = result.scalar_one_or_none()
     if not rectification:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="整改记录不存在")
-    
+
     rectification.acceptance_status = "accepted"
     rectification.acceptance_comment = comment
     rectification.accepted_by_id = current_user.id
     rectification.accepted_at = datetime.now(timezone.utc)
     rectification.status = "accepted"
-    
+
     result2 = await db.execute(select(HazardReport).where(HazardReport.id == report_id))
     report = result2.scalar_one()
     report.status = "closed"
     report.updated_at = datetime.now(timezone.utc)
-    
+
     await db.commit()
     return {"message": "验收通过，隐患处置完毕"}
 
@@ -391,24 +401,22 @@ async def reject_rectification(
     current_user: User = Depends(get_current_user),
 ):
     """专职安全员验收不通过，退回整改。POST /api/v1/hazards/{id}/reject-rectification"""
-    result = await db.execute(
-        select(HazardRectification).where(HazardRectification.hazard_report_id == report_id)
-    )
+    result = await db.execute(select(HazardRectification).where(HazardRectification.hazard_report_id == report_id))
     rectification = result.scalar_one_or_none()
     if not rectification:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="整改记录不存在")
-    
+
     rectification.acceptance_status = "rejected"
     rectification.acceptance_comment = comment
     rectification.accepted_by_id = current_user.id
     rectification.accepted_at = datetime.now(timezone.utc)
     rectification.status = "rectifying"  # 退回重新整改
-    
+
     result2 = await db.execute(select(HazardReport).where(HazardReport.id == report_id))
     report = result2.scalar_one()
     report.status = "rectifying"
     report.updated_at = datetime.now(timezone.utc)
-    
+
     notif = Notification(
         user_id=rectification.handler_id,
         type="rectification_rejected",
@@ -424,6 +432,7 @@ async def reject_rectification(
 
 # ── 统计 ────────────────────────────────────────────────────
 
+
 @router.get("/stats/summary")
 async def hazard_stats_summary(
     db: AsyncSession = Depends(get_db),
@@ -432,7 +441,16 @@ async def hazard_stats_summary(
     """隐患统计摘要。GET /api/v1/hazards/stats/summary"""
     status_counts = {}
     type_counts = {}
-    for status_val in ["pending", "assigned", "confirmed", "pushed", "rectifying", "pending_acceptance", "closed", "rejected"]:
+    for status_val in [
+        "pending",
+        "assigned",
+        "confirmed",
+        "pushed",
+        "rectifying",
+        "pending_acceptance",
+        "closed",
+        "rejected",
+    ]:
         q = select(func.count(HazardReport.id)).where(HazardReport.status == status_val)
         count = (await db.execute(q)).scalar() or 0
         status_counts[status_val] = count
@@ -445,6 +463,7 @@ async def hazard_stats_summary(
 
 
 # ── 草稿 ────────────────────────────────────────────────────
+
 
 @router.get("/drafts", response_model=PaginatedResponse)
 async def list_drafts(

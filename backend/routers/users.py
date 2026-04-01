@@ -30,9 +30,5 @@ async def list_users(
     items = (await db.execute(query)).scalars().all()
 
     return PageResult(
-        items=[UserResponse.model_validate(u) for u in items],
-        total=total,
-        page=1,
-        page_size=total,
-        has_more=False
+        items=[UserResponse.model_validate(u) for u in items], total=total, page=1, page_size=total, has_more=False
     )

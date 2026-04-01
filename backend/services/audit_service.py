@@ -235,20 +235,31 @@ class AuditService:
 
         output = io.StringIO()
         writer = csv.writer(output)
-        writer.writerow([
-            "ID", "Action", "Resource Type", "Resource ID",
-            "Operator ID", "Detail", "IP Address", "User Agent", "Created At",
-        ])
+        writer.writerow(
+            [
+                "ID",
+                "Action",
+                "Resource Type",
+                "Resource ID",
+                "Operator ID",
+                "Detail",
+                "IP Address",
+                "User Agent",
+                "Created At",
+            ]
+        )
         for row in rows:
-            writer.writerow([
-                row.id,
-                row.action,
-                row.resource_type,
-                row.resource_id,
-                row.operator_id,
-                str(row.detail or {}),
-                row.ip_address or "",
-                row.user_agent or "",
-                row.created_at.isoformat() if row.created_at else "",
-            ])
+            writer.writerow(
+                [
+                    row.id,
+                    row.action,
+                    row.resource_type,
+                    row.resource_id,
+                    row.operator_id,
+                    str(row.detail or {}),
+                    row.ip_address or "",
+                    row.user_agent or "",
+                    row.created_at.isoformat() if row.created_at else "",
+                ]
+            )
         return output.getvalue().encode("utf-8")

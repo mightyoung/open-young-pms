@@ -24,7 +24,9 @@ class ForumPost(Base):
     updated_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
 
     author: Mapped["User"] = relationship("User", foreign_keys=[author_id])
-    replies: Mapped[List["ForumReply"]] = relationship("ForumReply", back_populates="post", cascade="all, delete-orphan")
+    replies: Mapped[List["ForumReply"]] = relationship(
+        "ForumReply", back_populates="post", cascade="all, delete-orphan"
+    )
 
 
 class ForumReply(Base):

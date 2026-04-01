@@ -1,4 +1,5 @@
 """论坛路由."""
+
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,6 +17,7 @@ router = APIRouter()
 async def _get_user_brief(db: AsyncSession, user_id: str) -> UserBrief:
     from sqlalchemy import select
     from api.services.fastapi_code_generator.models import User
+
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if user:
@@ -47,7 +49,7 @@ async def _build_post_response(db: AsyncSession, post, current_user_id: str = No
 async def _build_reply_response(db: AsyncSession, reply) -> ReplyResponse:
     author = await _get_user_brief(db, reply.author_id)
     mentioned = []
-    for uid in (reply.mentioned_users or []):
+    for uid in reply.mentioned_users or []:
         mentioned.append(await _get_user_brief(db, uid))
     return ReplyResponse(
         id=reply.id,
@@ -85,8 +87,11 @@ async def list_posts(
     db: AsyncSession = Depends(get_db),
 ):
     result = await forum_service.list_posts(
-        db=db, page=page, page_size=page_size,
-        project_id=project_id, filter_essence=filter_essence,
+        db=db,
+        page=page,
+        page_size=page_size,
+        project_id=project_id,
+        filter_essence=filter_essence,
     )
     return ApiResponse.ok(result)
 

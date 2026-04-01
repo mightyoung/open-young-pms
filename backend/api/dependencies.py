@@ -1,4 +1,5 @@
 """全局异常处理器 + 请求 ID 中间件"""
+
 import uuid
 import traceback
 
@@ -39,6 +40,7 @@ async def exception_handler(request: Request, exc: Exception) -> JSONResponse:
 
     # FastAPI 内置 HTTPException
     from fastapi import HTTPException
+
     if isinstance(exc, HTTPException):
         return JSONResponse(
             status_code=exc.status_code,
@@ -51,8 +53,6 @@ async def exception_handler(request: Request, exc: Exception) -> JSONResponse:
 
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content=ApiResponse.error(
-            ERR_INTERNAL, "服务器内部错误", str(exc)
-        ).model_dump(),
+        content=ApiResponse.error(ERR_INTERNAL, "服务器内部错误", str(exc)).model_dump(),
         headers={"X-Request-ID": req_id},
     )

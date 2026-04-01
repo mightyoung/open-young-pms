@@ -35,12 +35,7 @@ async def list_tasks_by_phase(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Task)
-        .options()
-        .where(Task.phase_id == phase_id)
-        .order_by(Task.created_at)
-    )
+    result = await db.execute(select(Task).options().where(Task.phase_id == phase_id).order_by(Task.created_at))
     rows = result.scalars().all()
     return ApiResponse.ok({"items": [TaskResponse.model_validate(r) for r in rows]})
 

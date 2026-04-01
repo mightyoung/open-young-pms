@@ -7,6 +7,7 @@ from uuid import uuid4
 
 import sys
 import os
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
@@ -15,6 +16,7 @@ class TestDecodeToken:
 
     def test_decode_valid_token(self):
         from api.services.fastapi_code_generator.auth import create_access_token, decode_token
+
         token = create_access_token({"sub": str(uuid4())})
         payload = decode_token(token)
         assert "sub" in payload
@@ -23,6 +25,7 @@ class TestDecodeToken:
     def test_decode_invalid_token(self):
         from api.services.fastapi_code_generator.auth import decode_token
         from fastapi import HTTPException
+
         with pytest.raises(HTTPException) as exc_info:
             decode_token("not.a.valid.token")
         assert exc_info.value.status_code == 401
@@ -30,6 +33,7 @@ class TestDecodeToken:
     def test_decode_tampered_token(self):
         from api.services.fastapi_code_generator.auth import decode_token
         from fastapi import HTTPException
+
         with pytest.raises(HTTPException) as exc_info:
             decode_token("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.signature")
         assert exc_info.value.status_code == 401
@@ -98,6 +102,7 @@ class TestCreateAccessToken:
 
     def test_token_contains_sub(self):
         from api.services.fastapi_code_generator.auth import create_access_token, decode_token
+
         user_id = str(uuid4())
         token = create_access_token({"sub": user_id})
         payload = decode_token(token)
@@ -105,7 +110,7 @@ class TestCreateAccessToken:
 
     def test_token_with_custom_expiry(self):
         from api.services.fastapi_code_generator.auth import create_access_token, decode_token
+
         token = create_access_token({"sub": str(uuid4())}, expires_delta=timedelta(hours=1))
         payload = decode_token(token)
         assert "exp" in payload
-

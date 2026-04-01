@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 class GUID(TypeDecorator):
     """Platform-independent GUID type."""
+
     impl = CHAR(36)
     cache_ok = True
 
@@ -32,10 +33,7 @@ class Base(DeclarativeBase):
     pass
 
 
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql+asyncpg://postgres:postgres@localhost:5432/pms"
-)
+DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/pms")
 
 _async_engine = None
 _async_session_factory = None
@@ -62,6 +60,7 @@ def _get_async_session_factory():
 async def init_db() -> None:
     """Initialize database tables. Raises exception on failure — no silent fallback."""
     from api.services.fastapi_code_generator.models import Base as ModelBase
+
     engine = _get_async_engine()
     async with engine.begin() as conn:
         await conn.run_sync(ModelBase.metadata.create_all)
@@ -82,7 +81,9 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 
 # Sync engine only for migrations/CLI — uses same URL as async
-_sync_engine = create_engine(DATABASE_URL.replace("+asyncpg", "").replace("postgresql+asyncpg", "postgresql"), pool_size=5)
+_sync_engine = create_engine(
+    DATABASE_URL.replace("+asyncpg", "").replace("postgresql+asyncpg", "postgresql"), pool_size=5
+)
 SyncSessionLocal = sessionmaker(_sync_engine, autocommit=False, autoflush=False)
 
 

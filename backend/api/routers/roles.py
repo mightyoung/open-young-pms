@@ -1,4 +1,5 @@
 """角色与权限管理路由"""
+
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -20,16 +21,18 @@ async def list_roles(
     """获取角色列表（所有用户可见）。GET /api/v1/roles"""
     result = await db.execute(select(Role).order_by(Role.is_system.desc(), Role.created_at))
     rows = result.scalars().all()
-    return ApiResponse.ok([
-        {
-            "id": r.id,
-            "name": r.name,
-            "label": r.label,
-            "permissions": r.permissions or {},
-            "is_system": r.is_system,
-        }
-        for r in rows
-    ])
+    return ApiResponse.ok(
+        [
+            {
+                "id": r.id,
+                "name": r.name,
+                "label": r.label,
+                "permissions": r.permissions or {},
+                "is_system": r.is_system,
+            }
+            for r in rows
+        ]
+    )
 
 
 @router.get("/{role_id}")
@@ -43,13 +46,15 @@ async def get_role(
     role = result.scalar_one_or_none()
     if not role:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="角色不存在")
-    return ApiResponse.ok({
-        "id": role.id,
-        "name": role.name,
-        "label": role.label,
-        "permissions": role.permissions or {},
-        "is_system": role.is_system,
-    })
+    return ApiResponse.ok(
+        {
+            "id": role.id,
+            "name": role.name,
+            "label": role.label,
+            "permissions": role.permissions or {},
+            "is_system": role.is_system,
+        }
+    )
 
 
 @router.post("")
@@ -69,13 +74,15 @@ async def create_role(
     db.add(role)
     await db.commit()
     await db.refresh(role)
-    return ApiResponse.ok({
-        "id": role.id,
-        "name": role.name,
-        "label": role.label,
-        "permissions": role.permissions,
-        "is_system": role.is_system,
-    })
+    return ApiResponse.ok(
+        {
+            "id": role.id,
+            "name": role.name,
+            "label": role.label,
+            "permissions": role.permissions,
+            "is_system": role.is_system,
+        }
+    )
 
 
 @router.patch("/{role_id}")
@@ -99,13 +106,15 @@ async def update_role(
         role.permissions = data["permissions"]
 
     await db.commit()
-    return ApiResponse.ok({
-        "id": role.id,
-        "name": role.name,
-        "label": role.label,
-        "permissions": role.permissions,
-        "is_system": role.is_system,
-    })
+    return ApiResponse.ok(
+        {
+            "id": role.id,
+            "name": role.name,
+            "label": role.label,
+            "permissions": role.permissions,
+            "is_system": role.is_system,
+        }
+    )
 
 
 @router.delete("/{role_id}")

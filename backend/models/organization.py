@@ -12,6 +12,7 @@ from api.services.fastapi_code_generator.database import Base
 def _patch_user_model():
     """Add organizations relationship to User model."""
     from api.services.fastapi_code_generator.models import User
+
     if not hasattr(User, "organizations"):
         User.organizations = relationship("UserOrganization", back_populates="user")
 
@@ -32,7 +33,9 @@ class Department(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-    parent: Mapped[Optional["Department"]] = relationship("Department", remote_side=[id], back_populates="children", foreign_keys=[parent_id])
+    parent: Mapped[Optional["Department"]] = relationship(
+        "Department", remote_side=[id], back_populates="children", foreign_keys=[parent_id]
+    )
     children: Mapped[list["Department"]] = relationship("Department", back_populates="parent", foreign_keys=[parent_id])
     manager: Mapped[Optional["User"]] = relationship("User", foreign_keys=[manager_id])
     user_orgs: Mapped[list["UserOrganization"]] = relationship("UserOrganization", back_populates="department")

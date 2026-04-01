@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field, ConfigDict
 
 # ── Auth ──────────────────────────────────────────────────────
 
+
 class LoginRequest(BaseModel):
     username: str
     password: str
@@ -38,6 +39,7 @@ class RoleResponse(BaseModel):
 
 
 # ── Project Management ────────────────────────────────────────
+
 
 class ProjectCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=200)
@@ -127,6 +129,7 @@ class TaskResponse(BaseModel):
 
 # ── Hazard Reporting (随手拍) ─────────────────────────────────
 
+
 class HazardReportCreate(BaseModel):
     project_id: Optional[UUID] = None
     hazard_type: str = Field(..., pattern="^(safety|quality|environment)$")
@@ -195,6 +198,7 @@ class RectificationResponse(BaseModel):
 
 # ── Inspection ───────────────────────────────────────────────
 
+
 class InspectionPointCreate(BaseModel):
     project_id: UUID
     name: str = Field(..., min_length=1, max_length=200)
@@ -221,6 +225,7 @@ class InspectionResponse(BaseModel):
 
 # ── Reports ──────────────────────────────────────────────────
 
+
 class ReportCreate(BaseModel):
     project_id: UUID
     type: str = Field(..., pattern="^(daily|weekly|monthly)$")
@@ -231,6 +236,7 @@ class ReportCreate(BaseModel):
 
 
 # ── Notifications ─────────────────────────────────────────────
+
 
 class NotificationResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -245,6 +251,7 @@ class NotificationResponse(BaseModel):
 
 
 # ── Paginated Response ───────────────────────────────────────
+
 
 class PaginatedResponse(BaseModel):
     items: list[Any]
@@ -268,12 +275,14 @@ class QualityStandardCreate(BaseModel):
     check_items: Optional[list] = None
     description: Optional[str] = None
 
+
 class QualityStandardUpdate(BaseModel):
     name: Optional[str] = None
     category: Optional[str] = None
     pass_score: Optional[int] = None
     check_items: Optional[list] = None
     description: Optional[str] = None
+
 
 class QualityInspectionCreate(BaseModel):
     project_id: str

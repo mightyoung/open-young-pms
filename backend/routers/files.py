@@ -42,9 +42,7 @@ async def upload_file(
     content = await file.read()
     if len(content) > file_service.MAX_FILE_SIZE:
         raise ApiException.from_error_code(ErrorCode.FILE_TOO_LARGE)
-    file_record = await file_service.save_file(
-        db, content, file.filename, str(current_user.id), project_id
-    )
+    file_record = await file_service.save_file(db, content, file.filename, str(current_user.id), project_id)
     return ApiResponse.ok(FileResponseSchema.model_validate(file_record), message="上传成功")
 
 

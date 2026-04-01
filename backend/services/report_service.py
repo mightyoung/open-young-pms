@@ -12,7 +12,6 @@ from schemas.report import ReportStats
 
 
 class ReportService:
-
     async def create_report(
         self,
         db: AsyncSession,

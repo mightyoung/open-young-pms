@@ -9,23 +9,39 @@ if TYPE_CHECKING:
 PERMISSION_MATRIX = {
     "super_admin": ["*"],
     "company_leader": [
-        "project:read:all", "approval:all", "report:read:all",
-        "ai:chat", "issue:read:all",
+        "project:read:all",
+        "approval:all",
+        "report:read:all",
+        "ai:chat",
+        "issue:read:all",
     ],
     "dept_leader": [
-        "project:read:dept", "approval:dept", "report:read:dept",
-        "ai:chat", "issue:read:dept", "monitor:view",
+        "project:read:dept",
+        "approval:dept",
+        "report:read:dept",
+        "ai:chat",
+        "issue:read:dept",
+        "monitor:view",
     ],
     "section_chief": [
-        "approval:section", "issue:verify", "report:read:section",
-        "ai:chat", "issue:read:section",
+        "approval:section",
+        "issue:verify",
+        "report:read:section",
+        "ai:chat",
+        "issue:read:section",
     ],
     "project_manager": [
-        "project:manage", "task:*", "issue:manage",
-        "report:manage", "ai:chat:project",
+        "project:manage",
+        "task:*",
+        "issue:manage",
+        "report:manage",
+        "ai:chat:project",
     ],
     "field_staff": [
-        "issue:create", "task:execute", "report:create", "ai:chat",
+        "issue:create",
+        "task:execute",
+        "report:create",
+        "ai:chat",
     ],
 }
 
@@ -40,7 +56,7 @@ def get_user_permissions(user: "User") -> list[str]:
 
 def has_permission(user: "User", action: str, resource: Optional[str] = None) -> bool:
     """Check if user has a specific permission.
-    
+
     Args:
         action: permission action in form 'resource:verb' or 'resource:verb:scope'
                e.g. 'project:read', 'project:read:all'
@@ -51,10 +67,10 @@ def has_permission(user: "User", action: str, resource: Optional[str] = None) ->
     perms = PERMISSION_MATRIX.get(role_code, [])
     if "*" in perms:
         return True
-    
+
     action_base = action.split(":")[0] if ":" in action else action
     action_verb = action.split(":")[1] if ":" in action else None
-    
+
     for perm in perms:
         perm_parts = perm.split(":")
         if perm == action:
@@ -69,6 +85,7 @@ def has_permission(user: "User", action: str, resource: Optional[str] = None) ->
 
 def require_any_permission(*perms: str):
     """Return a checker that returns True if user has any of the required permissions."""
+
     def checker(user: "User") -> bool:
         if not user.role:
             return False
@@ -80,6 +97,7 @@ def require_any_permission(*perms: str):
             if has_permission(user, required):
                 return True
         return False
+
     return checker
 
 

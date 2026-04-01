@@ -1,4 +1,5 @@
 """ID 自动生成服务"""
+
 import json
 from datetime import datetime, timezone
 from pathlib import Path

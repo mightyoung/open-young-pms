@@ -59,8 +59,12 @@ class PermissionMiddleware(BaseHTTPMiddleware):
     """
 
     EXEMPT_PATHS = {
-        "/", "/docs", "/openapi.json", "/redoc",
-        "/api/v1/auth/login", "/api/v1/auth/register",
+        "/",
+        "/docs",
+        "/openapi.json",
+        "/redoc",
+        "/api/v1/auth/login",
+        "/api/v1/auth/register",
         "/health",
     }
 

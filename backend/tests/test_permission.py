@@ -1,8 +1,8 @@
 """Unit tests for permission system."""
 
-
 import sys
 import os
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from services.permission_service import (
@@ -21,8 +21,14 @@ class MockRole:
 
 
 class MockUser:
-    def __init__(self, role_name: str | None, department_id: str = "dept1",
-                 assigned_projects: list = None, managed_projects: list = None, uid: str = "user1"):
+    def __init__(
+        self,
+        role_name: str | None,
+        department_id: str = "dept1",
+        assigned_projects: list = None,
+        managed_projects: list = None,
+        uid: str = "user1",
+    ):
         self.role = MockRole(role_name) if role_name else None
         self.department_id = department_id
         self.assigned_projects = assigned_projects or []
@@ -46,8 +52,7 @@ class MockIssue:
 
 class TestPermissionMatrix:
     def test_all_roles_defined(self):
-        expected = {"super_admin", "company_leader", "dept_leader",
-                    "section_chief", "project_manager", "field_staff"}
+        expected = {"super_admin", "company_leader", "dept_leader", "section_chief", "project_manager", "field_staff"}
         assert set(PERMISSION_MATRIX.keys()) == expected
 
     def test_super_admin_has_star(self):

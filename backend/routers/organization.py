@@ -25,6 +25,7 @@ def require_permission(action: str):
         if not has_permission(user, action):
             raise HTTPException(status_code=403, detail="权限不足")
         return user
+
     return Depends(dependency)
 
 
@@ -54,9 +55,8 @@ async def get_department(
 
     from sqlalchemy import select
     from models.organization import Department
-    result = await db.execute(
-        select(Department).where(Department.id == department_id, Department.is_active == True)
-    )
+
+    result = await db.execute(select(Department).where(Department.id == department_id, Department.is_active == True))
     dept = result.scalar_one_or_none()
     if not dept:
         raise HTTPException(status_code=404, detail="部门不存在")
@@ -111,10 +111,9 @@ async def get_department_users(
         raise HTTPException(status_code=403, detail="无权限访问该部门")
 
     users = await org_service.get_department_users(db, department_id)
-    return ApiResponse.ok([
-        {"id": u.id, "username": u.username, "full_name": u.full_name, "email": u.email}
-        for u in users
-    ])
+    return ApiResponse.ok(
+        [{"id": u.id, "username": u.username, "full_name": u.full_name, "email": u.email} for u in users]
+    )
 
 
 @router.get("/users/{user_id}/departments", response_model=ApiResponse)
@@ -138,7 +137,5 @@ async def assign_user_departments(
     db: AsyncSession = Depends(get_db),
     current_user: User = require_permission("user:assign"),
 ):
-    orgs = await org_service.assign_user_departments(
-        db, user_id, [a.model_dump() for a in assignments]
-    )
+    orgs = await org_service.assign_user_departments(db, user_id, [a.model_dump() for a in assignments])
     return ApiResponse.ok([UserOrganizationResponse.model_validate(o) for o in orgs])

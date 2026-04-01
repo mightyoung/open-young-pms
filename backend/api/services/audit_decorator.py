@@ -1,9 +1,11 @@
 """审计日志装饰器 — 自动记录关键操作"""
+
 from functools import wraps
 
 
 def audit_log(action: str, entity_type: str, entity_name_field: str = None):
     """装饰器：在操作成功后自动写入审计日志"""
+
     def decorator(func):
         @wraps(func)
         async def wrapper(*args, **kwargs):
@@ -16,6 +18,7 @@ def audit_log(action: str, entity_type: str, entity_name_field: str = None):
             try:
                 from api.routers.audit import add_audit_log
                 from starlette.requests import Request
+
                 request: Request = next((a for a in args if isinstance(a, Request)), None)
                 ip = request.client.host if request else None
                 ua = request.headers.get("user-agent", "") if request else ""
@@ -24,14 +27,20 @@ def audit_log(action: str, entity_type: str, entity_name_field: str = None):
                 entity_name = kwargs.get(entity_name_field or "name", "")
 
                 add_audit_log(
-                    db=db, user_id=str(current_user.id),
-                    username=current_user.username, action=action,
-                    entity_type=entity_type, entity_id=entity_id,
+                    db=db,
+                    user_id=str(current_user.id),
+                    username=current_user.username,
+                    action=action,
+                    entity_type=entity_type,
+                    entity_id=entity_id,
                     entity_name=str(entity_name) if entity_name else None,
-                    ip_address=ip, user_agent=ua,
+                    ip_address=ip,
+                    user_agent=ua,
                 )
             except Exception as e:
                 print(f"[Audit] Failed to write log: {e}")
             return result
+
         return wrapper
+
     return decorator

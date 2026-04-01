@@ -15,7 +15,9 @@ async_engine = create_async_engine(DATABASE_URL, echo=False, pool_size=20, max_o
 AsyncSessionLocal = async_sessionmaker(async_engine, class_=AsyncSession, expire_on_commit=False)
 
 # Sync engine (for alembic migrations / CLI)
-sync_engine = create_engine(DATABASE_URL.replace("+asyncpg", "").replace("postgresql+asyncpg", "postgresql"), pool_size=5)
+sync_engine = create_engine(
+    DATABASE_URL.replace("+asyncpg", "").replace("postgresql+asyncpg", "postgresql"), pool_size=5
+)
 SyncSessionLocal = sessionmaker(sync_engine, autocommit=False, autoflush=False)
 
 
@@ -48,6 +50,7 @@ def get_sync_db() -> Session:
 def init_db() -> None:
     """Create all tables. Call once at startup."""
     import asyncio
+
     asyncio.get_event_loop().run_until_complete(_init_db_async())
 
 

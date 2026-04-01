@@ -1,4 +1,5 @@
 """监测看板服务."""
+
 import uuid
 from datetime import datetime, timezone
 
@@ -58,9 +59,7 @@ class DashboardService:
         )
 
     async def _calc_progress_light(self, project_id: str) -> str:
-        result = await self.db.execute(
-            select(func.count(WBSTask.id)).where(WBSTask.project_id == project_id)
-        )
+        result = await self.db.execute(select(func.count(WBSTask.id)).where(WBSTask.project_id == project_id))
         total = result.scalar() or 0
         if total == 0:
             return "green"
@@ -124,9 +123,7 @@ class DashboardService:
             return "green"
 
         result = await self.db.execute(
-            select(func.coalesce(func.sum(WBSTask.estimated_hours), 0)).where(
-                WBSTask.project_id == project_id
-            )
+            select(func.coalesce(func.sum(WBSTask.estimated_hours), 0)).where(WBSTask.project_id == project_id)
         )
         used_hours = float(result.scalar() or 0)
         utilization = used_hours / project.budget * 100
@@ -139,20 +136,14 @@ class DashboardService:
         return "red"
 
     async def get_project_statistics(self, project_id: str) -> dict:
-        task_result = await self.db.execute(
-            select(WBSTask).where(WBSTask.project_id == project_id)
-        )
+        task_result = await self.db.execute(select(WBSTask).where(WBSTask.project_id == project_id))
         tasks = task_result.scalars().all()
 
         total = len(tasks)
         completed = sum(1 for t in tasks if t.status == "completed")
         in_progress = sum(1 for t in tasks if t.status == "in_progress")
         overdue = sum(
-            1
-            for t in tasks
-            if t.planned_end
-            and t.planned_end < datetime.now(timezone.utc)
-            and t.status != "completed"
+            1 for t in tasks if t.planned_end and t.planned_end < datetime.now(timezone.utc) and t.status != "completed"
         )
 
         total_progress = sum(t.progress for t in tasks)
@@ -201,8 +192,7 @@ class DashboardService:
                 "pending": issue_by_status.get("pending", 0)
                 + issue_by_status.get("assigned", 0)
                 + issue_by_status.get("confirmed", 0),
-                "fixing": issue_by_status.get("rectifying", 0)
-                + issue_by_status.get("pushed", 0),
+                "fixing": issue_by_status.get("rectifying", 0) + issue_by_status.get("pushed", 0),
                 "resolved": issue_by_status.get("closed", 0),
             },
             "report_stats": {
@@ -225,10 +215,7 @@ class DashboardService:
         traffic_light = await self.get_traffic_light(project_id)
 
         task_result = await self.db.execute(
-            select(WBSTask)
-            .where(WBSTask.project_id == project_id)
-            .order_by(WBSTask.created_at.desc())
-            .limit(5)
+            select(WBSTask).where(WBSTask.project_id == project_id).order_by(WBSTask.created_at.desc()).limit(5)
         )
         recent_tasks = [
             {"id": str(t.id), "title": t.title, "status": t.status, "progress": t.progress}
@@ -247,8 +234,7 @@ class DashboardService:
             .limit(5)
         )
         upcoming = [
-            {"id": str(t.id), "title": t.title, "due_date": t.planned_end}
-            for t in deadline_result.scalars().all()
+            {"id": str(t.id), "title": t.title, "due_date": t.planned_end} for t in deadline_result.scalars().all()
         ]
 
         avg_progress = stats["task_stats"]["average_progress"]
@@ -326,16 +312,12 @@ class DashboardService:
     async def get_department_overview(self, department_id: str) -> dict:
         from models import Department, Project, User
 
-        dept_result = await self.db.execute(
-            select(Department).where(Department.id == department_id)
-        )
+        dept_result = await self.db.execute(select(Department).where(Department.id == department_id))
         dept = dept_result.scalar_one_or_none()
         if not dept:
             raise ValueError("部门不存在")
 
-        project_result = await self.db.execute(
-            select(Project).where(Project.department_id == department_id)
-        )
+        project_result = await self.db.execute(select(Project).where(Project.department_id == department_id))
         projects = project_result.scalars().all()
 
         project_count = len(projects)
@@ -349,23 +331,15 @@ class DashboardService:
                 pass
 
         normal = sum(1 for tl in traffic_lights if tl["light"].progress == "green")
-        warning = sum(
-            1
-            for tl in traffic_lights
-            if tl["light"].progress in ("yellow", "yellow", "yellow")
-        )
+        warning = sum(1 for tl in traffic_lights if tl["light"].progress in ("yellow", "yellow", "yellow"))
         danger = sum(1 for tl in traffic_lights if tl["light"].progress == "red")
 
         issue_result = await self.db.execute(
-            select(func.count(HazardReport.id)).where(
-                HazardReport.project_id.in_([str(p.id) for p in projects])
-            )
+            select(func.count(HazardReport.id)).where(HazardReport.project_id.in_([str(p.id) for p in projects]))
         )
         total_issues = issue_result.scalar() or 0
 
-        member_result = await self.db.execute(
-            select(func.count(User.id)).where(User.department_id == department_id)
-        )
+        member_result = await self.db.execute(select(func.count(User.id)).where(User.department_id == department_id))
         member_count = member_result.scalar() or 0
 
         return {
@@ -389,22 +363,16 @@ class DashboardService:
         dept_overviews = []
 
         for company in companies:
-            dept_result = await self.db.execute(
-                select(Department).where(Department.company_id == company.id)
-            )
+            dept_result = await self.db.execute(select(Department).where(Department.company_id == company.id))
             depts = dept_result.scalars().all()
 
             for dept in depts:
-                project_result = await self.db.execute(
-                    select(Project).where(Project.department_id == dept.id)
-                )
+                project_result = await self.db.execute(select(Project).where(Project.department_id == dept.id))
                 projects = project_result.scalars().all()
                 project_count = len(projects)
                 total_projects += project_count
 
-                member_result = await self.db.execute(
-                    select(func.count(User.id)).where(User.department_id == dept.id)
-                )
+                member_result = await self.db.execute(select(func.count(User.id)).where(User.department_id == dept.id))
                 member_count = member_result.scalar() or 0
                 total_members += member_count
 
@@ -420,13 +388,20 @@ class DashboardService:
                 warning = sum(1 for tl in traffic_lights if tl.progress == "yellow")
                 normal = sum(1 for tl in traffic_lights if tl.progress == "green")
 
-                dept_overviews.append({
-                    "department_id": str(dept.id),
-                    "department_name": dept.name,
-                    "project_count": project_count,
-                    "project_stats": {"total": project_count, "normal": normal, "warning": warning, "danger": danger},
-                    "member_count": member_count,
-                })
+                dept_overviews.append(
+                    {
+                        "department_id": str(dept.id),
+                        "department_name": dept.name,
+                        "project_count": project_count,
+                        "project_stats": {
+                            "total": project_count,
+                            "normal": normal,
+                            "warning": warning,
+                            "danger": danger,
+                        },
+                        "member_count": member_count,
+                    }
+                )
 
         return {
             "company_overview": {

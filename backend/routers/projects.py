@@ -13,8 +13,11 @@ from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import Project, Phase, User
 from api.services.fastapi_code_generator.schemas import (
-    ProjectCreate, ProjectUpdate, ProjectResponse,
-    PhaseCreate, PhaseResponse,
+    ProjectCreate,
+    ProjectUpdate,
+    ProjectResponse,
+    PhaseCreate,
+    PhaseResponse,
 )
 from schemas import ApiResponse, ErrorCode, PaginationParams, PageResult
 from middleware.exception import ApiException
@@ -71,7 +74,7 @@ async def list_projects(
         total=total,
         page=pagination.page,
         page_size=pagination.page_size,
-        has_more=(pagination.page * pagination.page_size) < total
+        has_more=(pagination.page * pagination.page_size) < total,
     )
 
 
@@ -82,9 +85,7 @@ async def get_project(
     current_user: User = Depends(get_current_user),
 ):
     result = await db.execute(
-        select(Project)
-        .options(selectinload(Project.phases).selectinload(Phase.tasks))
-        .where(Project.id == project_id)
+        select(Project).options(selectinload(Project.phases).selectinload(Phase.tasks)).where(Project.id == project_id)
     )
     project = result.scalar_one_or_none()
     if not project:
@@ -111,6 +112,7 @@ async def update_project(
 
 
 # ── Phase ────────────────────────────────────────────────────
+
 
 @router.post("/{project_id}/phases", response_model=ApiResponse[PhaseResponse], status_code=status.HTTP_201_CREATED)
 async def create_phase(
@@ -151,14 +153,16 @@ async def get_project_gantt(
     gantt_items = []
     for phase in project.phases:
         for task in phase.tasks:
-            gantt_items.append({
-                "id": str(task.id),
-                "title": task.title,
-                "phase": phase.name,
-                "start": task.start_date.isoformat() if task.start_date else None,
-                "end": task.due_date.isoformat() if task.due_date else None,
-                "status": task.status,
-                "priority": task.priority,
-                "assignee_id": str(task.assignee_id) if task.assignee_id else None,
-            })
+            gantt_items.append(
+                {
+                    "id": str(task.id),
+                    "title": task.title,
+                    "phase": phase.name,
+                    "start": task.start_date.isoformat() if task.start_date else None,
+                    "end": task.due_date.isoformat() if task.due_date else None,
+                    "status": task.status,
+                    "priority": task.priority,
+                    "assignee_id": str(task.assignee_id) if task.assignee_id else None,
+                }
+            )
     return ApiResponse.ok({"project": {"id": str(project.id), "name": project.name}, "items": gantt_items})

@@ -4,6 +4,7 @@ DEPRECATED: This router duplicates routers.ai (Layer 2).
 Use routers.ai ("AI助手V2") as the canonical implementation.
 Will be removed in a future release after routes are consolidated.
 """
+
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from api.services.fastapi_code_generator.auth import get_current_user
@@ -13,10 +14,12 @@ import uuid
 
 router = APIRouter(prefix="/ai", tags=["AI助手"])
 
+
 class ChatRequest(BaseModel):
     message: str
     session_id: str = None
     use_rag: bool = True
+
 
 # 内存会话存储（生产用 Redis）
 _sessions: dict[str, list[dict]] = {}
@@ -47,12 +50,14 @@ async def chat(req: ChatRequest, current_user=Depends(get_current_user)):
     history.append({"role": "assistant", "content": answer})
     _sessions[session_id] = history
 
-    return ApiResponse.ok({
-        "session_id": session_id,
-        "answer": answer,
-        "sources": [c["source"] for c in context_chunks if c.get("source")],
-        "context_used": len(context_chunks) > 0,
-    })
+    return ApiResponse.ok(
+        {
+            "session_id": session_id,
+            "answer": answer,
+            "sources": [c["source"] for c in context_chunks if c.get("source")],
+            "context_used": len(context_chunks) > 0,
+        }
+    )
 
 
 @router.get("/chat/history/{session_id}")
@@ -66,10 +71,12 @@ async def get_history(session_id: str, current_user=Depends(get_current_user)):
 async def add_knowledge(content: str, source: str, current_user=Depends(get_current_user)):
     """手动添加知识库片段"""
     ids = await rag_service.add_knowledge(content, source, {"added_by": str(current_user.id)})
-    return ApiResponse.ok({
-        "chunks_added": len(ids),
-        "chunk_ids": ids,
-    })
+    return ApiResponse.ok(
+        {
+            "chunks_added": len(ids),
+            "chunk_ids": ids,
+        }
+    )
 
 
 @router.get("/knowledge/search")

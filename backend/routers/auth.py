@@ -5,8 +5,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.services.fastapi_code_generator.auth import (
-    verify_password, create_access_token, hash_password,
-    ACCESS_TOKEN_EXPIRE_MINUTES
+    verify_password,
+    create_access_token,
+    hash_password,
+    ACCESS_TOKEN_EXPIRE_MINUTES,
 )
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import User

@@ -1,4 +1,5 @@
 """AI 服务 — 通义千问 + RAG"""
+
 import os
 
 import httpx
@@ -38,27 +39,21 @@ class AIService:
         result = resp.json()
         return result["output"]["text"]
 
-    async def chat_with_rag(
-        self, query: str, user_id: str, project_id: str = None
-    ) -> dict:
+    async def chat_with_rag(self, query: str, user_id: str, project_id: str = None) -> dict:
         docs = await self._retrieve_docs(query, user_id, project_id)
         context = self._build_context(docs)
         messages = [{"role": "user", "content": query}]
         response = await self.chat(messages, context)
         return {"response": response, "sources": [doc.metadata for doc in docs]}
 
-    async def _retrieve_docs(
-        self, query: str, user_id: str, project_id: str = None
-    ) -> list:
+    async def _retrieve_docs(self, query: str, user_id: str, project_id: str = None) -> list:
         from services.knowledge_service import knowledge_service
 
         query_embedding = await self._get_embedding(query)
         filters = {"user_id": user_id}
         if project_id:
             filters["project_id"] = project_id
-        docs = await knowledge_service.vector_search(
-            query_embedding, filters=filters, top_k=AI_CONFIG["rag"]["top_k"]
-        )
+        docs = await knowledge_service.vector_search(query_embedding, filters=filters, top_k=AI_CONFIG["rag"]["top_k"])
         return docs
 
     async def _get_embedding(self, text: str) -> list:

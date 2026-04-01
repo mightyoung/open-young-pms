@@ -10,6 +10,7 @@ from api.services.fastapi_code_generator.database import Base
 
 class ApprovalFlow(Base):
     """审批流程模板"""
+
     __tablename__ = "approval_flows"
     __table_args__ = {"extend_existing": True}
 
@@ -28,6 +29,7 @@ class ApprovalFlow(Base):
 
 class ApprovalInstance(Base):
     """审批流程实例"""
+
     __tablename__ = "approval_instances"
     __table_args__ = {"extend_existing": True}
 
@@ -49,6 +51,7 @@ class ApprovalInstance(Base):
 
 class ApprovalRecord(Base):
     """审批记录"""
+
     __tablename__ = "approval_records"
     __table_args__ = {"extend_existing": True}
 

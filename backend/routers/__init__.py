@@ -1,4 +1,5 @@
 """Routers package."""
+
 from routers.auth import router as auth_router
 from routers.users import router as users_router
 from routers.projects import router as projects_router

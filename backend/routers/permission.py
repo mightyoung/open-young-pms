@@ -27,12 +27,14 @@ class PermissionsResponse(BaseModel):
 async def get_my_permissions(current_user: User = Depends(get_current_user)):
     """Get current user's roles, permissions, and project assignments."""
     roles = [current_user.role.name] if current_user.role else []
-    return ApiResponse.ok(PermissionsResponse(
-        roles=roles,
-        permissions=get_user_permissions(current_user),
-        assigned_projects=current_user.assigned_projects or [],
-        managed_projects=current_user.managed_projects or [],
-    ))
+    return ApiResponse.ok(
+        PermissionsResponse(
+            roles=roles,
+            permissions=get_user_permissions(current_user),
+            assigned_projects=current_user.assigned_projects or [],
+            managed_projects=current_user.managed_projects or [],
+        )
+    )
 
 
 class RoleCreate(BaseModel):
@@ -84,13 +86,16 @@ async def create_role(
     db.add(role)
     db.commit()
     db.refresh(role)
-    return ApiResponse.ok(RoleResponse(
-        id=role.id,
-        code=role.code,
-        name=role.name,
-        permissions=role.permissions or [],
-        is_system=role.is_system,
-    ), message="创建成功")
+    return ApiResponse.ok(
+        RoleResponse(
+            id=role.id,
+            code=role.code,
+            name=role.name,
+            permissions=role.permissions or [],
+            is_system=role.is_system,
+        ),
+        message="创建成功",
+    )
 
 
 @admin_router.get("/roles", response_model=PageResult[RoleResponse])
@@ -101,17 +106,20 @@ async def list_roles(
     """List all roles (super_admin only)."""
     roles = db.query(Role).all()
     return PageResult(
-        items=[RoleResponse(
-            id=r.id,
-            code=r.code,
-            name=r.name,
-            permissions=r.permissions or [],
-            is_system=r.is_system,
-        ) for r in roles],
+        items=[
+            RoleResponse(
+                id=r.id,
+                code=r.code,
+                name=r.name,
+                permissions=r.permissions or [],
+                is_system=r.is_system,
+            )
+            for r in roles
+        ],
         total=len(roles),
         page=1,
         page_size=len(roles),
-        has_more=False
+        has_more=False,
     )
 
 
@@ -124,6 +132,7 @@ async def assign_roles(
 ):
     """Assign roles to a user (super_admin only)."""
     from api.services.fastapi_code_generator.models import User as DBUser
+
     user = db.query(DBUser).filter(DBUser.id == user_id).first()
     if not user:
         raise ApiException.from_error_code(ErrorCode.USER_NOT_FOUND)
@@ -145,6 +154,7 @@ async def assign_projects(
 ):
     """Assign projects to a user (super_admin only)."""
     from api.services.fastapi_code_generator.models import User as DBUser
+
     user = db.query(DBUser).filter(DBUser.id == user_id).first()
     if not user:
         raise ApiException.from_error_code(ErrorCode.USER_NOT_FOUND)

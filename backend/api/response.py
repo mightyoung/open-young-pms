@@ -1,4 +1,5 @@
 """统一 API 响应格式 — 所有接口统一使用此格式返回"""
+
 from datetime import datetime, timezone
 from typing import Generic, TypeVar, Optional
 from pydantic import BaseModel, ConfigDict
@@ -8,6 +9,7 @@ T = TypeVar("T")
 
 class ApiResponse(BaseModel, Generic[T]):
     """统一响应格式：code/message/data/timestamp/request_id"""
+
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     code: str = "A0000"
@@ -37,6 +39,7 @@ class ApiResponse(BaseModel, Generic[T]):
 
 class PaginatedResponse(BaseModel, Generic[T]):
     """统一分页响应"""
+
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     code: str = "A0000"

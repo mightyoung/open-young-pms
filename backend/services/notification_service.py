@@ -37,18 +37,21 @@ class NotificationService:
         await self.db.commit()
         await self.db.refresh(notification)
 
-        await manager.send_to_user(user_id, {
-            "type": "notification",
-            "data": {
-                "id": notification.id,
-                "notification_type": notification_type,
-                "title": title,
-                "content": content,
-                "data": data or {},
-                "is_read": False,
-                "created_at": notification.created_at.isoformat(),
-            }
-        })
+        await manager.send_to_user(
+            user_id,
+            {
+                "type": "notification",
+                "data": {
+                    "id": notification.id,
+                    "notification_type": notification_type,
+                    "title": title,
+                    "content": content,
+                    "data": data or {},
+                    "is_read": False,
+                    "created_at": notification.created_at.isoformat(),
+                },
+            },
+        )
 
         setting = await self._get_setting(user_id)
         if setting:
@@ -131,9 +134,7 @@ class NotificationService:
         )
 
     async def _get_setting(self, user_id: str) -> Optional[NotificationSetting]:
-        result = await self.db.execute(
-            select(NotificationSetting).where(NotificationSetting.user_id == user_id)
-        )
+        result = await self.db.execute(select(NotificationSetting).where(NotificationSetting.user_id == user_id))
         return result.scalar_one_or_none()
 
     async def _send_email(self, user_id: str, title: str, content: Optional[str]):

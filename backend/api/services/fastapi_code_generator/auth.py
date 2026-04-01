@@ -100,6 +100,7 @@ def require_role(*role_names: str):
     Raises 403 if the authenticated user lacks the required role.
     No fallback — all unauthenticated or unauthorized requests are rejected.
     """
+
     async def check_role(current_user=Depends(get_current_user)):
         if not hasattr(current_user, "role") or current_user.role is None:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No role assigned")
@@ -107,4 +108,5 @@ def require_role(*role_names: str):
         if role_value not in role_names:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
         return current_user
+
     return check_role

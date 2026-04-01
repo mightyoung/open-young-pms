@@ -1,4 +1,5 @@
 """部门管理路由 — 公司-部门-科室三级结构"""
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -34,10 +35,9 @@ async def get_department_tree(db: AsyncSession = Depends(get_db)):
     tree = []
     for company in companies:
         dept_result = await db.execute(
-            select(Department).where(
-                Department.company_id == company.id,
-                Department.is_active == True
-            ).order_by(Department.sort_order)
+            select(Department)
+            .where(Department.company_id == company.id, Department.is_active == True)
+            .order_by(Department.sort_order)
         )
         depts = dept_result.scalars().all()
 
@@ -46,15 +46,16 @@ async def get_department_tree(db: AsyncSession = Depends(get_db)):
         def build_tree(dept):
             children = [d for d in depts if d.parent_id == dept.id]
             return {
-                "id": dept.id, "name": dept.name, "code": dept.code,
+                "id": dept.id,
+                "name": dept.name,
+                "code": dept.code,
                 "sort_order": dept.sort_order,
-                "children": [build_tree(c) for c in children]
+                "children": [build_tree(c) for c in children],
             }
 
-        tree.append({
-            "id": company.id, "name": company.name, "type": "company",
-            "children": [build_tree(d) for d in root_depts]
-        })
+        tree.append(
+            {"id": company.id, "name": company.name, "type": "company", "children": [build_tree(d) for d in root_depts]}
+        )
 
     return ApiResponse.ok(tree)
 
@@ -78,11 +79,17 @@ async def list_departments(
 
     result = await db.execute(query.order_by(Department.sort_order))
     rows = result.scalars().all()
-    items = [{
-        "id": r.id, "name": r.name, "code": r.code,
-        "parent_id": r.parent_id, "company_id": r.company_id,
-        "sort_order": r.sort_order
-    } for r in rows]
+    items = [
+        {
+            "id": r.id,
+            "name": r.name,
+            "code": r.code,
+            "parent_id": r.parent_id,
+            "company_id": r.company_id,
+            "sort_order": r.sort_order,
+        }
+        for r in rows
+    ]
     return ApiResponse.ok({"items": items, "total": len(items)})
 
 
@@ -94,8 +101,7 @@ async def create_department(
 ):
     """创建部门"""
     dept = Department(
-        name=data.name, code=data.code, company_id=data.company_id,
-        parent_id=data.parent_id, sort_order=data.sort_order
+        name=data.name, code=data.code, company_id=data.company_id, parent_id=data.parent_id, sort_order=data.sort_order
     )
     db.add(dept)
     await db.commit()
@@ -115,9 +121,12 @@ async def update_department(
     dept = result.scalar_one_or_none()
     if not dept:
         return ApiResponse.error("B0001", "部门不存在")
-    if data.name is not None: dept.name = data.name
-    if data.parent_id is not None: dept.parent_id = data.parent_id
-    if data.sort_order is not None: dept.sort_order = data.sort_order
+    if data.name is not None:
+        dept.name = data.name
+    if data.parent_id is not None:
+        dept.parent_id = data.parent_id
+    if data.sort_order is not None:
+        dept.sort_order = data.sort_order
     await db.commit()
     return ApiResponse.ok({"id": dept.id})
 

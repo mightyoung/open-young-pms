@@ -1,4 +1,5 @@
 """知识库服务 — 向量存储（pgvector）+ 文本分块"""
+
 import re
 import uuid
 
@@ -27,9 +28,7 @@ class KnowledgeService:
                     def __init__(self, conn):
                         self.conn = conn
 
-                    async def search(
-                        self, embedding: list, filter: dict = None, top_k: int = 5
-                    ) -> list[DocumentChunk]:
+                    async def search(self, embedding: list, filter: dict = None, top_k: int = 5) -> list[DocumentChunk]:
                         cond = "1=1"
                         params = {"query_emb": str(embedding), "top_k": top_k}
                         if filter:
@@ -62,9 +61,7 @@ class KnowledgeService:
                             for r in rows
                         ]
 
-                    async def add(
-                        self, id: str, embedding: list, content: str, metadata: dict
-                    ):
+                    async def add(self, id: str, embedding: list, content: str, metadata: dict):
                         self.conn.execute(
                             text("""
                                 INSERT INTO knowledge_chunks (id, content, source, metadata, embedding)
@@ -79,7 +76,6 @@ class KnowledgeService:
                                 "embedding": str(embedding),
                             },
                         )
-
 
                 self._vector_store = PgVectorStore(engine.connect().__enter__())
             except Exception as e:
@@ -104,9 +100,7 @@ class KnowledgeService:
                 )
         return doc_id
 
-    async def search(
-        self, query: str, user_id: str = None, project_id: str = None
-    ) -> list[DocumentChunk]:
+    async def search(self, query: str, user_id: str = None, project_id: str = None) -> list[DocumentChunk]:
         query_embedding = await ai_service._get_embedding(query)
         filters = {}
         if user_id:
@@ -118,9 +112,7 @@ class KnowledgeService:
             return await vector_store.search(query_embedding, filters=filters, top_k=10)
         return []
 
-    async def vector_search(
-        self, query_embedding: list, filter: dict = None, top_k: int = 5
-    ) -> list[DocumentChunk]:
+    async def vector_search(self, query_embedding: list, filter: dict = None, top_k: int = 5) -> list[DocumentChunk]:
         vector_store = self._get_vector_store()
         if vector_store:
             return await vector_store.search(query_embedding, filter=filter, top_k=top_k)

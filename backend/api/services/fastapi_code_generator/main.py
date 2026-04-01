@@ -56,6 +56,7 @@ app.add_middleware(
 
 # ── Exception Handlers ────────────────────────────────────────
 
+
 @app.exception_handler(Exception)
 async def global_exception(request: Request, exc: Exception):
     return JSONResponse(
@@ -77,6 +78,7 @@ app.include_router(notifications_router, prefix="/api/v1/notifications", tags=["
 
 
 # ── Health ───────────────────────────────────────────────────
+
 
 @app.get("/health", tags=["健康检查"])
 async def health():

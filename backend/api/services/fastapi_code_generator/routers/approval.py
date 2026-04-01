@@ -1,4 +1,5 @@
 """审批流路由 — 模板管理 + 执行引擎"""
+
 from fastapi import APIRouter, Depends, Body
 from sqlalchemy import select, desc, func
 from api.services.fastapi_code_generator.database import get_db
@@ -11,11 +12,14 @@ router = APIRouter(prefix="/approval", tags=["审批流"])
 
 # ── 审批流模板 ─────────────────────────────────────────
 
+
 @router.get("/flows")
 async def list_flows(
     flow_type: str = None,
-    page: int = 1, page_size: int = 20,
-    db=Depends(get_db), current_user=Depends(get_current_user),
+    page: int = 1,
+    page_size: int = 20,
+    db=Depends(get_db),
+    current_user=Depends(get_current_user),
 ):
     """审批流模板列表"""
     query = select(ApprovalFlow).where(ApprovalFlow.is_active == True)
@@ -24,28 +28,39 @@ async def list_flows(
 
     total_q = select(func.count(ApprovalFlow.id)).where(ApprovalFlow.is_active == True)
     total = (await db.execute(total_q)).scalar() or 0
-    query = query.order_by(desc(ApprovalFlow.created_at)).offset((page-1)*page_size).limit(page_size)
+    query = query.order_by(desc(ApprovalFlow.created_at)).offset((page - 1) * page_size).limit(page_size)
     result = await db.execute(query)
     rows = result.scalars().all()
-    items = [{
-        "id": r.id, "name": r.name, "description": r.description,
-        "flow_type": r.flow_type, "version": r.version,
-        "created_at": r.created_at.isoformat() if r.created_at else None,
-    } for r in rows]
-    return ApiResponse.ok({"items": items, "total": total, "page": page, "pages": (total+page_size-1)//page_size})
+    items = [
+        {
+            "id": r.id,
+            "name": r.name,
+            "description": r.description,
+            "flow_type": r.flow_type,
+            "version": r.version,
+            "created_at": r.created_at.isoformat() if r.created_at else None,
+        }
+        for r in rows
+    ]
+    return ApiResponse.ok({"items": items, "total": total, "page": page, "pages": (total + page_size - 1) // page_size})
 
 
 @router.post("/flows")
 async def create_flow(
-    name: str, flow_type: str, description: str = None,
+    name: str,
+    flow_type: str,
+    description: str = None,
     definition: dict = Body(default=dict),
-    db=Depends(get_db), current_user=Depends(get_current_user),
+    db=Depends(get_db),
+    current_user=Depends(get_current_user),
 ):
     """创建审批流模板"""
     flow = ApprovalFlow(
-        name=name, flow_type=flow_type, description=description,
+        name=name,
+        flow_type=flow_type,
+        description=description,
         definition=definition or _default_flow_definition(),
-        created_by=str(current_user.id)
+        created_by=str(current_user.id),
     )
     db.add(flow)
     await db.commit()
@@ -59,18 +74,27 @@ async def get_flow(flow_id: str, db=Depends(get_db), current_user=Depends(get_cu
     flow = result.scalar_one_or_none()
     if not flow:
         return ApiResponse.error("B0001", "审批流不存在")
-    return ApiResponse.ok({
-        "id": flow.id, "name": flow.name, "description": flow.description,
-        "flow_type": flow.flow_type, "definition": flow.definition,
-        "version": flow.version, "is_active": flow.is_active,
-    })
+    return ApiResponse.ok(
+        {
+            "id": flow.id,
+            "name": flow.name,
+            "description": flow.description,
+            "flow_type": flow.flow_type,
+            "definition": flow.definition,
+            "version": flow.version,
+            "is_active": flow.is_active,
+        }
+    )
 
 
 @router.post("/start")
 async def start_approval(
-    flow_id: str, entity_type: str, entity_id: str,
+    flow_id: str,
+    entity_type: str,
+    entity_id: str,
     variables: dict = Body(default=dict),
-    db=Depends(get_db), current_user=Depends(get_current_user),
+    db=Depends(get_db),
+    current_user=Depends(get_current_user),
 ):
     """发起审批流程"""
     # 获取流程定义
@@ -94,10 +118,13 @@ async def start_approval(
 
     # 创建审批实例
     instance = ApprovalInstance(
-        flow_id=flow_id, entity_type=entity_type, entity_id=entity_id,
-        initiator_id=str(current_user.id), status="pending",
+        flow_id=flow_id,
+        entity_type=entity_type,
+        entity_id=entity_id,
+        initiator_id=str(current_user.id),
+        status="pending",
         current_node_id=first_approver.get("id"),
-        variables=variables
+        variables=variables,
     )
     db.add(instance)
     await db.flush()
@@ -105,7 +132,8 @@ async def start_approval(
     # 创建第一个审批任务
     approver_id = first_approver.get("approver_id") or str(current_user.id)
     task = ApprovalTask(
-        instance_id=instance.id, node_id=first_approver.get("id"),
+        instance_id=instance.id,
+        node_id=first_approver.get("id"),
         node_name=first_approver.get("name", "审批"),
         node_type="approver",
         approver_id=approver_id,
@@ -116,30 +144,32 @@ async def start_approval(
     await db.commit()
     await db.refresh(instance)
 
-    return ApiResponse.ok({
-        "instance_id": instance.id, "status": instance.status,
-        "current_node": first_approver.get("name"),
-    })
+    return ApiResponse.ok(
+        {
+            "instance_id": instance.id,
+            "status": instance.status,
+            "current_node": first_approver.get("name"),
+        }
+    )
 
 
 @router.get("/my-tasks")
 async def my_tasks(
     status: str = None,
-    page: int = 1, page_size: int = 20,
-    db=Depends(get_db), current_user=Depends(get_current_user),
+    page: int = 1,
+    page_size: int = 20,
+    db=Depends(get_db),
+    current_user=Depends(get_current_user),
 ):
     """我的待审批任务"""
     user_id = str(current_user.id)
-    query = select(ApprovalTask).where(
-        ApprovalTask.approver_id == user_id,
-        ApprovalTask.status == "pending"
-    )
+    query = select(ApprovalTask).where(ApprovalTask.approver_id == user_id, ApprovalTask.status == "pending")
 
     total_q = select(func.count(ApprovalTask.id)).where(
         ApprovalTask.approver_id == user_id, ApprovalTask.status == "pending"
     )
     total = (await db.execute(total_q)).scalar() or 0
-    query = query.order_by(desc(ApprovalTask.created_at)).offset((page-1)*page_size).limit(page_size)
+    query = query.order_by(desc(ApprovalTask.created_at)).offset((page - 1) * page_size).limit(page_size)
     result = await db.execute(query)
     rows = result.scalars().all()
 
@@ -147,14 +177,18 @@ async def my_tasks(
     for task in rows:
         inst_result = await db.execute(select(ApprovalInstance).where(ApprovalInstance.id == task.instance_id))
         inst = inst_result.scalar_one_or_none()
-        items.append({
-            "id": task.id, "instance_id": task.instance_id,
-            "node_name": task.node_name, "node_type": task.node_type,
-            "status": task.status,
-            "entity_type": inst.entity_type if inst else None,
-            "entity_id": inst.entity_id if inst else None,
-            "created_at": task.created_at.isoformat() if task.created_at else None,
-        })
+        items.append(
+            {
+                "id": task.id,
+                "instance_id": task.instance_id,
+                "node_name": task.node_name,
+                "node_type": task.node_type,
+                "status": task.status,
+                "entity_type": inst.entity_type if inst else None,
+                "entity_id": inst.entity_id if inst else None,
+                "created_at": task.created_at.isoformat() if task.created_at else None,
+            }
+        )
 
     return ApiResponse.ok({"items": items, "total": total})
 
@@ -162,8 +196,10 @@ async def my_tasks(
 @router.post("/tasks/{task_id}/approve")
 async def approve_task(
     task_id: str,
-    agree: bool = True, comment: str = None,
-    db=Depends(get_db), current_user=Depends(get_current_user),
+    agree: bool = True,
+    comment: str = None,
+    db=Depends(get_db),
+    current_user=Depends(get_current_user),
 ):
     """审批任务（通过/驳回）"""
     task_result = await db.execute(select(ApprovalTask).where(ApprovalTask.id == task_id))
@@ -191,7 +227,7 @@ async def approve_task(
             pending_q = select(func.count(ApprovalTask.id)).where(
                 ApprovalTask.instance_id == inst.id,
                 ApprovalTask.node_id == task.node_id,
-                ApprovalTask.status == "pending"
+                ApprovalTask.status == "pending",
             )
             pending = (await db.execute(pending_q)).scalar() or 0
 
@@ -204,16 +240,17 @@ async def approve_task(
             inst.finished_at = datetime.now(timezone.utc)
 
     await db.commit()
-    return ApiResponse.ok({
-        "result": "通过" if agree else "驳回",
-        "instance_status": inst.status if inst else "unknown"
-    })
+    return ApiResponse.ok(
+        {"result": "通过" if agree else "驳回", "instance_status": inst.status if inst else "unknown"}
+    )
 
 
 @router.post("/tasks/{task_id}/return")
 async def return_task(
-    task_id: str, comment: str,
-    db=Depends(get_db), current_user=Depends(get_current_user),
+    task_id: str,
+    comment: str,
+    db=Depends(get_db),
+    current_user=Depends(get_current_user),
 ):
     """驳回重填（退回发起人）"""
     task_result = await db.execute(select(ApprovalTask).where(ApprovalTask.id == task_id))
@@ -247,5 +284,5 @@ def _default_flow_definition() -> dict:
         "edges": [
             {"from": "start", "to": "approver_1"},
             {"from": "approver_1", "to": "end"},
-        ]
+        ],
     }

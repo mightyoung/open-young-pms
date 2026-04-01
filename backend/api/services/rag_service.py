@@ -1,4 +1,5 @@
 """RAG 知识库服务 — 使用 pgvector + 通义千问嵌入"""
+
 import os
 import re
 import uuid
@@ -16,7 +17,7 @@ DEEPSEEK_MODEL = "deepseek-chat"
 def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[str]:
     """按段落分块，chunk_size=500字符，overlap=50"""
     # 先按段落分割
-    paragraphs = re.split(r'\n\n+', text.strip())
+    paragraphs = re.split(r"\n\n+", text.strip())
     chunks = []
     current = ""
     for para in paragraphs:
@@ -49,7 +50,7 @@ async def get_embedding(text: str) -> list[float]:
             json={
                 "model": "text-embedding-v4",
                 "input": text[:8000],  # 限制输入长度
-            }
+            },
         )
         if resp.status_code != 200:
             raise RuntimeError(f"Embedding failed: {resp.status_code} {resp.text}")
@@ -61,10 +62,7 @@ async def get_embedding(text: str) -> list[float]:
 async def chat_with_rag(question: str, context_chunks: list[dict]) -> str:
     """调用 DeepSeek LLM，带 RAG 上下文"""
     if context_chunks:
-        context = "\n\n".join([
-            f"[来源: {c.get('source', '知识库')}]\n{c.get('content', '')}"
-            for c in context_chunks
-        ])
+        context = "\n\n".join([f"[来源: {c.get('source', '知识库')}]\n{c.get('content', '')}" for c in context_chunks])
         system_prompt = f"""你是一个项目管理专家。基于以下知识库内容回答用户问题。
 如果知识库中没有相关信息，请诚实说明，不要编造。
 
@@ -93,7 +91,7 @@ async def chat_with_rag(question: str, context_chunks: list[dict]) -> str:
                 ],
                 "temperature": 0.3,
                 "max_tokens": 1000,
-            }
+            },
         )
         if resp.status_code != 200:
             raise RuntimeError(f"LLM failed: {resp.status_code} {resp.text}")
@@ -121,7 +119,7 @@ async def search_knowledge(query: str, top_k: int = 5) -> list[dict]:
                     ORDER BY embedding <=> :query_emb::vector
                     LIMIT :top_k
                 """),
-                {"query_emb": str(query_emb), "top_k": top_k}
+                {"query_emb": str(query_emb), "top_k": top_k},
             )
             rows = result.fetchall()
 
@@ -164,7 +162,7 @@ async def add_knowledge(content: str, source: str, metadata: dict = None) -> lis
                         "source": source,
                         "metadata": str(metadata or {}),
                         "embedding": str(emb),
-                    }
+                    },
                 )
                 row = result.fetchone()
                 if row:

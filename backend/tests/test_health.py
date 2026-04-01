@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, AsyncMock, patch
 
 import sys
 import os
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
@@ -14,6 +15,7 @@ class TestLiveness:
     @pytest.mark.asyncio
     async def test_liveness_returns_up(self):
         from routers.health import liveness
+
         result = await liveness()
         assert result["status"] == "UP"
         assert result["tier"] == "liveness"
@@ -47,9 +49,7 @@ class TestReadiness:
         from routers.health import readiness
 
         mock_engine = MagicMock()
-        mock_engine.connect = MagicMock(
-            side_effect=Exception("connection refused")
-        )
+        mock_engine.connect = MagicMock(side_effect=Exception("connection refused"))
 
         with patch("routers.health._get_async_engine", return_value=mock_engine):
             result = await readiness()

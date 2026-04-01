@@ -1,4 +1,5 @@
 """文件下载路由"""
+
 from fastapi import APIRouter, Depends
 from fastapi.responses import FileResponse
 from api.services.fastapi_code_generator.auth import get_current_user
@@ -17,5 +18,5 @@ async def download_file(file_name: str, current_user=Depends(get_current_user)):
     return FileResponse(
         path=file_path,
         filename=file_name,
-        media_type='application/octet-stream',
+        media_type="application/octet-stream",
     )

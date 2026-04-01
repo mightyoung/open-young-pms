@@ -1,4 +1,5 @@
 """审批流服务."""
+
 import uuid
 from datetime import datetime, timezone
 from typing import Optional
@@ -33,9 +34,7 @@ class ApprovalService:
         return flow
 
     async def update_flow(self, flow_id: str, nodes: list) -> ApprovalFlow:
-        result = await self.db.execute(
-            select(ApprovalFlow).where(ApprovalFlow.id == flow_id)
-        )
+        result = await self.db.execute(select(ApprovalFlow).where(ApprovalFlow.id == flow_id))
         flow = result.scalar_one_or_none()
         if not flow:
             raise ValueError("审批流程不存在")
@@ -46,9 +45,7 @@ class ApprovalService:
         return flow
 
     async def get_flow(self, flow_id: str) -> ApprovalFlow:
-        result = await self.db.execute(
-            select(ApprovalFlow).where(ApprovalFlow.id == flow_id)
-        )
+        result = await self.db.execute(select(ApprovalFlow).where(ApprovalFlow.id == flow_id))
         flow = result.scalar_one_or_none()
         if not flow:
             raise ValueError("审批流程不存在")
@@ -72,9 +69,7 @@ class ApprovalService:
     ) -> ApprovalInstance:
         flow = await self.get_flow(flow_id)
         nodes = flow.nodes or []
-        first_approval_node = next(
-            (n for n in nodes if n.get("type") == "approval"), None
-        )
+        first_approval_node = next((n for n in nodes if n.get("type") == "approval"), None)
         if not first_approval_node:
             raise ValueError("流程未定义审批节点")
 
@@ -109,9 +104,7 @@ class ApprovalService:
         await self.db.refresh(instance)
         return instance
 
-    async def approve(
-        self, instance_id: str, approver_id: str, comment: str = None
-    ) -> ApprovalInstance:
+    async def approve(self, instance_id: str, approver_id: str, comment: str = None) -> ApprovalInstance:
         instance = await self._get_instance(instance_id)
         if instance.status != "pending":
             raise ValueError("当前流程状态不允许审批")
@@ -149,9 +142,7 @@ class ApprovalService:
         await self.db.refresh(instance)
         return instance
 
-    async def reject(
-        self, instance_id: str, approver_id: str, comment: str
-    ) -> ApprovalInstance:
+    async def reject(self, instance_id: str, approver_id: str, comment: str) -> ApprovalInstance:
         instance = await self._get_instance(instance_id)
         if instance.status != "pending":
             raise ValueError("当前流程状态不允许驳回")
@@ -279,9 +270,7 @@ class ApprovalService:
     async def get_pending_tasks(self, user_id: str) -> list[dict]:
         result = await self.db.execute(
             select(ApprovalRecord)
-            .options(
-                selectinload(ApprovalRecord.instance).selectinload(ApprovalInstance.flow)
-            )
+            .options(selectinload(ApprovalRecord.instance).selectinload(ApprovalInstance.flow))
             .where(
                 ApprovalRecord.approver_id == user_id,
                 ApprovalRecord.action == "pending",
@@ -292,17 +281,19 @@ class ApprovalService:
         tasks = []
         for record in records:
             inst = record.instance
-            tasks.append({
-                "id": record.id,
-                "instance_id": inst.id,
-                "node_name": record.node_name,
-                "status": inst.status,
-                "flow_name": inst.flow.name if inst.flow else "",
-                "entity_type": inst.entity_type,
-                "entity_id": inst.entity_id,
-                "initiator_id": inst.initiator_id,
-                "created_at": inst.created_at,
-            })
+            tasks.append(
+                {
+                    "id": record.id,
+                    "instance_id": inst.id,
+                    "node_name": record.node_name,
+                    "status": inst.status,
+                    "flow_name": inst.flow.name if inst.flow else "",
+                    "entity_type": inst.entity_type,
+                    "entity_id": inst.entity_id,
+                    "initiator_id": inst.initiator_id,
+                    "created_at": inst.created_at,
+                }
+            )
         return tasks
 
     async def get_my_initiated(self, user_id: str) -> list[ApprovalInstance]:
@@ -337,7 +328,7 @@ class ApprovalService:
         flow = self.db.query(ApprovalFlow).filter(ApprovalFlow.id == instance.flow_id).first()
         if not flow:
             return None
-        for n in (flow.nodes or []):
+        for n in flow.nodes or []:
             if n.get("id") == next_id:
                 return n
         return None
@@ -349,23 +340,19 @@ class ApprovalService:
         flow = self.db.query(ApprovalFlow).filter(ApprovalFlow.id == instance.flow_id).first()
         if not flow:
             return None
-        for n in (flow.nodes or []):
+        for n in flow.nodes or []:
             if n.get("id") == instance.current_node_id:
                 return n
         return None
 
     async def _get_instance(self, instance_id: str) -> ApprovalInstance:
-        result = await self.db.execute(
-            select(ApprovalInstance).where(ApprovalInstance.id == instance_id)
-        )
+        result = await self.db.execute(select(ApprovalInstance).where(ApprovalInstance.id == instance_id))
         inst = result.scalar_one_or_none()
         if not inst:
             raise ValueError("审批实例不存在")
         return inst
 
-    async def _find_pending_record(
-        self, instance_id: str, approver_id: str
-    ) -> Optional[ApprovalRecord]:
+    async def _find_pending_record(self, instance_id: str, approver_id: str) -> Optional[ApprovalRecord]:
         result = await self.db.execute(
             select(ApprovalRecord).where(
                 ApprovalRecord.instance_id == instance_id,

@@ -1,4 +1,5 @@
 """公司管理路由"""
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from api.services.fastapi_code_generator.database import get_db
@@ -16,10 +17,7 @@ async def list_companies(
 ):
     result = await db.execute(select(Company).where(Company.is_active == True))
     rows = result.scalars().all()
-    items = [{
-        "id": r.id, "name": r.name, "code": r.code,
-        "description": r.description
-    } for r in rows]
+    items = [{"id": r.id, "name": r.name, "code": r.code, "description": r.description} for r in rows]
     return ApiResponse.ok(items)
 
 

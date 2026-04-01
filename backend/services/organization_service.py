@@ -14,15 +14,14 @@ from api.services.fastapi_code_generator.models import User
 class OrganizationService:
     async def get_department_tree(self, db: AsyncSession) -> list[dict]:
         result = await db.execute(
-            select(Department)
-            .where(Department.is_active == True)
-            .order_by(Department.sort_order)
+            select(Department).where(Department.is_active == True).order_by(Department.sort_order)
         )
         departments = result.scalars().all()
 
         user_count_q = await db.execute(
-            select(UserOrganization.department_id, func.count(UserOrganization.user_id))
-            .group_by(UserOrganization.department_id)
+            select(UserOrganization.department_id, func.count(UserOrganization.user_id)).group_by(
+                UserOrganization.department_id
+            )
         )
         user_counts = dict(user_count_q.all())
 
@@ -59,16 +58,12 @@ class OrganizationService:
             dept_filter = UserOrganization.department_id == department_id
 
         result = await db.execute(
-            select(User)
-            .join(UserOrganization, User.id == UserOrganization.user_id)
-            .where(dept_filter)
+            select(User).join(UserOrganization, User.id == UserOrganization.user_id).where(dept_filter)
         )
         return list(result.scalars().all())
 
     async def _get_descendant_ids(self, db: AsyncSession, department_id: str) -> list[str]:
-        result = await db.execute(
-            select(Department).where(Department.is_active == True)
-        )
+        result = await db.execute(select(Department).where(Department.is_active == True))
         all_depts = {d.id: d for d in result.scalars().all()}
 
         descendants = []
@@ -81,9 +76,7 @@ class OrganizationService:
                     queue.append(dept.id)
         return descendants + [department_id]
 
-    async def can_view_department(
-        self, db: AsyncSession, user: User, department_id: str
-    ) -> bool:
+    async def can_view_department(self, db: AsyncSession, user: User, department_id: str) -> bool:
         role_code = getattr(getattr(user, "role", None), "name", None) or getattr(user, "role_name", None)
         if role_code == "super_admin":
             return True
@@ -98,14 +91,9 @@ class OrganizationService:
             return str(user.department_id) in descendants
 
         user_orgs = await self.get_user_departments(db, str(user.id))
-        return any(
-            str(org.department_id) == department_id and org.is_default
-            for org in user_orgs
-        )
+        return any(str(org.department_id) == department_id and org.is_default for org in user_orgs)
 
-    async def create_department(
-        self, db: AsyncSession, data: dict
-    ) -> Department:
+    async def create_department(self, db: AsyncSession, data: dict) -> Department:
         dept = Department(
             id=str(uuid.uuid4()),
             name=data["name"],
@@ -120,12 +108,8 @@ class OrganizationService:
         await db.refresh(dept)
         return dept
 
-    async def update_department(
-        self, db: AsyncSession, department_id: str, data: dict
-    ) -> Optional[Department]:
-        result = await db.execute(
-            select(Department).where(Department.id == department_id)
-        )
+    async def update_department(self, db: AsyncSession, department_id: str, data: dict) -> Optional[Department]:
+        result = await db.execute(select(Department).where(Department.id == department_id))
         dept = result.scalar_one_or_none()
         if not dept:
             return None
@@ -136,12 +120,8 @@ class OrganizationService:
         await db.refresh(dept)
         return dept
 
-    async def delete_department(
-        self, db: AsyncSession, department_id: str
-    ) -> tuple[bool, str]:
-        result = await db.execute(
-            select(Department).where(Department.id == department_id)
-        )
+    async def delete_department(self, db: AsyncSession, department_id: str) -> tuple[bool, str]:
+        result = await db.execute(select(Department).where(Department.id == department_id))
         dept = result.scalar_one_or_none()
         if not dept:
             return False, "部门不存在"
@@ -155,11 +135,7 @@ class OrganizationService:
         if child_result.scalars().first():
             return False, "该部门存在子部门，无法删除"
 
-        user_result = await db.execute(
-            select(UserOrganization).where(
-                UserOrganization.department_id == department_id
-            )
-        )
+        user_result = await db.execute(select(UserOrganization).where(UserOrganization.department_id == department_id))
         if user_result.scalars().first():
             return False, "该部门下有用户，无法删除"
 
@@ -170,13 +146,9 @@ class OrganizationService:
     async def assign_user_departments(
         self, db: AsyncSession, user_id: str, assignments: list[dict]
     ) -> list[UserOrganization]:
-        await db.execute(
-            select(UserOrganization).where(UserOrganization.user_id == user_id)
-        )
+        await db.execute(select(UserOrganization).where(UserOrganization.user_id == user_id))
 
-        existing_result = await db.execute(
-            select(UserOrganization).where(UserOrganization.user_id == user_id)
-        )
+        existing_result = await db.execute(select(UserOrganization).where(UserOrganization.user_id == user_id))
         existing = {org.department_id: org for org in existing_result.scalars().all()}
 
         for a in assignments:

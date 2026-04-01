@@ -1,4 +1,5 @@
 """数据服务层 — 统一数据入口 + 数据治理"""
+
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import Optional
@@ -12,23 +13,97 @@ router = APIRouter(prefix="/data", tags=["数据服务"])
 # ── 数据质量规则定义 ──────────────────────────────────────────
 DATA_QUALITY_RULES = {
     "users": [
-        {"rule_id": "u001", "field": "phone", "rule_type": "format", "pattern": r"^1[3-9]\d{9}$", "severity": "critical", "message": "手机号格式错误"},
-        {"rule_id": "u002", "field": "email", "rule_type": "format", "pattern": r"^[\w.-]+@[\w.-]+\.\w+$", "severity": "warning", "message": "邮箱格式错误"},
-        {"rule_id": "u003", "field": "role_id", "rule_type": "not_null", "severity": "critical", "message": "角色不能为空"},
+        {
+            "rule_id": "u001",
+            "field": "phone",
+            "rule_type": "format",
+            "pattern": r"^1[3-9]\d{9}$",
+            "severity": "critical",
+            "message": "手机号格式错误",
+        },
+        {
+            "rule_id": "u002",
+            "field": "email",
+            "rule_type": "format",
+            "pattern": r"^[\w.-]+@[\w.-]+\.\w+$",
+            "severity": "warning",
+            "message": "邮箱格式错误",
+        },
+        {
+            "rule_id": "u003",
+            "field": "role_id",
+            "rule_type": "not_null",
+            "severity": "critical",
+            "message": "角色不能为空",
+        },
     ],
     "projects": [
-        {"rule_id": "p001", "field": "project_code", "rule_type": "not_null", "severity": "critical", "message": "项目编号不能为空"},
-        {"rule_id": "p002", "field": "end_date", "rule_type": "range", "rule_config": {"gt_field": "start_date"}, "severity": "critical", "message": "结束日期必须晚于开始日期"},
+        {
+            "rule_id": "p001",
+            "field": "project_code",
+            "rule_type": "not_null",
+            "severity": "critical",
+            "message": "项目编号不能为空",
+        },
+        {
+            "rule_id": "p002",
+            "field": "end_date",
+            "rule_type": "range",
+            "rule_config": {"gt_field": "start_date"},
+            "severity": "critical",
+            "message": "结束日期必须晚于开始日期",
+        },
     ],
     "hazards": [
-        {"rule_id": "h001", "field": "images", "rule_type": "min_count", "rule_config": {"min": 1}, "severity": "critical", "message": "图片至少上传1张"},
-        {"rule_id": "h002", "field": "latitude", "rule_type": "range", "rule_config": {"min": -90, "max": 90}, "severity": "critical", "message": "纬度范围错误"},
-        {"rule_id": "h003", "field": "longitude", "rule_type": "range", "rule_config": {"min": -180, "max": 180}, "severity": "critical", "message": "经度范围错误"},
-        {"rule_id": "h004", "field": "severity", "rule_type": "enum", "rule_config": {"values": ["urgent", "important", "normal"]}, "severity": "critical", "message": "严重程度必选"},
+        {
+            "rule_id": "h001",
+            "field": "images",
+            "rule_type": "min_count",
+            "rule_config": {"min": 1},
+            "severity": "critical",
+            "message": "图片至少上传1张",
+        },
+        {
+            "rule_id": "h002",
+            "field": "latitude",
+            "rule_type": "range",
+            "rule_config": {"min": -90, "max": 90},
+            "severity": "critical",
+            "message": "纬度范围错误",
+        },
+        {
+            "rule_id": "h003",
+            "field": "longitude",
+            "rule_type": "range",
+            "rule_config": {"min": -180, "max": 180},
+            "severity": "critical",
+            "message": "经度范围错误",
+        },
+        {
+            "rule_id": "h004",
+            "field": "severity",
+            "rule_type": "enum",
+            "rule_config": {"values": ["urgent", "important", "normal"]},
+            "severity": "critical",
+            "message": "严重程度必选",
+        },
     ],
     "reports": [
-        {"rule_id": "r001", "field": "content", "rule_type": "not_null", "severity": "critical", "message": "报告内容不能为空"},
-        {"rule_id": "r002", "field": "report_type", "rule_type": "enum", "rule_config": {"values": ["daily", "weekly", "monthly"]}, "severity": "critical", "message": "报告类型错误"},
+        {
+            "rule_id": "r001",
+            "field": "content",
+            "rule_type": "not_null",
+            "severity": "critical",
+            "message": "报告内容不能为空",
+        },
+        {
+            "rule_id": "r002",
+            "field": "report_type",
+            "rule_type": "enum",
+            "rule_config": {"values": ["daily", "weekly", "monthly"]},
+            "severity": "critical",
+            "message": "报告类型错误",
+        },
     ],
 }
 
@@ -50,7 +125,7 @@ MASTER_DATA_METADATA = {
             "status": {"name": "状态", "type": "ENUM(active/inactive)", "nullable": False, "default": "active"},
             "created_at": {"name": "创建时间", "type": "DATETIME", "nullable": False},
             "updated_at": {"name": "更新时间", "type": "DATETIME", "nullable": False},
-        }
+        },
     },
     "projects": {
         "table": "projects",
@@ -67,7 +142,7 @@ MASTER_DATA_METADATA = {
             "budget": {"name": "预算", "type": "DECIMAL(15,2)", "nullable": True},
             "department_id": {"name": "所属部门", "type": "UUID", "nullable": True, "fk": "mst_department.id"},
             "created_at": {"name": "创建时间", "type": "DATETIME", "nullable": False},
-        }
+        },
     },
     "departments": {
         "table": "departments",
@@ -80,7 +155,7 @@ MASTER_DATA_METADATA = {
             "manager_id": {"name": "负责人", "type": "UUID", "nullable": True, "fk": "mst_user.id"},
             "sort_order": {"name": "排序", "type": "INT", "nullable": True, "default": 0},
             "created_at": {"name": "创建时间", "type": "DATETIME", "nullable": False},
-        }
+        },
     },
     "hazards": {
         "table": "hazard_reports",
@@ -101,7 +176,7 @@ MASTER_DATA_METADATA = {
             "rectify_deadline": {"name": "整改截止", "type": "DATE", "nullable": True},
             "created_at": {"name": "创建时间", "type": "DATETIME", "nullable": False},
             "updated_at": {"name": "更新时间", "type": "DATETIME", "nullable": False},
-        }
+        },
     },
     "reports": {
         "table": "reports",
@@ -116,26 +191,88 @@ MASTER_DATA_METADATA = {
             "submitted_at": {"name": "提交时间", "type": "DATETIME", "nullable": True},
             "approved_by": {"name": "审批人", "type": "UUID", "nullable": True, "fk": "mst_user.id"},
             "created_at": {"name": "创建时间", "type": "DATETIME", "nullable": False},
-        }
+        },
     },
 }
 
 # ── 数据血缘定义 ──────────────────────────────────────────────
 DATA_LINEAGE = [
-    {"source": "users", "source_field": "id", "target": "hazards", "target_field": "reporter_id", "transformation": "direct", "meaning": "用户上报随手拍"},
-    {"source": "users", "source_field": "id", "target": "hazards", "target_field": "assignee_id", "transformation": "direct", "meaning": "用户被指派处理随手拍"},
-    {"source": "users", "source_field": "id", "target": "reports", "target_field": "author_id", "transformation": "direct", "meaning": "用户撰写报告"},
-    {"source": "projects", "source_field": "id", "target": "hazards", "target_field": "project_id", "transformation": "direct", "meaning": "项目关联随手拍"},
-    {"source": "projects", "source_field": "id", "target": "reports", "target_field": "project_id", "transformation": "direct", "meaning": "项目关联报告"},
-    {"source": "departments", "source_field": "id", "target": "users", "target_field": "department_id", "transformation": "direct", "meaning": "部门包含用户"},
-    {"source": "departments", "source_field": "id", "target": "projects", "target_field": "department_id", "transformation": "direct", "meaning": "部门下有项目"},
-    {"source": "roles", "source_field": "id", "target": "users", "target_field": "role_id", "transformation": "direct", "meaning": "角色赋予用户权限"},
+    {
+        "source": "users",
+        "source_field": "id",
+        "target": "hazards",
+        "target_field": "reporter_id",
+        "transformation": "direct",
+        "meaning": "用户上报随手拍",
+    },
+    {
+        "source": "users",
+        "source_field": "id",
+        "target": "hazards",
+        "target_field": "assignee_id",
+        "transformation": "direct",
+        "meaning": "用户被指派处理随手拍",
+    },
+    {
+        "source": "users",
+        "source_field": "id",
+        "target": "reports",
+        "target_field": "author_id",
+        "transformation": "direct",
+        "meaning": "用户撰写报告",
+    },
+    {
+        "source": "projects",
+        "source_field": "id",
+        "target": "hazards",
+        "target_field": "project_id",
+        "transformation": "direct",
+        "meaning": "项目关联随手拍",
+    },
+    {
+        "source": "projects",
+        "source_field": "id",
+        "target": "reports",
+        "target_field": "project_id",
+        "transformation": "direct",
+        "meaning": "项目关联报告",
+    },
+    {
+        "source": "departments",
+        "source_field": "id",
+        "target": "users",
+        "target_field": "department_id",
+        "transformation": "direct",
+        "meaning": "部门包含用户",
+    },
+    {
+        "source": "departments",
+        "source_field": "id",
+        "target": "projects",
+        "target_field": "department_id",
+        "transformation": "direct",
+        "meaning": "部门下有项目",
+    },
+    {
+        "source": "roles",
+        "source_field": "id",
+        "target": "users",
+        "target_field": "role_id",
+        "transformation": "direct",
+        "meaning": "角色赋予用户权限",
+    },
 ]
 
 # ── 敏感字段定义 ──────────────────────────────────────────────
 SENSITIVE_FIELDS = [
     {"entity": "users", "field": "password_hash", "mask_type": "hash", "description": "密码哈希"},
-    {"entity": "users", "field": "phone", "mask_type": "partial", "pattern": "***", "description": "手机号（部分隐藏）"},
+    {
+        "entity": "users",
+        "field": "phone",
+        "mask_type": "partial",
+        "pattern": "***",
+        "description": "手机号（部分隐藏）",
+    },
     {"entity": "users", "field": "email", "mask_type": "partial", "pattern": "@", "description": "邮箱（脱敏）"},
     {"entity": "audit_logs", "field": "before_value", "mask_type": "json_mask", "description": "变更前值（脱敏）"},
     {"entity": "audit_logs", "field": "after_value", "mask_type": "json_mask", "description": "变更后值（脱敏）"},
@@ -144,6 +281,7 @@ SENSITIVE_FIELDS = [
 
 # ── API 端点实现 ──────────────────────────────────────────────
 
+
 class QualityRuleCheckRequest(BaseModel):
     entity_type: str
     data: dict
@@ -151,24 +289,35 @@ class QualityRuleCheckRequest(BaseModel):
 
 @router.get("/master/users")
 async def get_master_users(
-    page: int = 1, page_size: int = 20,
+    page: int = 1,
+    page_size: int = 20,
     status: str = None,
     current_user=Depends(get_current_user),
 ):
     """用户主数据查询"""
     from api.services.fastapi_code_generator.database import get_db
     from sqlalchemy import select, func
-    
+
     db_gen = get_db()
     db = await db_gen.__anext__()
     query = select(User)
     if status:
         query = query.where(User.status == status)
     total = (await db.execute(select(func.count(User.id)))).scalar() or 0
-    query = query.offset((page-1)*page_size).limit(page_size)
+    query = query.offset((page - 1) * page_size).limit(page_size)
     rows = (await db.execute(query)).scalars().all()
-    
-    items = [{"id": str(u.id), "username": u.username, "full_name": u.full_name, "email": u.email, "phone": u.phone, "status": u.status} for u in rows]
+
+    items = [
+        {
+            "id": str(u.id),
+            "username": u.username,
+            "full_name": u.full_name,
+            "email": u.email,
+            "phone": u.phone,
+            "status": u.status,
+        }
+        for u in rows
+    ]
     return ApiResponse.ok({"items": items, "total": total, "page": page})
 
 
@@ -178,32 +327,56 @@ async def validate_user_data(req: QualityRuleCheckRequest, current_user=Depends(
     rules = DATA_QUALITY_RULES.get("users", [])
     issues = []
     data = req.data
-    
+
     for rule in rules:
         field = rule["field"]
         value = data.get(field)
-        
+
         if rule["rule_type"] == "not_null" and not value:
-            issues.append({"rule_id": rule["rule_id"], "field": field, "severity": rule["severity"], "message": rule["message"]})
-        
+            issues.append(
+                {"rule_id": rule["rule_id"], "field": field, "severity": rule["severity"], "message": rule["message"]}
+            )
+
         elif rule["rule_type"] == "format" and value:
             import re
+
             if not re.match(rule.get("pattern", ""), str(value)):
-                issues.append({"rule_id": rule["rule_id"], "field": field, "severity": rule["severity"], "message": rule["message"]})
-        
+                issues.append(
+                    {
+                        "rule_id": rule["rule_id"],
+                        "field": field,
+                        "severity": rule["severity"],
+                        "message": rule["message"],
+                    }
+                )
+
         elif rule["rule_type"] == "enum" and value:
             allowed = rule.get("rule_config", {}).get("values", [])
             if value not in allowed:
-                issues.append({"rule_id": rule["rule_id"], "field": field, "severity": rule["severity"], "message": rule["message"]})
-    
-    score = max(0, 100 - len([i for i in issues if i["severity"] == "critical"]) * 30 - len([i for i in issues if i["severity"] == "warning"]) * 10)
-    
-    return ApiResponse.ok({
-        "passed": len(issues) == 0,
-        "score": score,
-        "issues": issues,
-        "rule_count": len(rules),
-    })
+                issues.append(
+                    {
+                        "rule_id": rule["rule_id"],
+                        "field": field,
+                        "severity": rule["severity"],
+                        "message": rule["message"],
+                    }
+                )
+
+    score = max(
+        0,
+        100
+        - len([i for i in issues if i["severity"] == "critical"]) * 30
+        - len([i for i in issues if i["severity"] == "warning"]) * 10,
+    )
+
+    return ApiResponse.ok(
+        {
+            "passed": len(issues) == 0,
+            "score": score,
+            "issues": issues,
+            "rule_count": len(rules),
+        }
+    )
 
 
 @router.get("/quality/score")
@@ -211,21 +384,25 @@ async def get_quality_score(entity_type: str = None, current_user=Depends(get_cu
     """数据质量总分（按实体或全局）"""
     if entity_type:
         rules = DATA_QUALITY_RULES.get(entity_type, [])
-        return ApiResponse.ok({
-            "entity": entity_type,
-            "score": 100,  # 实际从 DB 统计得出
-            "total_rules": len(rules),
-            "description": f"{MASTER_DATA_METADATA.get(entity_type, {}).get('display_name', entity_type)} 质量评分",
-        })
-    
+        return ApiResponse.ok(
+            {
+                "entity": entity_type,
+                "score": 100,  # 实际从 DB 统计得出
+                "total_rules": len(rules),
+                "description": f"{MASTER_DATA_METADATA.get(entity_type, {}).get('display_name', entity_type)} 质量评分",
+            }
+        )
+
     # 全局评分
     total_rules = sum(len(v) for v in DATA_QUALITY_RULES.values())
-    return ApiResponse.ok({
-        "overall_score": 100,
-        "entity_scores": {k: 100 for k in DATA_QUALITY_RULES},
-        "total_rules": total_rules,
-        "last_check": datetime.now(timezone.utc).isoformat(),
-    })
+    return ApiResponse.ok(
+        {
+            "overall_score": 100,
+            "entity_scores": {k: 100 for k in DATA_QUALITY_RULES},
+            "total_rules": total_rules,
+            "last_check": datetime.now(timezone.utc).isoformat(),
+        }
+    )
 
 
 @router.get("/quality/rules")
@@ -241,13 +418,15 @@ async def get_entity_lineage(entity: str, current_user=Depends(get_current_user)
     """获取实体血缘（上下游）"""
     upstream = [l for l in DATA_LINEAGE if l["target"] == entity]
     downstream = [l for l in DATA_LINEAGE if l["source"] == entity]
-    
-    return ApiResponse.ok({
-        "entity": entity,
-        "display_name": MASTER_DATA_METADATA.get(entity, {}).get("display_name", entity),
-        "upstream": upstream,
-        "downstream": downstream,
-    })
+
+    return ApiResponse.ok(
+        {
+            "entity": entity,
+            "display_name": MASTER_DATA_METADATA.get(entity, {}).get("display_name", entity),
+            "upstream": upstream,
+            "downstream": downstream,
+        }
+    )
 
 
 @router.get("/metadata/entities")
@@ -255,12 +434,14 @@ async def get_metadata_entities(current_user=Depends(get_current_user)):
     """实体元数据列表"""
     entities = []
     for key, meta in MASTER_DATA_METADATA.items():
-        entities.append({
-            "entity": key,
-            "display_name": meta["display_name"],
-            "table": meta["table"],
-            "field_count": len(meta["fields"]),
-        })
+        entities.append(
+            {
+                "entity": key,
+                "display_name": meta["display_name"],
+                "table": meta["table"],
+                "field_count": len(meta["fields"]),
+            }
+        )
     return ApiResponse.ok({"items": entities, "total": len(entities)})
 
 
@@ -270,7 +451,7 @@ async def get_entity_fields(entity: str, current_user=Depends(get_current_user))
     meta = MASTER_DATA_METADATA.get(entity)
     if not meta:
         return ApiResponse.error("D0001", f"实体 {entity} 不存在")
-    
+
     fields = []
     for fname, fmeta in meta["fields"].items():
         field_info = {
@@ -285,7 +466,7 @@ async def get_entity_fields(entity: str, current_user=Depends(get_current_user))
         if "unique" in fmeta:
             field_info["unique"] = fmeta["unique"]
         fields.append(field_info)
-    
+
     return ApiResponse.ok({"entity": entity, "display_name": meta["display_name"], "fields": fields})
 
 
@@ -314,7 +495,7 @@ async def mask_test_data(entity: str, field: str, value: str, current_user=Depen
     sensitive = next((s for s in SENSITIVE_FIELDS if s["entity"] == entity and s["field"] == field), None)
     if not sensitive:
         return ApiResponse.error("D0002", "该字段未标记为敏感字段")
-    
+
     mask_type = sensitive["mask_type"]
     if mask_type == "partial":
         if "@" in str(value):
@@ -324,10 +505,11 @@ async def mask_test_data(entity: str, field: str, value: str, current_user=Depen
             masked = str(value)[:3] + "***"
     elif mask_type == "hash":
         import hashlib
+
         masked = hashlib.sha256(str(value).encode()).hexdigest()[:16]
     else:
         masked = "***"
-    
+
     return ApiResponse.ok({"original": value, "masked": masked, "mask_type": mask_type})
 
 
@@ -365,9 +547,11 @@ async def post_lineage(body: LineageRequest, current_user=Depends(get_current_us
         return ApiResponse.error("D0003", "table_name 不能为空")
     upstream = [l for l in DATA_LINEAGE if l["target"] == entity]
     downstream = [l for l in DATA_LINEAGE if l["source"] == entity]
-    return ApiResponse.ok({
-        "entity": entity,
-        "display_name": MASTER_DATA_METADATA.get(entity, {}).get("display_name", entity),
-        "upstream": upstream,
-        "downstream": downstream,
-    })
+    return ApiResponse.ok(
+        {
+            "entity": entity,
+            "display_name": MASTER_DATA_METADATA.get(entity, {}).get("display_name", entity),
+            "upstream": upstream,
+            "downstream": downstream,
+        }
+    )

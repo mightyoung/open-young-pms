@@ -1,4 +1,5 @@
 """WebSocket 连接管理器"""
+
 from fastapi import WebSocket
 from typing import Dict
 

@@ -8,7 +8,8 @@ from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import InspectionPoint, Inspection, User
 from api.services.fastapi_code_generator.schemas import (
-    InspectionPointCreate, InspectionSubmitRequest,
+    InspectionPointCreate,
+    InspectionSubmitRequest,
 )
 
 router = APIRouter()
@@ -21,6 +22,7 @@ async def create_point(
     current_user: User = Depends(get_current_user),
 ):
     import uuid
+
     qr = f"QR-{uuid.uuid4().hex[:8].upper()}"
     point = InspectionPoint(qr_code=qr, **data.model_dump())
     db.add(point)
@@ -52,7 +54,7 @@ async def submit_inspection(
     point = point_result.scalar_one_or_none()
     if not point:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="巡检点不存在")
-    
+
     record = Inspection(
         point_id=data.point_id,
         project_id=point.project_id,
