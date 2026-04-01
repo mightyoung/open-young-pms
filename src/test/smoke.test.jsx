@@ -218,6 +218,24 @@ describe('API client', () => {
     expect(typeof projectsApi.gantt).toBe('function')
   })
 
+  it('api.hazards covers all backend router action endpoints', async () => {
+    const { api } = await import('../api')
+    expect(typeof api.hazards.list).toBe('function')
+    expect(typeof api.hazards.create).toBe('function')
+    expect(typeof api.hazards.assign).toBe('function')
+    expect(typeof api.hazards.transfer).toBe('function')
+    expect(typeof api.hazards.confirm).toBe('function')
+    expect(typeof api.hazards.push).toBe('function')
+    expect(typeof api.hazards.rectify).toBe('function')
+    expect(typeof api.hazards.accept).toBe('function')
+    expect(typeof api.hazards.reject).toBe('function')
+    expect(typeof api.hazards.rejectRectification).toBe('function')
+    expect(typeof api.hazards.stats).toBe('function')
+    expect(typeof api.hazards.drafts).toBe('function')
+    expect(typeof api.hazards.saveDraft).toBe('function')
+    expect(typeof api.hazards.deleteDraft).toBe('function')
+  })
+
   it('tasks.js exports all domain methods', async () => {
     const { tasksApi } = await import('../api/tasks')
     expect(typeof tasksApi.create).toBe('function')

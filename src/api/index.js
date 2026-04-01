@@ -31,6 +31,7 @@ export const api = {
     rectify: (id, data) => post(`/hazards/${id}/rectify`, data),
     accept: (id, comment) => post(`/hazards/${id}/accept`, { comment }),
     reject: (id, reason) => post(`/hazards/${id}/reject`, { reason }),
+    rejectRectification: (id, data) => post(`/hazards/${id}/reject-rectification`, data),
     stats: () => get('/hazards/stats/summary'),
     drafts: () => get('/hazards/drafts'),
     saveDraft: data => post('/hazards/drafts', data),
