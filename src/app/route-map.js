@@ -19,6 +19,11 @@ export const ROUTE_META = {
     path: '/tasks',
     label: '任务管理',
   },
+  notifications: {
+    key: 'notifications',
+    path: '/notifications',
+    label: '消息通知',
+  },
 }
 
 export const DEFAULT_AUTH_ROUTE = ROUTE_META.dashboard.path

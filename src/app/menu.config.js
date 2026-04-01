@@ -29,4 +29,10 @@ export const MENU_ITEMS = [
     path: ROUTE_META.tasks.path,
     iconKey: 'ToolOutlined',
   },
+  {
+    key: ROUTE_META.notifications.key,
+    label: ROUTE_META.notifications.label,
+    path: ROUTE_META.notifications.path,
+    iconKey: 'BellOutlined',
+  },
 ]
