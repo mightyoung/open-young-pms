@@ -29,6 +29,11 @@ export const ROUTE_META = {
     path: '/reports',
     label: '报告中心',
   },
+  forum: {
+    key: 'forum',
+    path: '/forum',
+    label: '论坛',
+  },
 }
 
 export const DEFAULT_AUTH_ROUTE = ROUTE_META.dashboard.path
