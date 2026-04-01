@@ -78,8 +78,8 @@ backend/
 
 **Backend router layers (defined in main.py):**
 - Layer 1 (`api.services.fastapi_code_generator.routers`) — Auto-generated CRUD: auth, users, projects, hazard_reports, inspections, reports, notifications. Do not edit directly.
-- Layer 2 (`routers/`) — Legacy canonical: dashboard, approval, audit, tasks, files, forum, reports, notifications, websocket, organization, permission, AI (V2). **Frozen: do not add new endpoints here.**
-- Layer 3 (`api/routers/`) — **Canonical for all new development**: upload, roles, data_service, knowledge, quality, contracts, notification_settings, export, forum (API), companies, departments, risks, ai_chat. All new backend endpoints must be placed here.
+- Layer 2 (`routers/`) — Legacy canonical: dashboard, approval, audit, tasks, files, forum, reports, notifications, websocket, organization, permission, AI (V2). **Frozen (CI-enforced): do not add new files here.**
+- Layer 3 (`api/routers/`) — **Canonical for all new development (CI-enforced)**: upload, roles, data_service, knowledge, quality, contracts, notification_settings, export, forum (API), companies, departments, risks, ai_chat. All new backend files must be placed here.
 
 **⚠️ Dual implementations exist (to be resolved in P3):**
 - Forum: `routers/forum.py` (增强) + `api/routers/forum.py` (API)
@@ -110,6 +110,11 @@ backend/
 - **Lucide React** + **@ant-design/icons** — Icons
 
 ## Key Patterns
+
+### Architecture guards (CI-enforced)
+- `src/pages/` is **frozen** — CI blocks any new `.jsx` files added here; new pages must go in `src/features/`
+- `backend/routers/` (Layer 2) is **frozen** — CI blocks any new `.py` files added here; new endpoints must go in `backend/api/routers/`
+- See `.github/workflows/ci.yml` for the `Guard legacy pages` and `Guard legacy routers` steps
 
 ### Adding a new feature (P3-compliant workflow)
 1. Create `src/features/<feature>/pages/FeaturePage.jsx`
