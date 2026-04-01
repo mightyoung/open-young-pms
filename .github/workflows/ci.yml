@@ -13,6 +13,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # needed for architecture guard diffs
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -38,6 +40,19 @@ jobs:
       - name: Run smoke tests
         run: npm run test
 
+      - name: Guard legacy pages
+        run: |
+          # Frozen: src/pages/ (legacy). New pages must go in src/features/
+          BASE_REF=${GITHUB_BASE_REF:-main}
+          NEW_FILES=$(git diff --name-only "$BASE_REF...HEAD" -- 'src/pages/*.jsx' | grep -v '^$' || true)
+          if [ -n "$NEW_FILES" ]; then
+            echo "ERROR: Cannot add new files to src/pages/ (frozen directory)"
+            echo "New files: $NEW_FILES"
+            echo "Create pages in src/features/ instead"
+            exit 1
+          fi
+          echo "✓ No new files added to src/pages/"
+
   backend-test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -47,6 +62,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # needed for architecture guard diffs
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -66,6 +83,19 @@ jobs:
           source .venv/bin/activate
           ruff check .
           ruff format --check .
+
+      - name: Guard legacy routers
+        run: |
+          # Frozen: backend/routers/ (Layer 2). New endpoints must go in backend/api/routers/
+          BASE_REF=${GITHUB_BASE_REF:-main}
+          NEW_FILES=$(git diff --name-only "$BASE_REF...HEAD" -- 'routers/*.py' | grep -v '^$' || true)
+          if [ -n "$NEW_FILES" ]; then
+            echo "ERROR: Cannot add new files to backend/routers/ (frozen Layer 2)"
+            echo "New files: $NEW_FILES"
+            echo "Create routers in backend/api/routers/ instead"
+            exit 1
+          fi
+          echo "✓ No new files added to backend/routers/"
 
       - name: Backend tests
         env:
