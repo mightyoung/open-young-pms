@@ -56,7 +56,7 @@ pms-template/
 │   ├── app/                # AppRoot、路由配置、菜单、AuthSession
 │   ├── components/         # 共享组件
 │   ├── contexts/           # React Context（AuthContext）
-│   ├── features/           # 按领域组织的功能模块（dashboard, users）
+│   ├── features/           # 按领域组织的功能模块（dashboard, users, projects, tasks）
 │   ├── hooks/              # 自定义 Hooks
 │   ├── pages/              # 页面组件（legacy，仍在使用）
 │   ├── styles/             # 主题和全局样式
@@ -64,14 +64,14 @@ pms-template/
 │
 ├── backend/                # FastAPI 后端
 │   ├── api/
-│   │   ├── routers/        # 新 API 路由（data_service, knowledge, quality...）
-│   │   └── services/       # 业务服务（含 fastapi_code_generator 自动生成层）
-│   ├── routers/           # Legacy 路由（dashboard, approval, forum...）
+│   │   ├── routers/        # Layer 3 — canonical for all new development（CI 强制冻结 Layer 2）
+│   │   └── services/
+│   │       └── fastapi_code_generator/  # Layer 1 — auto-generated（不要直接编辑）
+│   ├── routers/           # Layer 2 — legacy（冻结：禁止新增文件，CI 架构门禁）
 │   ├── middleware/         # 中间件（PermissionMiddleware, AuditMiddleware）
 │   ├── models/             # SQLAlchemy 模型
 │   ├── schemas/            # Pydantic schemas
-│   ├── main.py             # FastAPI 应用入口
-│   └── auth.py             # JWT 认证（代理到 api.services.fastapi_code_generator.auth）
+│   └── main.py             # FastAPI 应用入口，路由分三层注册
 │
 ├── mobile/                 # uni-app 移动端源码
 ├── pms-uniapp/            # uni-app 项目副本
@@ -134,11 +134,12 @@ CORS_ORIGINS=http://localhost:5173,http://localhost:3000
 | API 规范 | ✅ | ✅ | P0 |
 | 文件服务 | ✅ | ✅ | P0 |
 | Docker 环境 | ✅ | ✅ | P0 |
+| 项目管理 | ✅ | ✅ | P1 |
+| 任务管理 | ✅ | ✅ | P1 |
 | 组织架构 | ⏳ | ✅ | P1 |
 | 论坛增强 | ⏳ | ✅ | P1 |
 | 消息通知 | ⏳ | ✅ | P1 |
 | 报告管理 | ⏳ | ✅ | P1 |
-| 任务管理 | ⏳ | ✅ | P1 |
 | 审批流引擎 | ⏳ | ✅ | P1 |
 | 监测看板 | ⏳ | ⏳ | P2 |
 | AI 助手 | ⏳ | ⏳ | P2 |
@@ -177,15 +178,18 @@ pytest tests/ -v -k health    # 仅健康检查测试
 
 ### 添加新 API 端点
 
-1. 在 `backend/routers/` 或 `backend/api/routers/` 创建路由文件
+新 API 端点应添加到 `backend/api/routers/`（Layer 3）。
+`backend/routers/`（Layer 2）是冻结目录，**禁止新增文件**（CI 架构门禁强制执行）。
+
+1. 在 `backend/api/routers/` 创建路由文件
 2. 使用 `from api.services.fastapi_code_generator.auth import get_current_user, require_role` 做认证
 3. 使用 `from api.services.fastapi_code_generator.database import get_db` 获取数据库 session
-4. 在 `backend/main.py` 中注册路由
+4. 在 `backend/main.py` 的 Layer 3 区块注册路由
 
 ### 添加新页面
 
 新页面应添加到 `src/features/<feature>/pages/`（参考 `src/features/dashboard/`）。
-已在 `src/pages/` 的遗留页面保持原样，不再新增。
+`src/pages/` 是冻结目录，**禁止新增 `.jsx` 文件**（CI 架构门禁强制执行）。
 
 1. 在 `src/features/<feature>/pages/` 创建 `.jsx` 页面文件
 2. 在 `src/features/<feature>/api.js` 添加领域 API 方法（如需要）

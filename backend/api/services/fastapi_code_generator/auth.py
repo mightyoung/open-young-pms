@@ -1,4 +1,10 @@
-"""JWT authentication — strict mode: no demo/fallback users."""
+"""JWT authentication — strict mode: no demo/fallback users.
+
+Single canonical user resolution:
+- resolve_user() — core JWT decode + DB lookup (shared by middleware and dependency)
+- get_current_user() — dependency with ContextVar fast path (middleware sets cache)
+- set_cached_user() / _cached_user — in-request cache populated by middleware
+"""
 
 import os
 from contextvars import ContextVar
@@ -25,8 +31,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", "480"))
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
-# Caches the authenticated user from PermissionMiddleware for reuse by get_current_user,
-# avoiding a redundant JWT decode + DB query on every authenticated request.
+# In-request cache — PermissionMiddleware populates this after resolving the user.
+# get_current_user() checks this first to avoid redundant decode + DB query.
 _cached_user: ContextVar[Optional["User"]] = ContextVar("cached_user", default=None)
 
 
@@ -53,31 +59,19 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 
 
 def set_cached_user(user: "User") -> None:
-    """Called by PermissionMiddleware after successfully loading the user."""
+    """Called by PermissionMiddleware after successfully resolving the user."""
     _cached_user.set(user)
 
 
-async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: AsyncSession = Depends(get_db),
-) -> "User":
-    """Extract and validate current user from JWT.
+async def resolve_user(token: str, db: AsyncSession) -> "User":
+    """Core user resolution: decode JWT + load from DB.
 
-    Short-circuits using the user cached by PermissionMiddleware when available,
-    avoiding a redundant JWT decode + DB query on every authenticated request.
-
-    Raises 401 if token is invalid or user does not exist in database.
-    No demo/fallback users — authentication must be explicit.
+    This is the single implementation of JWT->user resolution.
+    Used by both PermissionMiddleware and get_current_user() slow path.
     """
     from api.services.fastapi_code_generator.models import User
 
-    # Fast path: user was already loaded by PermissionMiddleware
-    cached = _cached_user.get()
-    if cached is not None:
-        return cached
-
-    # Slow path: decode and validate
-    payload = decode_token(credentials.credentials)
+    payload = decode_token(token)
     user_id = payload.get("sub")
     if not user_id:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload")
@@ -92,6 +86,25 @@ async def get_current_user(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
 
     return user
+
+
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: AsyncSession = Depends(get_db),
+) -> "User":
+    """Extract and validate current user from JWT.
+
+    Fast path: user was already resolved by PermissionMiddleware and cached.
+    Slow path: calls resolve_user() to decode JWT and query DB.
+
+    Raises 401 if token is invalid or user does not exist in database.
+    No demo/fallback users — authentication must be explicit.
+    """
+    cached = _cached_user.get()
+    if cached is not None:
+        return cached
+
+    return await resolve_user(credentials.credentials, db)
 
 
 def require_role(*role_names: str):

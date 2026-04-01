@@ -10,6 +10,8 @@ import { DEFAULT_AUTH_ROUTE } from './route-map'
 // Lazy-loaded feature pages — each becomes a separate chunk
 const DashboardPage = lazy(() => import('../features/dashboard/pages/DashboardPage'))
 const UsersPage = lazy(() => import('../features/users/pages/UsersPage'))
+const ProjectsPage = lazy(() => import('../features/projects/pages/ProjectsPage'))
+const TasksPage = lazy(() => import('../features/tasks/pages/TasksPage'))
 
 function NotFoundPage() {
   return <Navigate to={DEFAULT_AUTH_ROUTE} replace />
@@ -51,6 +53,22 @@ export function AppRoutes() {
           element: (
             <Suspense fallback={<PageLoader />}>
               <UsersPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'projects',
+          element: (
+            <Suspense fallback={<PageLoader />}>
+              <ProjectsPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'tasks',
+          element: (
+            <Suspense fallback={<PageLoader />}>
+              <TasksPage />
             </Suspense>
           ),
         },

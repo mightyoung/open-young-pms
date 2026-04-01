@@ -9,6 +9,16 @@ export const ROUTE_META = {
     path: '/users',
     label: '用户管理',
   },
+  projects: {
+    key: 'projects',
+    path: '/projects',
+    label: '项目管理',
+  },
+  tasks: {
+    key: 'tasks',
+    path: '/tasks',
+    label: '任务管理',
+  },
 }
 
 export const DEFAULT_AUTH_ROUTE = ROUTE_META.dashboard.path

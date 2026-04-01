@@ -17,4 +17,16 @@ export const MENU_ITEMS = [
     path: ROUTE_META.users.path,
     iconKey: 'TeamOutlined',
   },
+  {
+    key: ROUTE_META.projects.key,
+    label: ROUTE_META.projects.label,
+    path: ROUTE_META.projects.path,
+    iconKey: 'ProjectOutlined',
+  },
+  {
+    key: ROUTE_META.tasks.key,
+    label: ROUTE_META.tasks.label,
+    path: ROUTE_META.tasks.path,
+    iconKey: 'ToolOutlined',
+  },
 ]
