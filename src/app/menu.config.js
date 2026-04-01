@@ -47,4 +47,10 @@ export const MENU_ITEMS = [
     path: ROUTE_META.forum.path,
     iconKey: 'MessageOutlined',
   },
+  {
+    key: ROUTE_META.hazards.key,
+    label: ROUTE_META.hazards.label,
+    path: ROUTE_META.hazards.path,
+    iconKey: 'SafetyOutlined',
+  },
 ]
