@@ -56,7 +56,7 @@ pms-template/
 │   ├── app/                # AppRoot、路由配置、菜单、AuthSession
 │   ├── components/         # 共享组件
 │   ├── contexts/           # React Context（AuthContext）
-│   ├── features/           # 按领域组织的功能模块（dashboard, users, projects, tasks）
+│   ├── features/           # 按领域组织的功能模块（dashboard, users, projects, tasks, notifications, reports, forum, hazards）
 │   ├── hooks/              # 自定义 Hooks
 │   ├── pages/              # 页面组件（legacy，仍在使用）
 │   ├── styles/             # 主题和全局样式
@@ -130,16 +130,16 @@ CORS_ORIGINS=http://localhost:5173,http://localhost:3000
 | 模块 | 前端 | 后端 | 状态 |
 |------|------|------|------|
 | 用户权限体系 | ✅ | ✅ | P0 |
-| 随手拍 | ✅ | ✅ | P0 |
+| 随手拍·隐患管理 | ✅ | ✅ | P0 |
 | API 规范 | ✅ | ✅ | P0 |
 | 文件服务 | ✅ | ✅ | P0 |
 | Docker 环境 | ✅ | ✅ | P0 |
 | 项目管理 | ✅ | ✅ | P1 |
 | 任务管理 | ✅ | ✅ | P1 |
+| 论坛 | ✅ | ✅ | P1 |
+| 消息通知 | ✅ | ✅ | P1 |
+| 报告中心 | ✅ | ✅ | P1 |
 | 组织架构 | ⏳ | ✅ | P1 |
-| 论坛增强 | ⏳ | ✅ | P1 |
-| 消息通知 | ⏳ | ✅ | P1 |
-| 报告管理 | ⏳ | ✅ | P1 |
 | 审批流引擎 | ⏳ | ✅ | P1 |
 | 监测看板 | ⏳ | ⏳ | P2 |
 | AI 助手 | ⏳ | ⏳ | P2 |
