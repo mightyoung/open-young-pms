@@ -65,4 +65,10 @@ export const MENU_ITEMS = [
     path: ROUTE_META.quality.path,
     iconKey: 'CheckCircleOutlined',
   },
+  {
+    key: ROUTE_META.organization.key,
+    label: ROUTE_META.organization.label,
+    path: ROUTE_META.organization.path,
+    iconKey: 'TeamOutlined',
+  },
 ]

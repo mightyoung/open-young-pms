@@ -18,6 +18,7 @@ const ForumPage = lazy(() => import('../features/forum/pages/ForumPage'))
 const HazardsPage = lazy(() => import('../features/hazards/pages/HazardsPage'))
 const RisksPage = lazy(() => import('../features/risks/pages/RisksPage'))
 const QualityPage = lazy(() => import('../features/quality/pages/QualityPage'))
+const OrganizationPage = lazy(() => import('../features/organization/pages/OrganizationPage'))
 
 function NotFoundPage() {
   return <Navigate to={DEFAULT_AUTH_ROUTE} replace />
@@ -123,6 +124,14 @@ export function AppRoutes() {
           element: (
             <Suspense fallback={<PageLoader />}>
               <QualityPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'organization',
+          element: (
+            <Suspense fallback={<PageLoader />}>
+              <OrganizationPage />
             </Suspense>
           ),
         },
