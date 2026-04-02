@@ -21,6 +21,9 @@ const QualityPage = lazy(() => import('../features/quality/pages/QualityPage'))
 const OrganizationPage = lazy(() => import('../features/organization/pages/OrganizationPage'))
 const AIChatPage = lazy(() => import('../features/ai-chat/pages/AIChatPage'))
 const ContractsPage = lazy(() => import('../features/contracts/pages/ContractsPage'))
+const ApprovalCenterPage = lazy(
+  () => import('../features/approval-center/pages/ApprovalCenterPage')
+)
 
 function NotFoundPage() {
   return <Navigate to={DEFAULT_AUTH_ROUTE} replace />
@@ -150,6 +153,14 @@ export function AppRoutes() {
           element: (
             <Suspense fallback={<PageLoader />}>
               <ContractsPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'approval-center',
+          element: (
+            <Suspense fallback={<PageLoader />}>
+              <ApprovalCenterPage />
             </Suspense>
           ),
         },

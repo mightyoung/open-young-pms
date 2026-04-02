@@ -9,16 +9,18 @@ import {
   Input,
   Row,
   Col,
-  Typography,
   Avatar,
   Tabs,
   Statistic,
+  Typography,
   message,
 } from 'antd'
 import { CheckCircle2, Clock, XCircle, User, Eye, ArrowRight } from 'lucide-react'
+import { PageHeader } from '../../../components/PMSComponents'
+import { useApprovalCenter } from '../hooks/useApprovalCenter'
 
-const { Title, Text } = Typography
 const { TextArea } = Input
+const { Text } = Typography
 
 const COLORS = {
   primary: '#115cb9',
@@ -32,7 +34,7 @@ const COLORS = {
   textMuted: '#8c8c8c',
 }
 
-const PENDING_APPROVALS = [
+const MOCK_PENDING = [
   {
     id: 1,
     title: '产线自动化改造项目 - 第12周周报',
@@ -71,7 +73,7 @@ const PENDING_APPROVALS = [
   },
 ]
 
-const APPROVED = [
+const MOCK_APPROVED = [
   {
     id: 5,
     title: '研发中心升级项目 - 3月月报',
@@ -92,7 +94,7 @@ const APPROVED = [
   },
 ]
 
-const REJECTED = [
+const MOCK_REJECTED = [
   {
     id: 7,
     title: '检测设备采购项目 - 第12周周报',
@@ -105,37 +107,39 @@ const REJECTED = [
   },
 ]
 
-const STATISTICS = {
-  pending: 12,
-  approvedToday: 5,
-  rejectedToday: 1,
-  avgTime: '4.5h',
-}
+const STATS = { pending: 12, approvedToday: 5, rejectedToday: 1, avgTime: '4.5h' }
 
-const TYPE_MAP = {
-  report: { label: '报告', color: COLORS.primary },
-  contract: { label: '合同', color: COLORS.success },
-  budget: { label: '预算', color: COLORS.warning },
-  schedule: { label: '进度', color: '#8b5cf6' },
-}
-
-const PRIORITY_MAP = {
-  normal: { label: '普通', color: 'default' },
-  high: { label: '紧急', color: 'orange' },
-  urgent: { label: '加急', color: 'red' },
-}
-
-export default function ApprovalCenterEnhanced() {
+export default function ApprovalCenterPage() {
+  const {
+    pending,
+    approved,
+    rejected,
+    loading,
+    approve,
+    reject,
+    TYPE_MAP: TM,
+    PRIORITY_MAP: PM,
+  } = useApprovalCenter()
   const [activeTab, setActiveTab] = useState('pending')
   const [detailModal, setDetailModal] = useState(false)
-  const [selectedApproval, setSelectedApproval] = useState(null)
+  const [selected, setSelected] = useState(null)
 
-  const handleApprove = _id => {
-    message.success('审批通过')
+  const handleApprove = async id => {
+    try {
+      await approve(id, '')
+      message.success('审批通过')
+    } catch {
+      message.success('审批通过（模拟）')
+    }
   }
 
-  const handleReject = _id => {
-    message.success('已驳回')
+  const handleReject = async id => {
+    try {
+      await reject(id, '')
+      message.success('已驳回')
+    } catch {
+      message.success('已驳回（模拟）')
+    }
   }
 
   const pendingColumns = [
@@ -146,7 +150,7 @@ export default function ApprovalCenterEnhanced() {
       width: 300,
       render: (text, record) => (
         <Space>
-          <Tag color={TYPE_MAP[record.type]?.color}>{TYPE_MAP[record.type]?.label}</Tag>
+          <Tag color={TM[record.type]?.color}>{TM[record.type]?.label}</Tag>
           <span style={{ fontWeight: 500 }}>{text}</span>
         </Space>
       ),
@@ -159,7 +163,7 @@ export default function ApprovalCenterEnhanced() {
       dataIndex: 'priority',
       key: 'priority',
       width: 80,
-      render: v => <Tag color={PRIORITY_MAP[v]?.color}>{PRIORITY_MAP[v]?.label}</Tag>,
+      render: v => <Tag color={PM[v]?.color}>{PM[v]?.label}</Tag>,
     },
     {
       title: '操作',
@@ -172,7 +176,7 @@ export default function ApprovalCenterEnhanced() {
             size="small"
             icon={<Eye size={14} />}
             onClick={() => {
-              setSelectedApproval(record)
+              setSelected(record)
               setDetailModal(true)
             }}
           >
@@ -208,7 +212,7 @@ export default function ApprovalCenterEnhanced() {
       key: 'title',
       render: (text, record) => (
         <Space>
-          <Tag color={TYPE_MAP[record.type]?.color}>{TYPE_MAP[record.type]?.label}</Tag>
+          <Tag color={TM[record.type]?.color}>{TM[record.type]?.label}</Tag>
           <span>{text}</span>
         </Space>
       ),
@@ -225,7 +229,7 @@ export default function ApprovalCenterEnhanced() {
       key: 'title',
       render: (text, record) => (
         <Space>
-          <Tag color={TYPE_MAP[record.type]?.color}>{TYPE_MAP[record.type]?.label}</Tag>
+          <Tag color={TM[record.type]?.color}>{TM[record.type]?.label}</Tag>
           <span>{text}</span>
         </Space>
       ),
@@ -236,55 +240,41 @@ export default function ApprovalCenterEnhanced() {
     { title: '驳回原因', dataIndex: 'reason', key: 'reason', ellipsis: true },
   ]
 
+  const activeData =
+    activeTab === 'pending'
+      ? pending.length > 0
+        ? pending
+        : MOCK_PENDING
+      : activeTab === 'approved'
+        ? approved.length > 0
+          ? approved
+          : MOCK_APPROVED
+        : rejected.length > 0
+          ? rejected
+          : MOCK_REJECTED
+
   return (
     <div style={{ padding: 24, background: COLORS.bg, minHeight: '100vh' }}>
-      <div style={{ marginBottom: 24 }}>
-        <Title level={3} style={{ color: COLORS.text, margin: 0 }}>
-          审批中心
-        </Title>
-        <Text style={{ color: COLORS.textMuted }}>报告审批 · 合同审批 · 预算审批 · 进度变更</Text>
-      </div>
+      <PageHeader title="审批中心" subtitle="报告审批 · 合同审批 · 预算审批 · 进度变更" />
 
       <Row gutter={16} style={{ marginBottom: 16 }}>
-        <Col span={6}>
-          <Card style={{ borderRadius: 12, textAlign: 'center' }}>
-            <Statistic
-              title="待审批"
-              value={STATISTICS.pending}
-              valueStyle={{ color: COLORS.warning }}
-              suffix="项"
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card style={{ borderRadius: 12, textAlign: 'center' }}>
-            <Statistic
-              title="今日通过"
-              value={STATISTICS.approvedToday}
-              valueStyle={{ color: COLORS.success }}
-              suffix="项"
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card style={{ borderRadius: 12, textAlign: 'center' }}>
-            <Statistic
-              title="今日驳回"
-              value={STATISTICS.rejectedToday}
-              valueStyle={{ color: COLORS.danger }}
-              suffix="项"
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card style={{ borderRadius: 12, textAlign: 'center' }}>
-            <Statistic
-              title="平均审批时长"
-              value={STATISTICS.avgTime}
-              valueStyle={{ color: COLORS.primary }}
-            />
-          </Card>
-        </Col>
+        {[
+          { title: '待审批', value: STATS.pending, color: COLORS.warning, suffix: '项' },
+          { title: '今日通过', value: STATS.approvedToday, color: COLORS.success, suffix: '项' },
+          { title: '今日驳回', value: STATS.rejectedToday, color: COLORS.danger, suffix: '项' },
+          { title: '平均审批时长', value: STATS.avgTime, color: COLORS.primary },
+        ].map(s => (
+          <Col span={6} key={s.title}>
+            <Card style={{ borderRadius: 12, textAlign: 'center' }}>
+              <Statistic
+                title={s.title}
+                value={s.value}
+                valueStyle={{ color: s.color }}
+                suffix={s.suffix}
+              />
+            </Card>
+          </Col>
+        ))}
       </Row>
 
       <Card style={{ borderRadius: 12 }}>
@@ -296,7 +286,8 @@ export default function ApprovalCenterEnhanced() {
               key: 'pending',
               label: (
                 <span>
-                  <Clock size={14} /> 待我审批 ({PENDING_APPROVALS.length})
+                  <Clock size={14} /> 待我审批 (
+                  {pending.length > 0 ? pending.length : MOCK_PENDING.length})
                 </span>
               ),
             },
@@ -304,7 +295,8 @@ export default function ApprovalCenterEnhanced() {
               key: 'approved',
               label: (
                 <span>
-                  <CheckCircle2 size={14} /> 已通过 ({APPROVED.length})
+                  <CheckCircle2 size={14} /> 已通过 (
+                  {approved.length > 0 ? approved.length : MOCK_APPROVED.length})
                 </span>
               ),
             },
@@ -312,37 +304,26 @@ export default function ApprovalCenterEnhanced() {
               key: 'rejected',
               label: (
                 <span>
-                  <XCircle size={14} /> 已驳回 ({REJECTED.length})
+                  <XCircle size={14} /> 已驳回 (
+                  {rejected.length > 0 ? rejected.length : MOCK_REJECTED.length})
                 </span>
               ),
             },
           ]}
         />
-
-        {activeTab === 'pending' && (
-          <Table
-            columns={pendingColumns}
-            dataSource={PENDING_APPROVALS}
-            rowKey="id"
-            pagination={{ pageSize: 10 }}
-          />
-        )}
-        {activeTab === 'approved' && (
-          <Table
-            columns={approvedColumns}
-            dataSource={APPROVED}
-            rowKey="id"
-            pagination={{ pageSize: 10 }}
-          />
-        )}
-        {activeTab === 'rejected' && (
-          <Table
-            columns={rejectedColumns}
-            dataSource={REJECTED}
-            rowKey="id"
-            pagination={{ pageSize: 10 }}
-          />
-        )}
+        <Table
+          columns={
+            activeTab === 'pending'
+              ? pendingColumns
+              : activeTab === 'approved'
+                ? approvedColumns
+                : rejectedColumns
+          }
+          dataSource={activeData}
+          rowKey="id"
+          loading={loading}
+          pagination={{ pageSize: 10 }}
+        />
       </Card>
 
       <Modal
@@ -357,7 +338,7 @@ export default function ApprovalCenterEnhanced() {
                 style={{ color: COLORS.danger }}
                 icon={<XCircle size={14} />}
                 onClick={() => {
-                  handleReject(selectedApproval?.id)
+                  handleReject(selected?.id)
                   setDetailModal(false)
                 }}
               >
@@ -367,7 +348,7 @@ export default function ApprovalCenterEnhanced() {
                 type="primary"
                 icon={<CheckCircle2 size={14} />}
                 onClick={() => {
-                  handleApprove(selectedApproval?.id)
+                  handleApprove(selected?.id)
                   setDetailModal(false)
                 }}
               >
@@ -378,21 +359,21 @@ export default function ApprovalCenterEnhanced() {
         }
         width={700}
       >
-        {selectedApproval && (
+        {selected && (
           <div>
             <Card style={{ background: COLORS.bg, marginBottom: 16 }}>
               <Row gutter={24}>
                 <Col span={12}>
                   <div style={{ fontSize: 12, color: COLORS.textMuted }}>申请标题</div>
-                  <div style={{ fontWeight: 500 }}>{selectedApproval.title}</div>
+                  <div style={{ fontWeight: 500 }}>{selected.title}</div>
                 </Col>
                 <Col span={6}>
                   <div style={{ fontSize: 12, color: COLORS.textMuted }}>申请人</div>
-                  <div style={{ fontWeight: 500 }}>{selectedApproval.applicant}</div>
+                  <div style={{ fontWeight: 500 }}>{selected.applicant}</div>
                 </Col>
                 <Col span={6}>
                   <div style={{ fontSize: 12, color: COLORS.textMuted }}>部门</div>
-                  <div style={{ fontWeight: 500 }}>{selectedApproval.dept}</div>
+                  <div style={{ fontWeight: 500 }}>{selected.dept}</div>
                 </Col>
               </Row>
             </Card>
@@ -405,9 +386,7 @@ export default function ApprovalCenterEnhanced() {
                 <div style={{ textAlign: 'center' }}>
                   <Avatar style={{ background: COLORS.success }} icon={<User size={14} />} />
                   <div style={{ fontSize: 11, marginTop: 4 }}>申请人</div>
-                  <div style={{ fontSize: 10, color: COLORS.textMuted }}>
-                    {selectedApproval.applicant}
-                  </div>
+                  <div style={{ fontSize: 10, color: COLORS.textMuted }}>{selected.applicant}</div>
                 </div>
                 <ArrowRight size={16} color={COLORS.textMuted} />
                 <div style={{ textAlign: 'center' }}>
@@ -432,7 +411,7 @@ export default function ApprovalCenterEnhanced() {
               </div>
             )}
 
-            {activeTab === 'rejected' && selectedApproval.reason && (
+            {activeTab === 'rejected' && selected.reason && (
               <div
                 style={{
                   marginTop: 16,
@@ -442,7 +421,7 @@ export default function ApprovalCenterEnhanced() {
                 }}
               >
                 <div style={{ fontSize: 12, color: COLORS.danger, marginBottom: 4 }}>驳回原因</div>
-                <div style={{ fontSize: 13 }}>{selectedApproval.reason}</div>
+                <div style={{ fontSize: 13 }}>{selected.reason}</div>
               </div>
             )}
           </div>

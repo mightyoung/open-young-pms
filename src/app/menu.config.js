@@ -83,4 +83,10 @@ export const MENU_ITEMS = [
     path: ROUTE_META.contracts.path,
     iconKey: 'AuditOutlined',
   },
+  {
+    key: ROUTE_META.approvalCenter.key,
+    label: ROUTE_META.approvalCenter.label,
+    path: ROUTE_META.approvalCenter.path,
+    iconKey: 'CheckSquareOutlined',
+  },
 ]
