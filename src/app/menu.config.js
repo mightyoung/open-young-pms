@@ -59,4 +59,10 @@ export const MENU_ITEMS = [
     path: ROUTE_META.risks.path,
     iconKey: 'AlertOutlined',
   },
+  {
+    key: ROUTE_META.quality.key,
+    label: ROUTE_META.quality.label,
+    path: ROUTE_META.quality.path,
+    iconKey: 'CheckCircleOutlined',
+  },
 ]

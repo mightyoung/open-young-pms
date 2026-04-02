@@ -44,6 +44,11 @@ export const ROUTE_META = {
     path: '/risks',
     label: '风险管理',
   },
+  quality: {
+    key: 'quality',
+    path: '/quality',
+    label: '质量管理',
+  },
 }
 
 export const DEFAULT_AUTH_ROUTE = ROUTE_META.dashboard.path
