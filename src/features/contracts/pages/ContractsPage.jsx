@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Card,
   Table,
@@ -18,8 +18,10 @@ import {
 } from 'antd'
 import { PlusOutlined, EditOutlined } from '@ant-design/icons'
 import { motion } from 'framer-motion'
+import { PageHeader } from '../../../components/PMSComponents'
+import { useContracts } from '../hooks/useContracts'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 
 const D = {
   primary: '#115cb9',
@@ -34,133 +36,6 @@ const D = {
   danger: '#ff4d4f',
 }
 
-const TYPE_MAP = {
-  supply: { label: '供货合同', bg: '#dbeafe', color: '#1e40af' },
-  install: { label: '安装合同', bg: '#dcfce7', color: '#166534' },
-  service: { label: '服务合同', bg: '#fef3c7', color: '#92400e' },
-  consulting: { label: '咨询合同', bg: '#fce7f3', color: '#be185d' },
-  other: { label: '其他', bg: '#f3f4f6', color: '#6b7280' },
-}
-const STATUS_MAP = {
-  draft: { label: '草稿', bg: '#f3f4f6', color: '#6b7280' },
-  signing: { label: '签订中', bg: '#dbeafe', color: '#1e40af' },
-  executing: { label: '执行中', bg: '#dcfce7', color: '#166534' },
-  completed: { label: '已完成', bg: '#dcfce7', color: '#166534' },
-  terminated: { label: '已终止', bg: '#fee2e2', color: '#991b1b' },
-}
-
-const MOCK_CONTRACTS = [
-  {
-    id: 1,
-    code: 'CTR-SUP-2026-001',
-    name: '高精度数控设备供货合同',
-    type: 'supply',
-    party_a: 'XX装备集团',
-    party_b: '我公司',
-    amount: 480,
-    signedDate: '2026-01-15',
-    startDate: '2026-01-20',
-    endDate: '2026-06-30',
-    status: 'executing',
-    payment: 60,
-    progress: 55,
-    leader: '张经理',
-  },
-  {
-    id: 2,
-    code: 'CTR-INS-2026-002',
-    name: '高压管路安装施工合同',
-    type: 'install',
-    party_a: 'YY能源公司',
-    party_b: '我公司',
-    amount: 320,
-    signedDate: '2025-11-10',
-    startDate: '2025-11-15',
-    endDate: '2026-08-30',
-    status: 'executing',
-    payment: 45,
-    progress: 60,
-    leader: '王经理',
-  },
-  {
-    id: 3,
-    code: 'CTR-SER-2026-003',
-    name: '项目管理咨询服务合同',
-    type: 'service',
-    party_a: 'ZZ咨询公司',
-    party_b: '我公司',
-    amount: 60,
-    signedDate: '2026-02-01',
-    startDate: '2026-02-01',
-    endDate: '2026-12-31',
-    status: 'executing',
-    payment: 30,
-    progress: 28,
-    leader: '张经理',
-  },
-  {
-    id: 4,
-    code: 'CTR-SUP-2026-004',
-    name: '电气控制系统采购合同',
-    type: 'supply',
-    party_a: 'WW电气公司',
-    party_b: '我公司',
-    amount: 150,
-    signedDate: '2026-03-01',
-    startDate: '2026-03-05',
-    endDate: '2026-05-31',
-    status: 'signing',
-    payment: 0,
-    progress: 10,
-    leader: '刘经理',
-  },
-  {
-    id: 5,
-    code: 'CTR-INS-2025-005',
-    name: '钢结构安装工程合同',
-    type: 'install',
-    party_a: 'VV建设集团',
-    party_b: '我公司',
-    amount: 280,
-    signedDate: '2025-06-01',
-    startDate: '2025-06-15',
-    endDate: '2025-12-31',
-    status: 'completed',
-    payment: 100,
-    progress: 100,
-    leader: '王经理',
-  },
-  {
-    id: 6,
-    code: 'CTR-SUP-2025-006',
-    name: '环保设备采购合同',
-    type: 'supply',
-    party_a: 'UU环保集团',
-    party_b: '我公司',
-    amount: 200,
-    signedDate: '2025-02-01',
-    startDate: '2025-02-10',
-    endDate: '2025-08-31',
-    status: 'terminated',
-    payment: 40,
-    progress: 40,
-    leader: '陈经理',
-  },
-]
-
-const _MOCK_FLOWS = [
-  {
-    contract: 'CTR-SUP-2026-001',
-    events: [
-      { time: '2026-01-15', actor: '法务部', action: '合同拟定' },
-      { time: '2026-01-15', actor: '张经理', action: '发起审批' },
-      { time: '2026-01-16', actor: '李总', action: '审批通过' },
-      { time: '2026-01-18', actor: '双方', action: '签章完成' },
-      { time: '2026-01-20', actor: '系统', action: '合同生效' },
-    ],
-  },
-]
-
 function va(i = 0) {
   return {
     hidden: { opacity: 0, y: 10 },
@@ -168,37 +43,54 @@ function va(i = 0) {
   }
 }
 
-export default function Contracts() {
-  const [data] = useState(MOCK_CONTRACTS)
+export default function ContractsPage() {
+  const {
+    contracts,
+    loading,
+    total,
+    loadContracts,
+    createContract,
+    TYPE_MAP: TM,
+    STATUS_MAP: SM,
+  } = useContracts()
+  const [search, setSearch] = useState('')
+  const [filterStatus, setFilterStatus] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [detailOpen, setDetailOpen] = useState(false)
   const [selected, setSelected] = useState(null)
-  const [search, setSearch] = useState('')
-  const [filterStatus, setFilterStatus] = useState('')
   const [form] = Form.useForm()
 
-  const filtered = data.filter(c => {
-    if (search && !c.name.includes(search) && !c.code.includes(search)) return false
+  useEffect(() => {
+    loadContracts()
+  }, [loadContracts])
+
+  const filtered = contracts.filter(c => {
+    if (search && !c.name?.includes(search) && !c.code?.includes(search)) return false
     if (filterStatus && c.status !== filterStatus) return false
     return true
   })
 
   const stats = {
-    total: data.length,
-    executing: data.filter(c => c.status === 'executing').length,
-    amountTotal: data.reduce((s, c) => s + c.amount, 0),
-    amountSigned: data
+    total: contracts.length,
+    executing: contracts.filter(c => c.status === 'executing').length,
+    amountTotal: contracts.reduce((s, c) => s + (c.amount || 0), 0),
+    amountSigned: contracts
       .filter(c => c.status !== 'draft')
-      .reduce((s, c) => s + (c.amount * c.payment) / 100, 0),
+      .reduce((s, c) => s + ((c.amount || 0) * (c.payment || 0)) / 100, 0),
   }
 
   const handleCreate = async () => {
     try {
       await form.validateFields()
+      await createContract(form.getFieldsValue())
       message.success('合同创建成功')
       setModalOpen(false)
       form.resetFields()
-    } catch {}
+      loadContracts()
+    } catch (err) {
+      if (err?.errorFields) return
+      message.error('创建失败，请稍后再试')
+    }
   }
 
   const columns = [
@@ -208,7 +100,7 @@ export default function Contracts() {
       key: 'code',
       render: v => (
         <Text style={{ fontFamily: 'monospace', color: D.primary, fontWeight: 600, fontSize: 12 }}>
-          {v}
+          {v || '—'}
         </Text>
       ),
     },
@@ -221,7 +113,7 @@ export default function Contracts() {
           <Text style={{ fontWeight: 600 }}>{v}</Text>
           <div>
             <Text style={{ color: D.textMuted, fontSize: 11 }}>
-              {r.party_a} ↔ {r.party_b}
+              {r.party_a || '—'} ↔ {r.party_b || '—'}
             </Text>
           </div>
         </div>
@@ -232,7 +124,7 @@ export default function Contracts() {
       dataIndex: 'type',
       key: 'type',
       render: v => {
-        const c = TYPE_MAP[v]
+        const c = TM[v] || TM.other
         return (
           <Tag style={{ background: c.bg, color: c.color, border: 'none', fontWeight: 600 }}>
             {c.label}
@@ -241,17 +133,17 @@ export default function Contracts() {
       },
     },
     {
-      title: '金额',
+      title: '金额（万）',
       dataIndex: 'amount',
       key: 'amount',
-      render: v => <Text style={{ fontWeight: 700, color: D.text }}>{v}</Text>,
+      render: v => <Text style={{ fontWeight: 700, color: D.text }}>{v ?? '—'}</Text>,
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
       render: v => {
-        const c = STATUS_MAP[v]
+        const c = SM[v] || { bg: '#f3f4f6', color: '#6b7280', label: v }
         return (
           <Tag style={{ background: c.bg, color: c.color, border: 'none', fontWeight: 600 }}>
             {c.label}
@@ -264,7 +156,7 @@ export default function Contracts() {
       dataIndex: 'progress',
       key: 'progress',
       render: v => (
-        <Progress percent={v} size="small" strokeColor={v === 100 ? D.success : D.primary} />
+        <Progress percent={v || 0} size="small" strokeColor={v === 100 ? D.success : D.primary} />
       ),
     },
     {
@@ -272,7 +164,7 @@ export default function Contracts() {
       dataIndex: 'payment',
       key: 'payment',
       render: v => (
-        <Text style={{ fontSize: 12, color: v === 100 ? D.success : D.warning }}>{v}%</Text>
+        <Text style={{ fontSize: 12, color: v === 100 ? D.success : D.warning }}>{v || 0}%</Text>
       ),
     },
     {
@@ -298,13 +190,8 @@ export default function Contracts() {
   ]
 
   return (
-    <div>
-      <motion.div variants={va(0)} initial="hidden" animate="visible" style={{ marginBottom: 24 }}>
-        <Title level={3} style={{ color: D.text, margin: 0 }}>
-          合同管理
-        </Title>
-        <Text style={{ color: D.textMuted, fontSize: 13 }}>合同列表 · 状态流转 · 付款跟踪</Text>
-      </motion.div>
+    <div style={{ padding: 24, background: D.bg, minHeight: '100vh' }}>
+      <PageHeader title="合同管理" subtitle="合同列表 · 状态流转 · 付款跟踪" />
 
       <Row gutter={[12, 12]} style={{ marginBottom: 20 }}>
         {[
@@ -359,7 +246,7 @@ export default function Contracts() {
               allowClear
               style={{ width: 130 }}
               onChange={setFilterStatus}
-              options={Object.entries(STATUS_MAP).map(([k, v]) => ({ value: k, label: v.label }))}
+              options={Object.entries(SM).map(([k, v]) => ({ value: k, label: v.label }))}
             />
           </Space>
           <Button
@@ -378,7 +265,8 @@ export default function Contracts() {
           columns={columns}
           dataSource={filtered}
           rowKey="id"
-          pagination={{ pageSize: 8, showSizeChanger: false }}
+          loading={loading}
+          pagination={{ pageSize: 8, showSizeChanger: false, total }}
         />
       </Card>
 
@@ -408,7 +296,7 @@ export default function Contracts() {
             <Col span={8}>
               <Form.Item name="type" label="合同类型">
                 <Select
-                  options={Object.entries(TYPE_MAP).map(([k, v]) => ({ value: k, label: v.label }))}
+                  options={Object.entries(TM).map(([k, v]) => ({ value: k, label: v.label }))}
                   style={{ borderRadius: 10 }}
                 />
               </Form.Item>
@@ -440,7 +328,7 @@ export default function Contracts() {
             <Col span={8}>
               <Form.Item name="status" label="合同状态">
                 <Select
-                  options={Object.entries(STATUS_MAP).map(([k, v]) => ({
+                  options={Object.entries(SM).map(([k, v]) => ({
                     value: k,
                     label: v.label,
                   }))}
@@ -468,36 +356,36 @@ export default function Contracts() {
             <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
               <Tag
                 style={{
-                  background: TYPE_MAP[selected.type]?.bg,
-                  color: TYPE_MAP[selected.type]?.color,
+                  background: (TM[selected.type] || TM.other).bg,
+                  color: (TM[selected.type] || TM.other).color,
                   border: 'none',
                   fontWeight: 600,
                 }}
               >
-                {TYPE_MAP[selected.type]?.label}
+                {(TM[selected.type] || TM.other).label}
               </Tag>
               <Tag
                 style={{
-                  background: STATUS_MAP[selected.status]?.bg,
-                  color: STATUS_MAP[selected.status]?.color,
+                  background: (SM[selected.status] || {}).bg,
+                  color: (SM[selected.status] || {}).color,
                   border: 'none',
                   fontWeight: 600,
                 }}
               >
-                {STATUS_MAP[selected.status]?.label}
+                {(SM[selected.status] || { label: selected.status }).label}
               </Tag>
             </div>
-            <Title level={4} style={{ color: D.text, margin: '0 0 4px 0' }}>
+            <Typography.Title level={4} style={{ color: D.text, margin: '0 0 4px 0' }}>
               {selected.name}
-            </Title>
+            </Typography.Title>
             <Text style={{ fontFamily: 'monospace', color: D.primary, fontSize: 12 }}>
-              {selected.code}
+              {selected.code || '—'}
             </Text>
             <Row gutter={[12, 12]} style={{ margin: '16px 0' }}>
               {[
-                { label: '合同金额', value: `${selected.amount} 万元` },
-                { label: '签订日期', value: selected.signedDate },
-                { label: '负责人', value: selected.leader },
+                { label: '合同金额', value: selected.amount ? `${selected.amount} 万元` : '—' },
+                { label: '签订日期', value: selected.signedDate || selected.sign_date || '—' },
+                { label: '负责人', value: selected.leader || '—' },
               ].map(({ label, value }) => (
                 <Col span={8} key={label}>
                   <div style={{ background: D.bg, borderRadius: 10, padding: '10px 14px' }}>
@@ -512,32 +400,32 @@ export default function Contracts() {
             <div style={{ marginBottom: 16 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                 <Text style={{ color: D.textSec, fontSize: 13 }}>合同执行进度</Text>
-                <Text style={{ color: D.primary, fontWeight: 700 }}>{selected.progress}%</Text>
+                <Text style={{ color: D.primary, fontWeight: 700 }}>{selected.progress || 0}%</Text>
               </div>
-              <Progress percent={selected.progress} strokeColor={D.primary} />
+              <Progress percent={selected.progress || 0} strokeColor={D.primary} />
             </div>
             <div style={{ marginBottom: 16 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                 <Text style={{ color: D.textSec, fontSize: 13 }}>付款进度</Text>
-                <Text style={{ color: D.warning, fontWeight: 700 }}>{selected.payment}%</Text>
+                <Text style={{ color: D.warning, fontWeight: 700 }}>{selected.payment || 0}%</Text>
               </div>
-              <Progress percent={selected.payment} strokeColor={D.warning} />
+              <Progress percent={selected.payment || 0} strokeColor={D.warning} />
             </div>
             <Divider style={{ margin: '16px 0' }} />
-            <Title level={5} style={{ color: D.text, marginBottom: 12 }}>
+            <Typography.Title level={5} style={{ color: D.text, marginBottom: 12 }}>
               合同双方
-            </Title>
+            </Typography.Title>
             <Row gutter={12}>
               <Col span={12}>
                 <div style={{ background: D.bg, borderRadius: 10, padding: '12px 14px' }}>
                   <Text style={{ fontSize: 11, color: D.textMuted, display: 'block' }}>甲方</Text>
-                  <Text style={{ fontWeight: 600 }}>{selected.party_a}</Text>
+                  <Text style={{ fontWeight: 600 }}>{selected.party_a || '—'}</Text>
                 </div>
               </Col>
               <Col span={12}>
                 <div style={{ background: D.bg, borderRadius: 10, padding: '12px 14px' }}>
                   <Text style={{ fontSize: 11, color: D.textMuted, display: 'block' }}>乙方</Text>
-                  <Text style={{ fontWeight: 600 }}>{selected.party_b}</Text>
+                  <Text style={{ fontWeight: 600 }}>{selected.party_b || '—'}</Text>
                 </div>
               </Col>
             </Row>

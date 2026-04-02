@@ -71,4 +71,16 @@ export const MENU_ITEMS = [
     path: ROUTE_META.organization.path,
     iconKey: 'TeamOutlined',
   },
+  {
+    key: ROUTE_META.aiChat.key,
+    label: ROUTE_META.aiChat.label,
+    path: ROUTE_META.aiChat.path,
+    iconKey: 'RobotOutlined',
+  },
+  {
+    key: ROUTE_META.contracts.key,
+    label: ROUTE_META.contracts.label,
+    path: ROUTE_META.contracts.path,
+    iconKey: 'AuditOutlined',
+  },
 ]

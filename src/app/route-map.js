@@ -54,6 +54,16 @@ export const ROUTE_META = {
     path: '/organization',
     label: '组织架构',
   },
+  aiChat: {
+    key: 'aiChat',
+    path: '/ai-chat',
+    label: 'AI助手',
+  },
+  contracts: {
+    key: 'contracts',
+    path: '/contracts',
+    label: '合同管理',
+  },
 }
 
 export const DEFAULT_AUTH_ROUTE = ROUTE_META.dashboard.path
