@@ -56,7 +56,7 @@ pms-template/
 │   ├── app/                # AppRoot、路由配置、菜单、AuthSession
 │   ├── components/         # 共享组件
 │   ├── contexts/           # React Context（AuthContext）
-│   ├── features/           # 按领域组织的功能模块（dashboard, users, projects, tasks, notifications, reports, forum, hazards, risks, quality）
+│   ├── features/           # 按领域组织的功能模块（dashboard, users, projects, tasks, notifications, reports, forum, hazards, risks, quality, organization）
 │   ├── hooks/              # 自定义 Hooks
 │   ├── pages/              # 页面组件（legacy，仍在使用）
 │   ├── styles/             # 主题和全局样式
@@ -141,7 +141,7 @@ CORS_ORIGINS=http://localhost:5173,http://localhost:3000
 | 报告中心 | ✅ | ✅ | P1 |
 | 风险管理 | ✅ | ✅ | P1 |
 | 质量管理 | ✅ | ✅ | P1 |
-| 组织架构 | ⏳ | ✅ | P1 |
+| 组织架构 | ✅ | ✅ | P1 |
 | 审批流引擎 | ⏳ | ✅ | P1 |
 | 监测看板 | ⏳ | ⏳ | P2 |
 | AI 助手 | ⏳ | ⏳ | P2 |
