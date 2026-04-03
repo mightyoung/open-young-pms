@@ -8,7 +8,8 @@ from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import User
 from api.services.fastapi_code_generator.schemas import UserResponse
-from schemas import ApiResponse, PageResult
+from api.response import ApiResponse
+from schemas import PageResult
 
 router = APIRouter()
 

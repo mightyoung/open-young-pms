@@ -8,7 +8,7 @@ from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import User
 from services.forum_service import forum_service
 from schemas.forum import PostCreate, ReplyCreate, PostResponse, ReplyResponse, UserBrief
-from schemas.response import ApiResponse
+from api.response import ApiResponse
 from middleware.exception import ApiException
 
 router = APIRouter()

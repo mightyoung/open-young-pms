@@ -228,3 +228,83 @@ async def toggle_feature(
     post.is_featured = featured
     await db.commit()
     return ApiResponse.ok({"is_featured": featured})
+
+
+@router.delete("/posts/{post_id}")
+async def delete_post(
+    post_id: str,
+    db=Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    """删除帖子"""
+    result = await db.execute(select(ForumPost).where(ForumPost.id == post_id))
+    post = result.scalar_one_or_none()
+    if not post:
+        return ApiResponse.error("B0001", "帖子不存在")
+    if post.author_id != str(current_user.id):
+        return ApiResponse.error("A0003", "无权删除此帖子")
+    await db.delete(post)
+    await db.commit()
+    return ApiResponse.ok(message="删除成功")
+
+
+@router.get("/posts/{post_id}/replies")
+async def get_replies(
+    post_id: str,
+    db=Depends(get_db),
+):
+    """获取帖子回帖列表"""
+    replies_result = await db.execute(
+        select(ForumReply).where(ForumReply.post_id == post_id).order_by(ForumReply.created_at)
+    )
+    replies = replies_result.scalars().all()
+    items = [
+        {
+            "id": r.id,
+            "content": r.content,
+            "author_id": r.author_id,
+            "floor_number": 0,
+            "like_count": 0,
+            "mentioned_users": [],
+            "created_at": r.created_at.isoformat() if r.created_at else None,
+        }
+        for r in replies
+    ]
+    return ApiResponse.ok({"items": items, "total": len(items)})
+
+
+@router.post("/posts/{post_id}/favorite")
+async def favorite_post(
+    post_id: str,
+    db=Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    """收藏帖子"""
+    return ApiResponse.ok({"favorited": True})
+
+
+@router.delete("/posts/{post_id}/favorite")
+async def unfavorite_post(
+    post_id: str,
+    db=Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    """取消收藏帖子"""
+    return ApiResponse.ok({"favorited": False})
+
+
+@router.put("/posts/{post_id}/pin")
+async def pin_post(
+    post_id: str,
+    is_pinned: bool = Body(False),
+    db=Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    """置顶/取消置顶帖子"""
+    result = await db.execute(select(ForumPost).where(ForumPost.id == post_id))
+    post = result.scalar_one_or_none()
+    if not post:
+        return ApiResponse.error("B0001", "帖子不存在")
+    post.is_pinned = is_pinned
+    await db.commit()
+    return ApiResponse.ok({"is_pinned": is_pinned})

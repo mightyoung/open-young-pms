@@ -14,7 +14,8 @@ from schemas.notification import (
     NotificationSettingResponse,
     UnreadCountResponse,
 )
-from schemas.response import ApiResponse, PageResult
+from api.response import ApiResponse
+from schemas.response import PageResult
 from schemas.pagination import PaginationParams
 from middleware.exception import ApiException
 

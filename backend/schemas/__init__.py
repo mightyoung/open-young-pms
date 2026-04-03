@@ -1,4 +1,4 @@
-from schemas.response import ApiResponse, PageResult
+from schemas.response import PageResult
 from schemas.error_code import ErrorCode
 from schemas.pagination import PaginationParams
 from schemas.organization import (
@@ -12,7 +12,6 @@ from schemas.organization import (
 )
 
 __all__ = [
-    "ApiResponse",
     "PageResult",
     "ErrorCode",
     "PaginationParams",

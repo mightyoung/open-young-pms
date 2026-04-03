@@ -19,7 +19,8 @@ from api.services.fastapi_code_generator.schemas import (
     PhaseCreate,
     PhaseResponse,
 )
-from schemas import ApiResponse, ErrorCode, PaginationParams, PageResult
+from api.response import ApiResponse
+from schemas import ErrorCode, PaginationParams, PageResult
 from middleware.exception import ApiException
 
 router = APIRouter()

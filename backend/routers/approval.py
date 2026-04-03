@@ -22,7 +22,7 @@ from schemas.approval import (
     UserBrief,
     FlowBrief,
 )
-from schemas.response import ApiResponse
+from api.response import ApiResponse
 
 
 router = APIRouter(prefix="/approval", tags=["审批流"])
@@ -74,7 +74,7 @@ async def get_flow(
         f = await svc.get_flow(flow_id)
         return ApiResponse.ok(FlowResponse.model_validate(f))
     except ValueError as e:
-        return ApiResponse.error(404, str(e))
+        return ApiResponse.error("A0001", str(e))
 
 
 @router.put("/flows/{flow_id}", response_model=ApiResponse)
@@ -89,7 +89,7 @@ async def update_flow(
         f = await svc.update_flow(flow_id, [n.model_dump() for n in flow.nodes])
         return ApiResponse.ok(FlowResponse.model_validate(f))
     except ValueError as e:
-        return ApiResponse.error(404, str(e))
+        return ApiResponse.error("A0001", str(e))
 
 
 @router.post("/instances", response_model=ApiResponse)
@@ -109,7 +109,7 @@ async def start_instance(
         )
         return ApiResponse.ok(InstanceResponse.model_validate(inst))
     except ValueError as e:
-        return ApiResponse.error(400, str(e))
+        return ApiResponse.error("A0002", str(e))
 
 
 @router.get("/instances/{instance_id}", response_model=ApiResponse)
@@ -153,7 +153,7 @@ async def get_instance(
             )
         )
     except ValueError as e:
-        return ApiResponse.error(404, str(e))
+        return ApiResponse.error("A0001", str(e))
 
 
 @router.get("/instances/{instance_id}/history", response_model=ApiResponse)
@@ -231,7 +231,7 @@ async def approve(
         inst = await svc.approve(instance_id, str(current_user.id), comment)
         return ApiResponse.ok({"instance_id": inst.id, "status": inst.status})
     except ValueError as e:
-        return ApiResponse.error(400, str(e))
+        return ApiResponse.error("A0002", str(e))
 
 
 @router.post("/instances/{instance_id}/reject", response_model=ApiResponse)
@@ -246,7 +246,7 @@ async def reject(
         inst = await svc.reject(instance_id, str(current_user.id), comment)
         return ApiResponse.ok({"instance_id": inst.id, "status": inst.status})
     except ValueError as e:
-        return ApiResponse.error(400, str(e))
+        return ApiResponse.error("A0002", str(e))
 
 
 @router.post("/instances/{instance_id}/cancel", response_model=ApiResponse)
@@ -260,7 +260,7 @@ async def cancel(
         inst = await svc.cancel(instance_id, str(current_user.id))
         return ApiResponse.ok({"instance_id": inst.id, "status": inst.status})
     except ValueError as e:
-        return ApiResponse.error(400, str(e))
+        return ApiResponse.error("A0002", str(e))
 
 
 @router.post("/instances/{instance_id}/assign", response_model=ApiResponse)
@@ -276,7 +276,7 @@ async def assign(
         inst = await svc.assign(instance_id, str(current_user.id), assignee_id, comment)
         return ApiResponse.ok({"instance_id": inst.id, "status": inst.status})
     except ValueError as e:
-        return ApiResponse.error(400, str(e))
+        return ApiResponse.error("A0002", str(e))
 
 
 @router.post("/instances/{instance_id}/add-sign", response_model=ApiResponse)
@@ -292,4 +292,4 @@ async def add_sign(
         inst = await svc.add_sign(instance_id, str(current_user.id), add_user_id, comment)
         return ApiResponse.ok({"instance_id": inst.id, "status": inst.status})
     except ValueError as e:
-        return ApiResponse.error(400, str(e))
+        return ApiResponse.error("A0002", str(e))

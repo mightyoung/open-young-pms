@@ -13,7 +13,8 @@ from api.services.fastapi_code_generator.auth import (
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import User
 from api.services.fastapi_code_generator.schemas import LoginRequest, TokenResponse, UserResponse
-from schemas import ApiResponse, ErrorCode
+from api.response import ApiResponse
+from schemas import ErrorCode
 from middleware.exception import ApiException
 
 router = APIRouter()

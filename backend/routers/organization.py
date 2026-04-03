@@ -11,7 +11,7 @@ from schemas.organization import (
     UserDepartmentAssign,
     UserOrganizationResponse,
 )
-from schemas.response import ApiResponse
+from api.response import ApiResponse
 from services.organization_service import org_service
 from api.services.fastapi_code_generator.models import User
 from services.permission_service import has_permission

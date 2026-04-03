@@ -6,7 +6,7 @@ T = TypeVar("T")
 
 
 class ApiResponse(BaseModel, Generic[T]):
-    """统一 API 响应格式"""
+    """统一 API 响应格式 — ⚠️ 已弃用，请使用 api.response.ApiResponse"""
 
     code: int = 0
     message: str = "success"

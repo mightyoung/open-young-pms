@@ -10,7 +10,8 @@ from api.services.fastapi_code_generator.models import User
 from api.services.fastapi_code_generator.auth import get_current_user
 from services.permission_service import get_user_permissions
 from models.permission import Role
-from schemas import ApiResponse, ErrorCode, PageResult
+from api.response import ApiResponse
+from schemas import ErrorCode, PageResult
 from middleware.exception import ApiException
 
 router = APIRouter(prefix="/users/me", tags=["权限"])

@@ -17,7 +17,8 @@ from schemas.report import (
     ReportResponse,
     ReportUpdate,
 )
-from schemas.response import ApiResponse, PageResult
+from api.response import ApiResponse
+from schemas.response import PageResult
 from services.report_service import report_service
 from middleware.exception import ApiException
 

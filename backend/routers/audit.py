@@ -15,7 +15,8 @@ from schemas.audit import (
     UserActivityItem,
     ResourceHistoryItem,
 )
-from schemas.response import ApiResponse, PageResult
+from api.response import ApiResponse
+from schemas.response import PageResult
 from services.audit_service import AuditService
 
 router = APIRouter(prefix="/audit", tags=["审计日志"])

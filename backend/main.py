@@ -30,16 +30,16 @@ from api.services.fastapi_code_generator.routers import (
 )
 
 # LAYER 2 — Legacy custom routers (routers/)
-#   Hand-written business logic routers. These are the canonical implementations.
+#   Hand-written business logic routers.
+#   ⚠️ DEPRECATED: forum_router → use forum_api_router (Layer 3)
+#   ⚠️ DEPRECATED: notifications_rest_router → use notification_settings_router (Layer 3)
 from routers.dashboard import router as dashboard_router
 from routers.approval import router as approval_router
 from routers.audit import router as audit_router
 from routers.tasks import router as tasks_router
 from routers.files import router as files_router
 from routers.ai import router as new_ai_router
-from routers.forum import router as forum_router
 from routers.reports import router as reports_custom_router
-from routers.notifications import router as notifications_rest_router
 from routers.websocket import router as websocket_router
 from routers.organization import router as organization_router
 from routers.permission import router as permission_router, admin_router as permission_admin_router
@@ -129,9 +129,11 @@ app.include_router(approval_router, prefix="/api/v1", tags=["审批流"])
 app.include_router(audit_router, prefix="/api/v1", tags=["审计日志"])
 app.include_router(tasks_router, prefix="/api/v1", tags=["任务管理"])
 app.include_router(files_router, prefix="/api/v1", tags=["文件管理"])
-app.include_router(forum_router, prefix="/api/v1", tags=["论坛增强"])
+# DEPRECATED: forum_router is replaced by forum_api_router (Layer 3)
+# app.include_router(forum_router, prefix="/api/v1", tags=["论坛增强"])
 app.include_router(reports_custom_router, prefix="/api/v1", tags=["报告管理(自定义)"])
-app.include_router(notifications_rest_router, prefix="/api/v1/notifications/v2", tags=["消息通知V2"])
+# DEPRECATED: notifications_rest_router is replaced by notification_settings_router (Layer 3)
+# app.include_router(notifications_rest_router, prefix="/api/v1/notifications/v2", tags=["消息通知V2"])
 app.include_router(organization_router, prefix="/api/v1", tags=["组织架构"])
 app.include_router(new_ai_router, prefix="/api/v1", tags=["AI助手V2"])
 app.include_router(permission_router, prefix="/api/v1", tags=["权限"])
