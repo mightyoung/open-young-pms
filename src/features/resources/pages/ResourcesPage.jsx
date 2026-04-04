@@ -21,6 +21,7 @@ import {
 } from '@ant-design/icons'
 import { PageHeader, StatusBadge } from '../../../components/PMSComponents'
 import { useResources, STATUS_MAP as SM } from '../hooks/useResources'
+import { useUrlFilters } from '../../../hooks/useUrlFilters'
 
 const CAT_MAP = {
   equipment: { label: '设备', icon: <ToolOutlined />, bg: '#dbeafe', color: '#1e40af' },
@@ -33,12 +34,13 @@ const CAT_MAP = {
 
 export default function ResourcesPage() {
   const { data, loading, load, create } = useResources()
-  const [filters, setFilters] = useState({})
+  const [filters, setFilters] = useUrlFilters({ paramNames: ['status', 'category'] })
   const [form] = Form.useForm()
   const [modalVisible, setModalVisible] = useState(false)
+  const [lastRefresh, setLastRefresh] = useState(null)
 
   useEffect(() => {
-    load(filters)
+    load(filters).finally(() => setLastRefresh(new Date()))
   }, [filters, load])
 
   const handleCreate = async () => {
@@ -230,6 +232,11 @@ export default function ResourcesPage() {
       </div>
 
       <div style={styles.tableCard}>
+        {lastRefresh && (
+          <div style={{ marginBottom: 8, fontSize: 12, color: 'var(--color-on-surface-variant)' }}>
+            最近刷新：{lastRefresh.toLocaleTimeString('zh-CN')}
+          </div>
+        )}
         <Table
           dataSource={data}
           columns={columns}
