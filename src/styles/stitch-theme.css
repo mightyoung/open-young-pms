@@ -135,6 +135,16 @@ body {
   transform: translateY(-2px);
 }
 
+/* 可点击卡片（Dashboard KPI 等） */
+.clickable-card {
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.clickable-card:hover {
+  box-shadow: var(--shadow-lifted);
+  transform: translateY(-1px);
+}
+
 /* 卡片分组 */
 .pms-card-group {
   background: var(--color-surface-container);

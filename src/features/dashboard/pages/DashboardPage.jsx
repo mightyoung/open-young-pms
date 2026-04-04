@@ -1,16 +1,22 @@
 import React from 'react'
-import { Row, Col, Empty } from 'antd'
+import { Row, Col, Empty, Button, Space } from 'antd'
 import {
   SafetyOutlined,
   CheckCircleOutlined,
   FileTextOutlined,
   DashboardOutlined,
   RiseOutlined,
+  ArrowRightOutlined,
+  ToolOutlined,
+  AlertOutlined,
+  AuditOutlined,
 } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 import { PageHeader, ProgressBar } from '../../../components/PMSComponents'
 import { useDashboardData } from '../hooks/useDashboardData'
 
 export default function DashboardPage() {
+  const navigate = useNavigate()
   const { loading, summary, hazardTrend, hazardByType, hazardByStatus } = useDashboardData()
 
   if (loading) {
@@ -49,19 +55,24 @@ export default function DashboardPage() {
 
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} lg={6}>
-          <div style={styles.kpiCard}>
+          <div
+            style={styles.kpiCard}
+            onClick={() => navigate('/hazards')}
+            className="clickable-card"
+          >
             <div style={styles.kpiHeader}>
               <SafetyOutlined style={{ ...styles.kpiIcon, color: 'var(--color-primary)' }} />
               <span style={styles.kpiLabel}>随手拍总数</span>
             </div>
             <div style={styles.kpiValue}>{hazard.total || 0}</div>
             <div style={styles.kpiTrend}>
-              <RiseOutlined /> 本月新增
+              <RiseOutlined /> 本月新增{' '}
+              <ArrowRightOutlined style={{ fontSize: 10, marginLeft: 4 }} />
             </div>
           </div>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <div style={styles.kpiCard}>
+          <div style={styles.kpiCard} onClick={() => navigate('/tasks')} className="clickable-card">
             <div style={styles.kpiHeader}>
               <CheckCircleOutlined style={{ ...styles.kpiIcon, color: '#52c41a' }} />
               <span style={styles.kpiLabel}>整改率</span>
@@ -73,7 +84,7 @@ export default function DashboardPage() {
           </div>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <div style={styles.kpiCard}>
+          <div style={styles.kpiCard} onClick={() => navigate('/tasks')} className="clickable-card">
             <div style={styles.kpiHeader}>
               <CheckCircleOutlined style={{ ...styles.kpiIcon, color: 'var(--color-primary)' }} />
               <span style={styles.kpiLabel}>任务完成率</span>
@@ -85,15 +96,65 @@ export default function DashboardPage() {
           </div>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <div style={styles.kpiCard}>
+          <div
+            style={styles.kpiCard}
+            onClick={() => navigate('/reports')}
+            className="clickable-card"
+          >
             <div style={styles.kpiHeader}>
               <FileTextOutlined style={{ ...styles.kpiIcon, color: '#faad14' }} />
               <span style={styles.kpiLabel}>报告总数</span>
             </div>
             <div style={styles.kpiValue}>{summary.report?.total || 0}</div>
             <div style={styles.kpiTrend}>
-              <RiseOutlined /> 本月新增
+              <RiseOutlined /> 本月新增{' '}
+              <ArrowRightOutlined style={{ fontSize: 10, marginLeft: 4 }} />
             </div>
+          </div>
+        </Col>
+      </Row>
+
+      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+        <Col span={24}>
+          <div style={styles.actionCard}>
+            <div style={styles.actionTitle}>快捷入口</div>
+            <Space wrap size={12}>
+              <Button
+                icon={<SafetyOutlined />}
+                onClick={() => navigate('/hazards')}
+                style={styles.actionBtn}
+              >
+                隐患管理
+              </Button>
+              <Button
+                icon={<ToolOutlined />}
+                onClick={() => navigate('/tasks')}
+                style={styles.actionBtn}
+              >
+                任务中心
+              </Button>
+              <Button
+                icon={<AlertOutlined />}
+                onClick={() => navigate('/risks')}
+                style={styles.actionBtn}
+              >
+                风险管理
+              </Button>
+              <Button
+                icon={<AuditOutlined />}
+                onClick={() => navigate('/approval-center')}
+                style={styles.actionBtn}
+              >
+                审批中心
+              </Button>
+              <Button
+                icon={<FileTextOutlined />}
+                onClick={() => navigate('/reports')}
+                style={styles.actionBtn}
+              >
+                报告中心
+              </Button>
+            </Space>
           </div>
         </Col>
       </Row>
@@ -219,4 +280,17 @@ const styles = {
   statusValue: { fontSize: 28, fontWeight: 700 },
   statusLabel: { fontSize: 13 },
   emptyText: { color: 'var(--color-on-surface-variant)' },
+  actionCard: {
+    background: 'var(--color-surface-container-lowest)',
+    borderRadius: 'var(--radius-lg)',
+    padding: 16,
+    boxShadow: 'var(--shadow-soft)',
+  },
+  actionTitle: {
+    fontSize: 14,
+    fontWeight: 600,
+    color: 'var(--color-on-surface)',
+    marginBottom: 12,
+  },
+  actionBtn: { borderColor: 'var(--color-primary)', color: 'var(--color-primary)' },
 }

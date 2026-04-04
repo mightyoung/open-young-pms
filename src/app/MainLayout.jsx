@@ -1,22 +1,43 @@
-import React from 'react'
-import { Avatar, Button, Layout, Menu, Typography } from 'antd'
-import { LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
+import React, { useState, useEffect } from 'react'
+import { Avatar, Button, Badge, Layout, Menu, Typography, Tooltip } from 'antd'
+import {
+  LogoutOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  SearchOutlined,
+  BellOutlined,
+  PlusOutlined,
+} from '@ant-design/icons'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { MENU_ITEMS } from './menu.config'
 import { getMenuKeyByPath } from './route-map'
 import { resolveIcon } from './icon-map'
 import { useAuth } from '../hooks/useAuth'
+import GlobalSearch from '../components/GlobalSearch/GlobalSearch'
 
 const { Header, Sider, Content } = Layout
 const { Text } = Typography
 
 export default function MainLayout() {
-  const [collapsed, setCollapsed] = React.useState(false)
+  const [collapsed, setCollapsed] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
   const { user, logout } = useAuth()
 
   const selectedKey = getMenuKeyByPath(location.pathname)
+
+  // Global search shortcut: Cmd+K (Mac) / Ctrl+K (Windows/Linux)
+  useEffect(() => {
+    const handler = e => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        setSearchOpen(prev => !prev)
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
 
   const handleMenuClick = ({ key }) => {
     const target = MENU_ITEMS.find(item => item.key === key)
@@ -133,6 +154,7 @@ export default function MainLayout() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            gap: 12,
           }}
         >
           <Button
@@ -140,11 +162,40 @@ export default function MainLayout() {
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(prev => !prev)}
           />
-          <Text type="secondary">PMS 管理系统</Text>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Tooltip title="搜索 (⌘K)">
+              <Button
+                type="text"
+                icon={<SearchOutlined />}
+                onClick={() => setSearchOpen(true)}
+                style={{ color: '#5f5f61' }}
+              />
+            </Tooltip>
+            <Tooltip title="通知">
+              <Badge count={0} size="small" offset={[-2, 2]}>
+                <Button
+                  type="text"
+                  icon={<BellOutlined />}
+                  onClick={() => navigate('/notifications')}
+                  style={{ color: '#5f5f61' }}
+                />
+              </Badge>
+            </Tooltip>
+            <Button
+              type="primary"
+              size="small"
+              icon={<PlusOutlined />}
+              onClick={() => navigate('/hazards')}
+              style={{ background: 'var(--color-primary)', borderColor: 'var(--color-primary)' }}
+            >
+              随手拍
+            </Button>
+          </div>
         </Header>
         <Content style={{ minHeight: 0 }}>
           <Outlet />
         </Content>
+        <GlobalSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
       </Layout>
     </Layout>
   )
