@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Avatar, Button, Badge, Layout, Menu, Typography, Tooltip } from 'antd'
+import { Avatar, Button, Badge, Layout, Menu, Typography, Tooltip, Popover, List } from 'antd'
 import {
   LogoutOutlined,
   MenuFoldOutlined,
@@ -13,6 +13,7 @@ import { MENU_ITEMS } from './menu.config'
 import { getMenuKeyByPath } from './route-map'
 import { resolveIcon } from './icon-map'
 import { useAuth } from '../hooks/useAuth'
+import { useNotificationContext } from '../contexts/NotificationContext'
 import GlobalSearch from '../components/GlobalSearch/GlobalSearch'
 
 const { Header, Sider, Content } = Layout
@@ -21,9 +22,11 @@ const { Text } = Typography
 export default function MainLayout() {
   const [collapsed, setCollapsed] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
   const { user, logout } = useAuth()
+  const { unreadCount, recent, markRead, markAllRead } = useNotificationContext()
 
   const selectedKey = getMenuKeyByPath(location.pathname)
 
@@ -171,16 +174,95 @@ export default function MainLayout() {
                 style={{ color: '#5f5f61' }}
               />
             </Tooltip>
-            <Tooltip title="通知">
-              <Badge count={0} size="small" offset={[-2, 2]}>
-                <Button
-                  type="text"
-                  icon={<BellOutlined />}
-                  onClick={() => navigate('/notifications')}
-                  style={{ color: '#5f5f61' }}
-                />
-              </Badge>
-            </Tooltip>
+            <Popover
+              trigger="click"
+              open={notifOpen}
+              onOpenChange={setNotifOpen}
+              placement="bottomRight"
+              title={
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                >
+                  <span style={{ fontWeight: 600, fontSize: 14 }}>通知中心</span>
+                  {unreadCount > 0 && (
+                    <Button
+                      type="link"
+                      size="small"
+                      onClick={markAllRead}
+                      style={{ fontSize: 12, padding: 0 }}
+                    >
+                      全部已读
+                    </Button>
+                  )}
+                </div>
+              }
+              content={
+                <div style={{ width: 320, maxHeight: 400, overflowY: 'auto' }}>
+                  {recent.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '24px 0', color: '#8c8c8c' }}>
+                      暂无通知
+                    </div>
+                  ) : (
+                    <List
+                      size="small"
+                      dataSource={recent}
+                      renderItem={item => (
+                        <List.Item
+                          style={{
+                            padding: '10px 0',
+                            cursor: 'pointer',
+                            background: item.is_read ? 'transparent' : '#f0f7ff',
+                            borderRadius: 8,
+                            paddingLeft: 8,
+                          }}
+                          onClick={() => {
+                            if (!item.is_read) markRead(item.id)
+                            setNotifOpen(false)
+                            navigate('/notifications')
+                          }}
+                        >
+                          <List.Item.Meta
+                            title={
+                              <span style={{ fontSize: 13, fontWeight: item.is_read ? 400 : 600 }}>
+                                {item.title}
+                              </span>
+                            }
+                            description={
+                              <span style={{ fontSize: 12, color: '#8c8c8c' }}>{item.content}</span>
+                            }
+                          />
+                        </List.Item>
+                      )}
+                    />
+                  )}
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      borderTop: '1px solid #f0f0f0',
+                      paddingTop: 8,
+                      marginTop: 4,
+                    }}
+                  >
+                    <Button
+                      type="link"
+                      size="small"
+                      onClick={() => {
+                        setNotifOpen(false)
+                        navigate('/notifications')
+                      }}
+                    >
+                      查看全部 →
+                    </Button>
+                  </div>
+                </div>
+              }
+            >
+              <Tooltip title="通知">
+                <Badge count={unreadCount} size="small" offset={[-2, 2]}>
+                  <Button type="text" icon={<BellOutlined />} style={{ color: '#5f5f61' }} />
+                </Badge>
+              </Tooltip>
+            </Popover>
             <Button
               type="primary"
               size="small"

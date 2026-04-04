@@ -1,6 +1,7 @@
 import React from 'react'
 import { AuthProvider } from '../contexts/AuthContext'
 import { PermissionProvider } from '../contexts/PermissionContext'
+import { NotificationProvider } from '../contexts/NotificationContext'
 import { useAuth } from '../hooks/useAuth'
 
 function PermissionBridge({ children }) {
@@ -11,7 +12,9 @@ function PermissionBridge({ children }) {
 export function AppProviders({ children }) {
   return (
     <AuthProvider>
-      <PermissionBridge>{children}</PermissionBridge>
+      <PermissionBridge>
+        <NotificationProvider>{children}</NotificationProvider>
+      </PermissionBridge>
     </AuthProvider>
   )
 }
