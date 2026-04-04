@@ -4,9 +4,10 @@ import { PlusOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons'
 import { useForum } from '../hooks/useForum'
 import { forumFeatureApi } from '../api'
 import SkeletonContent from '../../../components/SkeletonContent'
+import { PageHeader } from '../../../components/PMSComponents'
 
 const { TextArea } = Input
-const { Title, Text } = Typography
+const { Text } = Typography
 
 const D = {
   primary: '#115cb9',
@@ -86,19 +87,20 @@ export default function ForumPage() {
 
   return (
     <div style={{ padding: 24, background: D.bg, minHeight: '100vh' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-        <Title level={3} style={{ color: D.text, margin: 0 }}>
-          论坛
-        </Title>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          style={{ borderRadius: 10, background: D.primary }}
-          onClick={() => setPostModalOpen(true)}
-        >
-          发帖
-        </Button>
-      </div>
+      <PageHeader
+        title="论坛"
+        icon={<MessageOutlined style={{ color: 'var(--color-primary)' }} />}
+        actions={
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            style={{ borderRadius: 10, background: D.primary }}
+            onClick={() => setPostModalOpen(true)}
+          >
+            发帖
+          </Button>
+        }
+      />
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
         {tabItems.map(t => (
