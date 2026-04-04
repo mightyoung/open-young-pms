@@ -15,7 +15,6 @@ import {
   Typography,
   Avatar,
   Divider,
-  Timeline,
   Checkbox,
   Popconfirm,
 } from 'antd'
@@ -29,6 +28,7 @@ import {
   CheckCircleOutlined,
 } from '@ant-design/icons'
 import { motion, AnimatePresence } from 'framer-motion'
+import ActivityTimeline from '../../../components/ActivityTimeline'
 import {
   useHazards,
   STATUS_MAP,
@@ -720,51 +720,37 @@ export default function HazardsPage() {
               </Text>
             </div>
             <Divider style={{ margin: '16px 0' }} />
-            <Title level={5} style={{ color: D.text, marginBottom: 12 }}>
-              整改进度
-            </Title>
-            <Timeline
-              items={[
+            <ActivityTimeline
+              title="整改进度"
+              entries={[
                 {
-                  color: D.success,
-                  children: (
-                    <>
-                      <Text style={{ fontWeight: 600 }}>{selected.reporter}</Text>{' '}
-                      <Text style={{ color: D.textMuted, fontSize: 12 }}>上报了此隐患</Text>
-                    </>
-                  ),
+                  id: 1,
+                  actor: selected.reporter,
+                  action: '上报了此隐患',
+                  time: selected.createTime,
+                  color: 'green',
                 },
                 {
-                  color: D.primary,
-                  children: (
-                    <>
-                      <Text style={{ fontWeight: 600 }}>{selected.assignee}</Text>{' '}
-                      <Text style={{ color: D.textMuted, fontSize: 12 }}>接单处理</Text>
-                    </>
-                  ),
+                  id: 2,
+                  actor: selected.assignee,
+                  action: selected.assignee === '待分配' ? '待分配' : '接单处理',
+                  time: selected.assignee !== '待分配' ? selected.createTime : undefined,
+                  color: selected.assignee === '待分配' ? 'gray' : 'blue',
                 },
                 selected.status === 'rectifying'
                   ? {
-                      color: D.warning,
-                      children: (
-                        <>
-                          <Text style={{ fontWeight: 600 }}>{selected.assignee}</Text>{' '}
-                          <Text style={{ color: D.textMuted, fontSize: 12 }}>
-                            整改中... 截止 {selected.deadline}
-                          </Text>
-                        </>
-                      ),
+                      id: 3,
+                      actor: selected.assignee,
+                      action: `整改中... 截止 ${selected.deadline}`,
+                      color: 'yellow',
                     }
                   : null,
                 selected.status === 'closed'
                   ? {
-                      color: D.success,
-                      children: (
-                        <>
-                          <Text style={{ fontWeight: 600 }}>验收通过</Text>{' '}
-                          <Text style={{ color: D.textMuted, fontSize: 12 }}>已关闭</Text>
-                        </>
-                      ),
+                      id: 4,
+                      actor: '系统',
+                      action: '验收通过，已关闭',
+                      color: 'green',
                     }
                   : null,
               ].filter(Boolean)}
