@@ -15,6 +15,8 @@ import {
   Alert,
   Avatar,
   Tabs,
+  Popconfirm,
+  message,
 } from 'antd'
 import {
   Plus,
@@ -47,6 +49,29 @@ export default function TasksPage() {
   const { tasks, criticalIds, criticalTasks, conflicts, wbsTreeData, resourceData } = useTasks()
   const [activeTab, setActiveTab] = useState('wbs')
   const [showConflict, setShowConflict] = useState(false)
+  const [selectedRowKeys, setSelectedRowKeys] = useState([])
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: setSelectedRowKeys,
+  }
+
+  const batchAssign = () => {
+    if (selectedRowKeys.length === 0) return
+    message.success(`已将 ${selectedRowKeys.length} 个任务批量指派`)
+    setSelectedRowKeys([])
+  }
+
+  const batchDelete = () => {
+    if (selectedRowKeys.length === 0) return
+    message.success(`已删除 ${selectedRowKeys.length} 个任务`)
+    setSelectedRowKeys([])
+  }
+
+  const batchExport = () => {
+    if (selectedRowKeys.length === 0) return
+    message.success(`已导出 ${selectedRowKeys.length} 个任务`)
+  }
 
   const columns = [
     {
@@ -293,12 +318,44 @@ export default function TasksPage() {
                 </div>
               </Col>
             </Row>
+            {selectedRowKeys.length > 0 && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: '8px 12px',
+                  background: `${COLORS.primary}0a`,
+                  borderRadius: 8,
+                  marginBottom: 12,
+                }}
+              >
+                <Text style={{ color: COLORS.textMuted, fontSize: 13 }}>
+                  已选择 {selectedRowKeys.length} 项
+                </Text>
+                <Button size="small" onClick={batchAssign}>
+                  批量指派
+                </Button>
+                <Button size="small" onClick={batchExport}>
+                  批量导出
+                </Button>
+                <Popconfirm title="确认删除？" onConfirm={batchDelete}>
+                  <Button size="small" danger>
+                    批量删除
+                  </Button>
+                </Popconfirm>
+                <Button size="small" type="text" onClick={() => setSelectedRowKeys([])}>
+                  取消
+                </Button>
+              </div>
+            )}
             <Table
               dataSource={tasks}
               columns={columns}
               rowKey="id"
               pagination={false}
               size="small"
+              rowSelection={rowSelection}
               rowClassName={r => (criticalIds.includes(r.id) ? 'critical-row' : '')}
             />
             <style>{`.critical-row { background: ${COLORS.danger}10 !important; }`}</style>
