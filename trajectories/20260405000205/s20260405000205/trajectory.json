@@ -1,0 +1,12 @@
+{
+  "run_id": "R20260405000205",
+  "session_id": "s20260405000205",
+  "created_at": "2026-04-05T00:02:05.145984",
+  "prompt": "1. 遍历项目识别隐私数据；2. 清理冗余、失效、废弃文件；3. 编写项目说明文档；4. 推送至 GitHub 远程仓库 https://github.com/mightyoung/open-young-pms",
+  "trigger_type": "STAGE",
+  "current_phase": "DEBUGGING",
+  "phases": [],
+  "final_state": "running",
+  "failure_reason": null,
+  "completed_at": null
+}

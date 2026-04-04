@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import {
   Card,
   Table,
@@ -17,8 +17,9 @@ import {
   Tooltip,
   Tree,
 } from 'antd'
-import { PlusOutlined, ClockCircleOutlined, FolderOutlined, EditOutlined } from '@ant-design/icons'
+import { PlusOutlined, ClockCircleOutlined, FolderOutlined, EditOutlined, SyncOutlined } from '@ant-design/icons'
 import { motion } from 'framer-motion'
+import { useWebSocket } from '../hooks/useWebSocket'
 
 const { Title, Text } = Typography
 
@@ -377,9 +378,47 @@ function GanttChart({ data }) {
 
 export default function Gantt() {
   const [tab, setTab] = useState('gantt')
-  const [tasks, _setTasks] = useState(MOCK_TASKS)
+  const [tasks, setTasks] = useState(MOCK_TASKS)
   const [modalOpen, setModalOpen] = useState(false)
   const [form] = Form.useForm()
+
+  // WebSocket 消息处理逻辑
+  const handleTaskUpdate = useCallback((data, action) => {
+    if (action === 'deleted') {
+      setTasks(prev => prev.filter(t => t.id !== data.id))
+      message.info(`任务已删除`)
+    } else {
+      setTasks(prev => {
+        const index = prev.findIndex(t => t.id === data.id)
+        if (index > -1) {
+          const newTasks = [...prev]
+          // 更新现有任务
+          newTasks[index] = { ...newTasks[index], ...data }
+          return newTasks
+        } else if (action === 'created') {
+          // 新增任务 (简易转换 mock 字段)
+          return [...prev, {
+            ...data,
+            code: `TSK-${data.id.slice(0, 3).toUpperCase()}`,
+            name: data.title,
+            start: '04-01',
+            end: '04-10'
+          }]
+        }
+        return prev
+      })
+      message.success(`任务「${data.title || data.id}」状态已同步`)
+    }
+  }, [])
+
+  // 注册 WebSocket 处理器
+  const handlers = useMemo(() => ({
+    task_update: handleTaskUpdate
+  }), [handleTaskUpdate])
+
+  const token = localStorage.getItem('token') || 'demo_token'
+  const wsUrl = `ws://localhost:8000/ws/notifications?token=${token}`
+  const { ws } = useWebSocket(wsUrl, handlers)
 
   const STATUS_MAP = {
     done: { label: '已完成', bg: '#dcfce7', color: '#166534' },

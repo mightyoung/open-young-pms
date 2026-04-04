@@ -59,6 +59,10 @@
     
     <view class="actions">
       <button v-if="currentStep > 0" @click="prevStep" class="btn-secondary">上一步</button>
+      <view class="ai-voice-btn" @longpress="startVoice" @touchend="stopVoice">
+        <view class="mic-icon" :class="{ pulse: isRecording }">🎤</view>
+        <text>{{ isRecording ? '松开解析' : 'AI录入' }}</text>
+      </view>
       <button v-if="currentStep < 3" @click="nextStep" class="btn-primary">下一步</button>
       <button v-if="currentStep === 3" @click="submit" class="btn-primary">提交</button>
     </view>
@@ -67,8 +71,10 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { api } from '@/api'
 
 const currentStep = ref(0)
+const isRecording = ref(false)
 const steps = ['选择类型', '拍照', '描述', '确认']
 
 const issueTypes = [
@@ -86,6 +92,33 @@ const formData = reactive({
 })
 
 const location = ref<any>(null)
+
+async function startVoice() {
+  isRecording.value = true
+  uni.vibrateShort({})
+}
+
+async function stopVoice() {
+  if (!isRecording.value) return
+  isRecording.value = false
+  
+  uni.showLoading({ title: 'AI 解析中...' })
+  const mockText = "刚刚发现 3 号楼 2 层管道漏水，是个严重安全问题，请老李马上处理"
+  
+  try {
+    const res = await api.ai.parseIntent(mockText)
+    if (res.action === 'create_hazard') {
+      formData.type = 'safety'
+      formData.description = res.summary
+      uni.showToast({ title: 'AI 已自动填表', icon: 'success' })
+      currentStep.value = 1 
+    }
+  } catch (e) {
+    console.error(e)
+  } finally {
+    uni.hideLoading()
+  }
+}
 
 function nextStep() {
   if (currentStep.value < 3) currentStep.value++
@@ -303,6 +336,7 @@ async function submit() {
   padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
   background: #fff;
   display: flex;
+  align-items: center;
   gap: 20rpx;
 
   button {
@@ -310,10 +344,38 @@ async function submit() {
     height: 88rpx;
     line-height: 88rpx;
     border-radius: 44rpx;
-    font-size: 32rpx;
+    font-size: 28rpx;
   }
 
   .btn-primary { background: #1890ff; color: #fff; }
   .btn-secondary { background: #f5f5f5; color: #666; }
+
+  .ai-voice-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 120rpx;
+    height: 120rpx;
+    background: #f0f7ff;
+    border-radius: 50%;
+    color: #1890ff;
+    font-size: 20rpx;
+    box-shadow: 0 4rpx 16rpx rgba(24, 144, 255, 0.2);
+    
+    .mic-icon {
+      font-size: 40rpx;
+      margin-bottom: 4rpx;
+      &.pulse {
+        animation: pulse 1.5s infinite;
+      }
+    }
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
 }
 </style>

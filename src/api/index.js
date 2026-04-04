@@ -37,6 +37,10 @@ export const api = {
     saveDraft: data => post('/hazards/drafts', data),
     deleteDraft: id => del(`/hazards/drafts/${id}`),
   },
+  ai: {
+    chat: data => post('/ai/chat', data),
+    generateReport: data => post('/ai/generate-report', data),
+  },
   projects: {
     list: (params = {}) => get('/projects', { params }),
     get: id => get(`/projects/${id}`),

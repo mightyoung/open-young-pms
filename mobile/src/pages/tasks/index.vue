@@ -14,9 +14,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import EmptyState from '@/components/EmptyState.vue'
 import TaskCard from '@/components/TaskCard.vue'
+import { useWebSocket } from '@/hooks/useWebSocket'
+import { api } from '@/api'
 
 const tabs = [
   { label: '全部', value: 'all' },
@@ -27,6 +29,39 @@ const tabs = [
 
 const currentTab = ref('all')
 const tasks = ref<any[]>([])
+
+// 处理实时更新
+const handlers = {
+  task_update: (data: any, action?: string) => {
+    if (action === 'deleted') {
+      tasks.value = tasks.value.filter(t => t.id !== data.id)
+    } else {
+      const idx = tasks.value.findIndex(t => t.id === data.id)
+      if (idx > -1) {
+        tasks.value[idx] = { ...tasks.value[idx], ...data }
+      } else if (action === 'created') {
+        tasks.value.unshift(data)
+      }
+    }
+    uni.showToast({ title: '任务已同步', icon: 'none' })
+  }
+}
+
+const token = uni.getStorageSync('token') || 'demo_token'
+const wsUrl = `ws://localhost:8000/ws/notifications?token=${token}`
+const { connect } = useWebSocket(wsUrl, handlers)
+
+onMounted(() => {
+  fetchTasks()
+  connect()
+})
+
+async function fetchTasks() {
+  try {
+    const res = await api.tasks.list({})
+    tasks.value = res
+  } catch (e) {}
+}
 
 function goDetail(task: any) {
   console.log('task detail:', task)

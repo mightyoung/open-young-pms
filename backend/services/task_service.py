@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from models.task import Task as WBSTask
+from services.websocket_manager import manager
 
 
 class TaskService:
@@ -16,6 +17,24 @@ class TaskService:
 
     def __init__(self, db: AsyncSession):
         self.db = db
+
+    async def _broadcast_task_update(self, task: WBSTask, action: str):
+        """广播任务更新"""
+        await manager.broadcast(
+            {
+                "type": "task_update",
+                "action": action,
+                "data": {
+                    "id": str(task.id),
+                    "project_id": str(task.project_id),
+                    "title": task.title,
+                    "status": task.status,
+                    "progress": task.progress,
+                    "wbs_code": task.wbs_code,
+                    "updated_at": task.updated_at.isoformat() if task.updated_at else None,
+                },
+            }
+        )
 
     async def create_task(
         self, project_id: str, title: str, created_by: str, parent_id: Optional[str] = None, **kwargs
@@ -63,6 +82,7 @@ class TaskService:
         self.db.add(task)
         await self.db.commit()
         await self.db.refresh(task)
+        await self._broadcast_task_update(task, "created")
         return task
 
     async def update_task(self, task_id: str, user_id: str, **kwargs) -> WBSTask:
@@ -84,6 +104,7 @@ class TaskService:
 
         await self.db.commit()
         await self.db.refresh(task)
+        await self._broadcast_task_update(task, "updated")
         return task
 
     async def delete_task(self, task_id: str) -> bool:
@@ -98,6 +119,13 @@ class TaskService:
 
         await self.db.delete(task)
         await self.db.commit()
+        await manager.broadcast(
+            {
+                "type": "task_update",
+                "action": "deleted",
+                "data": {"id": task_id},
+            }
+        )
         return True
 
     async def get_task_tree(self, project_id: str) -> list[dict]:
@@ -210,6 +238,7 @@ class TaskService:
         task.updated_at = datetime.now(timezone.utc)
         await self.db.commit()
         await self.db.refresh(task)
+        await self._broadcast_task_update(task, "updated")
         return task
 
     async def update_progress(self, task_id: str, progress: int) -> WBSTask:
@@ -229,6 +258,7 @@ class TaskService:
         task.updated_at = datetime.now(timezone.utc)
         await self.db.commit()
         await self.db.refresh(task)
+        await self._broadcast_task_update(task, "updated")
         return task
 
     async def add_dependency(self, task_id: str, depends_on_id: str) -> WBSTask:

@@ -1,0 +1,12 @@
+{
+  "run_id": "R20260404194343",
+  "session_id": "s20260404194343",
+  "created_at": "2026-04-04T19:43:43.311112",
+  "prompt": "实现实时协作工作：包括任务状态的实时 WebSocket 推送，确保多端数据一致性。",
+  "trigger_type": "STAGE",
+  "current_phase": "EXECUTING",
+  "phases": [],
+  "final_state": "running",
+  "failure_reason": null,
+  "completed_at": null
+}

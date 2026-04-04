@@ -69,6 +69,37 @@ class AIService:
         result = resp.json()
         return result["output"]["embeddings"][0]["embedding"]
 
+    async def parse_intent(self, text: str) -> dict:
+        """解析用户意图并提取结构化数据"""
+        prompt = f"""你是一个项目管理专家。请分析以下描述，并将其转换为结构化的 JSON 数据。
+描述内容："{text}"
+
+你需要识别出：
+1. 意图（action）：'create_task'（新建任务） 或 'create_hazard'（隐患上报）。如果不明确，设为 'unknown'。
+2. 关键数据（data）：
+   - 如果是 create_task，提取：title, description, priority, assignee（若提及）。
+   - 如果是 create_hazard，提取：title, description, urgency, location（若提及）。
+3. 概括（summary）：一句话总结意图。
+
+请直接返回 JSON 格式，不要有任何其他文字。
+示例：
+{{
+  "action": "create_task",
+  "data": {{"title": "修复漏水", "priority": "high", "assignee": "张三"}},
+  "summary": "为张三创建紧急修复任务",
+  "confidence": 0.95
+}}
+"""
+        response_text = await self.chat([{"role": "user", "content": prompt}])
+        import json
+        try:
+            # 简单清理可能存在的 markdown 标记
+            clean_text = response_text.strip().strip('```json').strip('```').strip()
+            return json.loads(clean_text)
+        except Exception as e:
+            print(f"Parse intent failed: {e}")
+            return {"action": "unknown", "data": {}, "summary": text, "confidence": 0}
+
     def _build_context(self, docs: list) -> str:
         if not docs:
             return ""

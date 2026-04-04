@@ -43,3 +43,17 @@ class AIAnalyzeHazardRequest(BaseModel):
 class AISummarizeReportRequest(BaseModel):
     report_content: str
     report_type: str = "日报"
+
+
+class AIGenerateReportRequest(BaseModel):
+    project_id: str
+    report_type: str  # daily / weekly / monthly
+    start_date: str
+    end_date: str
+
+
+class AIIntentResponse(BaseModel):
+    action: str  # create_task / create_hazard / unknown
+    data: dict
+    confidence: float
+    summary: str

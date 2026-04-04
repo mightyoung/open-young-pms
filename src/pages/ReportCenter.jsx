@@ -20,7 +20,7 @@ import {
   Divider,
   Steps,
 } from 'antd'
-import { Plus, CheckCircle2, Download, Printer, Send, Edit2, Eye } from 'lucide-react'
+import { Plus, CheckCircle2, Download, Printer, Send, Edit2, Eye, Sparkles } from 'lucide-react'
 import {
   XAxis,
   YAxis,
@@ -33,6 +33,7 @@ import {
   Cell,
 } from 'recharts'
 import { measureText } from '../utils/pretextMeasure'
+import { api } from '../api'
 
 const { Title, Text } = Typography
 const { RangePicker } = DatePicker
@@ -161,6 +162,38 @@ export default function ReportCenter() {
   const [modalVisible, setModalVisible] = useState(false)
   const [previewReport, setPreviewReport] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [aiGenerating, setAiGenerating] = useState(false)
+  const [form] = Form.useForm()
+
+  const handleAiGenerate = async () => {
+    try {
+      const values = await form.validateFields(['project', 'dateRange'])
+      setAiGenerating(true)
+      const res = await api.ai.generateReport({
+        project_id: values.project,
+        report_type: typeFilter === 'all' ? 'daily' : typeFilter,
+        start_date: values.dateRange[0].toISOString(),
+        end_date: values.dateRange[1].toISOString(),
+      })
+
+      const content = res.data.generated_content
+      const progress = content.match(/\[PROGRESS\]([\s\S]*?)\[\/PROGRESS\]/)?.[1]?.trim() || ''
+      const issues = content.match(/\[ISSUES\]([\s\S]*?)\[\/ISSUES\]/)?.[1]?.trim() || ''
+      const milestone = content.match(/\[MILESTONE\]([\s\S]*?)\[\/MILESTONE\]/)?.[1]?.trim() || ''
+
+      form.setFieldsValue({
+        progress,
+        issues,
+        milestone,
+      })
+      message.success('AI 已根据项目运行数据生成报告草稿')
+    } catch (err) {
+      console.error(err)
+      message.error('AI 生成失败，请确保选择了项目和日期范围')
+    } finally {
+      setAiGenerating(false)
+    }
+  }
 
   const filteredReports = reports.filter(r => {
     if (typeFilter !== 'all' && r.type !== typeFilter) return false
@@ -427,7 +460,20 @@ export default function ReportCenter() {
       </Card>
 
       <Modal
-        title="新建报告"
+        title={
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>新建报告</span>
+            <Button
+              type="text"
+              icon={<Sparkles size={16} style={{ color: COLORS.primary }} />}
+              onClick={handleAiGenerate}
+              loading={aiGenerating}
+              style={{ color: COLORS.primary, fontWeight: 600 }}
+            >
+              AI 一键填报
+            </Button>
+          </div>
+        }
         open={modalVisible}
         onCancel={() => setModalVisible(false)}
         footer={null}
@@ -435,7 +481,7 @@ export default function ReportCenter() {
         destroyOnClose
         maskClosable={false}
       >
-        <Form layout="vertical" style={{ marginTop: 20 }}>
+        <Form form={form} layout="vertical" style={{ marginTop: 20 }}>
           <Form.Item label="报告类型">
             <Tabs items={REPORT_TYPES.map(t => ({ key: t.value, label: t.label }))} />
           </Form.Item>
@@ -457,14 +503,16 @@ export default function ReportCenter() {
           >
             <RangePicker style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item label="完成情况">
-            <Steps
-              current={1}
-              items={[
-                { title: '已完成', description: '本周工作' },
-                { title: '进行中', description: '正在进行' },
-                { title: '待开始', description: '下周计划' },
-              ]}
+          <Form.Item label="完成情况" name="progress">
+            <textarea
+              style={{
+                width: '100%',
+                minHeight: 100,
+                borderRadius: 8,
+                border: '1px solid #e5e7eb',
+                padding: 8,
+              }}
+              placeholder="描述完成情况..."
             />
           </Form.Item>
           <Form.Item

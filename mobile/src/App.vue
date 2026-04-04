@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
+import { offlineQueue } from '@/utils/offline'
 
 onLaunch(() => {
   console.log('App Launch')
+  offlineQueue.startAutoSync()
 })
 
 onShow(() => {
