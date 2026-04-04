@@ -28,8 +28,9 @@ import {
 } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 import { useProjects, PROJ_STATUS } from '../hooks/useProjects'
+import { PageHeader } from '../../../components/PMSComponents'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 const { TextArea } = Input
 
 const D = {
@@ -260,14 +261,11 @@ export default function ProjectsPage() {
 
   return (
     <div>
-      <motion.div variants={va(0)} initial="hidden" animate="visible" style={{ marginBottom: 24 }}>
-        <Title level={3} style={{ color: D.text, margin: 0 }}>
-          项目管理
-        </Title>
-        <Text style={{ color: D.textMuted, fontSize: 13 }}>
-          管理所有项目，含甲方/乙方属性和成员配置
-        </Text>
-      </motion.div>
+      <PageHeader
+        title="项目管理"
+        subtitle="管理所有项目，含甲方/乙方属性和成员配置"
+        icon={<BuildOutlined style={{ color: 'var(--color-primary)' }} />}
+      />
 
       <Row gutter={[12, 12]} style={{ marginBottom: 20 }}>
         {[
@@ -460,9 +458,9 @@ export default function ProjectsPage() {
               }}
             >
               <div>
-                <Title level={4} style={{ color: D.text, margin: 0 }}>
+                <Text strong style={{ fontSize: 16, color: D.text, display: 'block' }}>
                   {selected.name}
-                </Title>
+                </Text>
                 <Text style={{ color: D.textMuted, fontSize: 12 }}>{selected.code}</Text>
               </div>
               <Tag

@@ -13,11 +13,12 @@ import {
   Col,
   Typography,
 } from 'antd'
-import { PlusOutlined, EyeOutlined } from '@ant-design/icons'
+import { PlusOutlined, EyeOutlined, FileTextOutlined } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 import { useReports, REPORT_TYPES, STATUS_MAP } from '../hooks/useReports'
+import { PageHeader } from '../../../components/PMSComponents'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 const { TextArea } = Input
 
 const D = {
@@ -79,30 +80,64 @@ export default function ReportsPage() {
             {REPORT_TYPES[r.type].label}
           </Tag>
           <div>
-            <a onClick={() => { setSelected(r); setDetailOpen(true) }} style={{ fontWeight: 600, color: D.primary }}>
+            <a
+              onClick={() => {
+                setSelected(r)
+                setDetailOpen(true)
+              }}
+              style={{ fontWeight: 600, color: D.primary }}
+            >
               {v}
             </a>
           </div>
         </div>
       ),
     },
-    { title: '项目', dataIndex: 'project', key: 'project', render: v => <Text style={{ fontSize: 13 }}>{v}</Text> },
-    { title: '填报人', dataIndex: 'author', key: 'author', render: v => <Text style={{ fontSize: 13 }}>{v}</Text> },
+    {
+      title: '项目',
+      dataIndex: 'project',
+      key: 'project',
+      render: v => <Text style={{ fontSize: 13 }}>{v}</Text>,
+    },
+    {
+      title: '填报人',
+      dataIndex: 'author',
+      key: 'author',
+      render: v => <Text style={{ fontSize: 13 }}>{v}</Text>,
+    },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
       render: v => {
         const c = STATUS_MAP[v]
-        return <Tag style={{ background: c.bg, color: c.color, border: 'none', fontWeight: 600 }}>{c.label}</Tag>
+        return (
+          <Tag style={{ background: c.bg, color: c.color, border: 'none', fontWeight: 600 }}>
+            {c.label}
+          </Tag>
+        )
       },
     },
-    { title: '时间', dataIndex: 'createTime', key: 'createTime', render: v => <Text style={{ color: D.textMuted, fontSize: 12 }}>{v}</Text> },
+    {
+      title: '时间',
+      dataIndex: 'createTime',
+      key: 'createTime',
+      render: v => <Text style={{ color: D.textMuted, fontSize: 12 }}>{v}</Text>,
+    },
     {
       title: '操作',
       key: 'action',
       render: (_, r) => (
-        <Button type="text" size="small" icon={<EyeOutlined />} onClick={() => { setSelected(r); setDetailOpen(true) }} style={{ color: D.primary }}>
+        <Button
+          type="text"
+          size="small"
+          icon={<EyeOutlined />}
+          onClick={() => {
+            setSelected(r)
+            setDetailOpen(true)
+          }}
+          style={{ color: D.primary }}
+        >
           查看
         </Button>
       ),
@@ -111,10 +146,11 @@ export default function ReportsPage() {
 
   return (
     <div>
-      <motion.div variants={va(0)} initial="hidden" animate="visible" style={{ marginBottom: 24 }}>
-        <Title level={3} style={{ color: D.text, margin: 0 }}>报告中心</Title>
-        <Text style={{ color: D.textMuted, fontSize: 13 }}>日/周/月报填写 · 阶梯自动化 · 审批流转</Text>
-      </motion.div>
+      <PageHeader
+        title="报告中心"
+        subtitle="日/周/月报填写 · 阶梯自动化 · 审批流转"
+        icon={<FileTextOutlined style={{ color: 'var(--color-primary)' }} />}
+      />
 
       <Row gutter={[12, 12]} style={{ marginBottom: 20 }}>
         {[
@@ -123,8 +159,17 @@ export default function ReportsPage() {
           { title: '已通过', value: stats.approved, color: D.success },
         ].map((s, i) => (
           <Col xs={12} sm={8} key={s.title}>
-            <motion.div variants={va(i)} initial="hidden" animate="visible"
-              style={{ background: D.card, border: `1px solid ${D.border}`, borderRadius: 12, padding: '14px 18px' }}>
+            <motion.div
+              variants={va(i)}
+              initial="hidden"
+              animate="visible"
+              style={{
+                background: D.card,
+                border: `1px solid ${D.border}`,
+                borderRadius: 12,
+                padding: '14px 18px',
+              }}
+            >
               <div style={{ fontSize: 24, fontWeight: 800, color: s.color }}>{s.value}</div>
               <div style={{ fontSize: 12, color: D.textMuted, marginTop: 4 }}>{s.title}</div>
             </motion.div>
@@ -132,38 +177,88 @@ export default function ReportsPage() {
         ))}
       </Row>
 
-      <Card style={{ border: `1px solid ${D.border}`, borderRadius: 14 }}
+      <Card
+        style={{ border: `1px solid ${D.border}`, borderRadius: 14 }}
         headStyle={{ borderBottom: `1px solid ${D.border}`, padding: '12px 20px' }}
-        bodyStyle={{ padding: 0 }}>
-        <div style={{ padding: '16px 20px', display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+        bodyStyle={{ padding: 0 }}
+      >
+        <div
+          style={{
+            padding: '16px 20px',
+            display: 'flex',
+            gap: 8,
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           <Space size={6}>
-            {[['all', '全部'], ...Object.entries(REPORT_TYPES).map(([k, v]) => [k, v.label])].map(([k, label]) => (
-              <Button key={k} onClick={() => setTab(k)} type={tab === k ? 'primary' : 'text'} size="small"
-                style={tab === k ? { background: D.primary, border: 'none', borderRadius: 8 } : { color: D.textSec, borderRadius: 8 }}>
-                {label}
-              </Button>
-            ))}
+            {[['all', '全部'], ...Object.entries(REPORT_TYPES).map(([k, v]) => [k, v.label])].map(
+              ([k, label]) => (
+                <Button
+                  key={k}
+                  onClick={() => setTab(k)}
+                  type={tab === k ? 'primary' : 'text'}
+                  size="small"
+                  style={
+                    tab === k
+                      ? { background: D.primary, border: 'none', borderRadius: 8 }
+                      : { color: D.textSec, borderRadius: 8 }
+                  }
+                >
+                  {label}
+                </Button>
+              )
+            )}
           </Space>
-          <Button type="primary" icon={<PlusOutlined />} style={{ borderRadius: 10, background: D.primary }}
-            onClick={() => { setWriteOpen(true); form.resetFields() }}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            style={{ borderRadius: 10, background: D.primary }}
+            onClick={() => {
+              setWriteOpen(true)
+              form.resetFields()
+            }}
+          >
             填写报告
           </Button>
         </div>
-        <Table columns={columns} dataSource={filtered} rowKey="id" pagination={{ pageSize: 8, showSizeChanger: false }} />
+        <Table
+          columns={columns}
+          dataSource={filtered}
+          rowKey="id"
+          pagination={{ pageSize: 8, showSizeChanger: false }}
+        />
       </Card>
 
       <Modal
         title={<Text style={{ fontWeight: 700 }}>填写报告</Text>}
         open={writeOpen}
-        onCancel={() => { setWriteOpen(false); form.resetFields() }}
+        onCancel={() => {
+          setWriteOpen(false)
+          form.resetFields()
+        }}
         footer={null}
         width={640}
-        styles={{ content: { borderRadius: 16, padding: 0 }, header: { borderBottom: `1px solid ${D.border}`, padding: '16px 24px', margin: 0 } }}>
+        styles={{
+          content: { borderRadius: 16, padding: 0 },
+          header: { borderBottom: `1px solid ${D.border}`, padding: '16px 24px', margin: 0 },
+        }}
+      >
         <Form form={form} layout="vertical" style={{ padding: '20px 24px' }}>
           <Form.Item name="type" label="报告类型" rules={[{ required: true }]}>
             <Space>
               {Object.entries(REPORT_TYPES).map(([k, v]) => (
-                <Button key={k} style={form.getFieldValue('type') === k ? { background: v.bg, border: `1px solid ${v.color}`, color: v.color } : {}}>{v.label}</Button>
+                <Button
+                  key={k}
+                  style={
+                    form.getFieldValue('type') === k
+                      ? { background: v.bg, border: `1px solid ${v.color}`, color: v.color }
+                      : {}
+                  }
+                >
+                  {v.label}
+                </Button>
               ))}
             </Space>
           </Form.Item>
@@ -176,7 +271,13 @@ export default function ReportsPage() {
           <Form.Item name="attach" label="附件">
             <Input placeholder="上传附件（可选）" />
           </Form.Item>
-          <Button type="primary" style={{ background: D.primary, borderRadius: 10 }} onClick={handleSubmit}>提交报告</Button>
+          <Button
+            type="primary"
+            style={{ background: D.primary, borderRadius: 10 }}
+            onClick={handleSubmit}
+          >
+            提交报告
+          </Button>
         </Form>
       </Modal>
 
@@ -186,34 +287,64 @@ export default function ReportsPage() {
         onCancel={() => setDetailOpen(false)}
         footer={<Button onClick={() => setDetailOpen(false)}>关闭</Button>}
         width={600}
-        styles={{ content: { borderRadius: 16, padding: 0 }, header: { borderBottom: `1px solid ${D.border}`, padding: '16px 24px', margin: 0 } }}>
+        styles={{
+          content: { borderRadius: 16, padding: 0 },
+          header: { borderBottom: `1px solid ${D.border}`, padding: '16px 24px', margin: 0 },
+        }}
+      >
         {selected && (
           <div style={{ padding: '20px 24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
               <div>
-                <Title level={4} style={{ color: D.text, margin: 0 }}>{selected.title}</Title>
-                <Text style={{ color: D.textMuted, fontSize: 12 }}>{selected.createTime} · {selected.author}</Text>
+                <Text strong style={{ fontSize: 16, color: D.text, display: 'block' }}>
+                  {selected.title}
+                </Text>
+                <Text style={{ color: D.textMuted, fontSize: 12 }}>
+                  {selected.createTime} · {selected.author}
+                </Text>
               </div>
-              <Tag style={{ background: REPORT_TYPES[selected.type].bg, color: REPORT_TYPES[selected.type].color, border: 'none', fontWeight: 600 }}>
+              <Tag
+                style={{
+                  background: REPORT_TYPES[selected.type].bg,
+                  color: REPORT_TYPES[selected.type].color,
+                  border: 'none',
+                  fontWeight: 600,
+                }}
+              >
                 {REPORT_TYPES[selected.type].label}
               </Tag>
             </div>
-            <div style={{ background: D.bg, borderRadius: 10, padding: '12px 16px', marginBottom: 16 }}>
+            <div
+              style={{ background: D.bg, borderRadius: 10, padding: '12px 16px', marginBottom: 16 }}
+            >
               <Text style={{ color: D.textMuted, fontSize: 12 }}>所属项目</Text>
               <div style={{ color: D.text, fontWeight: 600 }}>{selected.project}</div>
             </div>
-            <div style={{ background: D.bg, borderRadius: 10, padding: '12px 16px', marginBottom: 16 }}>
+            <div
+              style={{ background: D.bg, borderRadius: 10, padding: '12px 16px', marginBottom: 16 }}
+            >
               <Text style={{ color: D.textMuted, fontSize: 12 }}>填报人</Text>
-              <div style={{ color: D.text, fontWeight: 600 }}>{selected.author} · {selected.dept}</div>
+              <div style={{ color: D.text, fontWeight: 600 }}>
+                {selected.author} · {selected.dept}
+              </div>
             </div>
             <div style={{ marginBottom: 16 }}>
-              <Text style={{ color: D.textMuted, fontSize: 12, display: 'block', marginBottom: 4 }}>报告内容</Text>
+              <Text style={{ color: D.textMuted, fontSize: 12, display: 'block', marginBottom: 4 }}>
+                报告内容
+              </Text>
               <div style={{ color: D.text, lineHeight: 1.6 }}>{selected.progress}</div>
             </div>
             <Row gutter={[8, 8]}>
               {Object.entries(selected.stats).map(([k, v]) => (
                 <Col span={8} key={k}>
-                  <div style={{ background: D.bg, borderRadius: 10, padding: '10px 12px', textAlign: 'center' }}>
+                  <div
+                    style={{
+                      background: D.bg,
+                      borderRadius: 10,
+                      padding: '10px 12px',
+                      textAlign: 'center',
+                    }}
+                  >
                     <div style={{ fontSize: 20, fontWeight: 800, color: D.primary }}>{v}</div>
                     <Text style={{ fontSize: 11, color: D.textMuted }}>
                       {{ completed: '完成', pending: '进行中', issues: '问题' }[k] || k}

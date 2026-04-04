@@ -15,13 +15,14 @@ import {
   Typography,
   Divider,
   Tabs,
-  Timeline,
 } from 'antd'
 import { PlusOutlined, WarningOutlined, EditOutlined } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 import { useRisks, LEVEL_MAP, STATUS_MAP, CAT_MAP } from '../hooks/useRisks'
+import ActivityTimeline from '../../../components/ActivityTimeline'
+import { PageHeader } from '../../../components/PMSComponents'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 
 const D = {
   primary: '#115cb9',
@@ -291,14 +292,11 @@ export default function RisksPage() {
 
   return (
     <div>
-      <motion.div variants={va(0)} initial="hidden" animate="visible" style={{ marginBottom: 24 }}>
-        <Title level={3} style={{ color: D.text, margin: 0 }}>
-          风险管理
-        </Title>
-        <Text style={{ color: D.textMuted, fontSize: 13 }}>
-          风险识别 · 影响评估 · 监控跟踪 · 应对措施
-        </Text>
-      </motion.div>
+      <PageHeader
+        title="风险管理"
+        subtitle="风险识别 · 影响评估 · 监控跟踪 · 应对措施"
+        icon={<WarningOutlined style={{ color: 'var(--color-primary)' }} />}
+      />
 
       <Row gutter={[12, 12]} style={{ marginBottom: 20 }}>
         {[
@@ -520,9 +518,9 @@ export default function RisksPage() {
                 {STATUS_MAP[selected.status]?.label}
               </Tag>
             </div>
-            <Title level={4} style={{ color: D.text, margin: '0 0 4px 0' }}>
+            <Text strong style={{ fontSize: 16, color: D.text, display: 'block', marginBottom: 4 }}>
               {selected.title}
-            </Title>
+            </Text>
             <Text style={{ fontFamily: 'monospace', color: D.primary, fontSize: 12 }}>
               {selected.code}
             </Text>
@@ -553,13 +551,13 @@ export default function RisksPage() {
               <Text style={{ color: D.textSec, lineHeight: 1.7 }}>{selected.desc}</Text>
             </div>
             <Divider style={{ margin: '16px 0' }} />
-            <Title level={5} style={{ color: D.text, marginBottom: 12 }}>
-              应对措施
-            </Title>
-            <Timeline
-              items={selected.measures.map((m, i) => ({
-                color: i < selected.measures.length - 1 ? D.primary : D.success,
-                children: <Text style={{ color: D.textSec, fontSize: 13 }}>{m}</Text>,
+            <ActivityTimeline
+              title="应对措施"
+              entries={selected.measures.map((m, i) => ({
+                id: i,
+                actor: selected.owner,
+                action: m,
+                color: i < selected.measures.length - 1 ? 'blue' : 'green',
               }))}
             />
           </div>
