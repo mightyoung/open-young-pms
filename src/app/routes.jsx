@@ -13,6 +13,9 @@ const UsersPage = lazy(() => import('../features/users/pages/UsersPage'))
 const ProjectsPage = lazy(() => import('../features/projects/pages/ProjectsPage'))
 const TasksPage = lazy(() => import('../features/tasks/pages/TasksPage'))
 const NotificationsPage = lazy(() => import('../features/notifications/pages/NotificationsPage'))
+const NotificationSettingsPage = lazy(
+  () => import('../features/notifications/pages/NotificationSettingsPage')
+)
 const ReportsPage = lazy(() => import('../features/reports/pages/ReportsPage'))
 const ForumPage = lazy(() => import('../features/forum/pages/ForumPage'))
 const HazardsPage = lazy(() => import('../features/hazards/pages/HazardsPage'))
@@ -90,6 +93,14 @@ export function AppRoutes() {
           element: (
             <Suspense fallback={<PageLoader />}>
               <NotificationsPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'notification-settings',
+          element: (
+            <Suspense fallback={<PageLoader />}>
+              <NotificationSettingsPage />
             </Suspense>
           ),
         },
