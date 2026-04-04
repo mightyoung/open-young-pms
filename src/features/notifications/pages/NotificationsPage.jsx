@@ -7,7 +7,9 @@ import {
   WarningOutlined,
   AuditOutlined,
   MessageOutlined,
+  SettingOutlined,
 } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 import { PageHeader, EmptyState } from '../../../components/PMSComponents'
 import { useNotifications, timeAgo } from '../hooks/useNotifications'
 
@@ -23,6 +25,7 @@ export const TYPE_MAP = {
 export default function NotificationsPage() {
   const { notifications, unreadCount, loading, load, markAllRead, markRead } = useNotifications()
   const [tab, setTab] = useState('all')
+  const navigate = useNavigate()
 
   const handleLoad = async () => {
     const params = { page: 1, page_size: 50 }
@@ -53,6 +56,15 @@ export default function NotificationsPage() {
         title="消息中心"
         subtitle={unreadCount > 0 ? `您有 ${unreadCount} 条未读消息` : '暂无未读消息'}
         icon={<BellOutlined style={{ color: 'var(--color-primary)' }} />}
+        actions={
+          <Button
+            icon={<SettingOutlined />}
+            onClick={() => navigate('/notification-settings')}
+            style={{ borderColor: 'var(--color-primary)', color: 'var(--color-primary)' }}
+          >
+            通知设置
+          </Button>
+        }
       />
 
       <div style={styles.statsRow}>
