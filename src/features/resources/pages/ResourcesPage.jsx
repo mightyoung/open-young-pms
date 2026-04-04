@@ -1,8 +1,4 @@
-/**
- * 资源调度页 - 基于 Stitch Azure Ethos 设计系统
- * 更新时间: 2026-03-30
- */
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Table,
   Tag,
@@ -12,9 +8,9 @@ import {
   Form,
   Input,
   InputNumber,
-  message,
   Row,
   Col,
+  message,
 } from 'antd'
 import {
   AppstoreOutlined,
@@ -23,20 +19,8 @@ import {
   InboxOutlined,
   CarOutlined,
 } from '@ant-design/icons'
-import { api } from '../api'
-import { PageHeader, StatusBadge } from '../components/PMSComponents'
-
-const STATUS_MAP = {
-  available: { label: '可用', bg: '#dcfce7', color: '#166534' },
-  ordered: { label: '已订购', bg: '#dbeafe', color: '#1e40af' },
-  delivered: { label: '已到货', bg: '#dbeafe', color: '#1e40af' },
-  testing: { label: '检测中', bg: '#fef3c7', color: '#92400e' },
-  accepted: { label: '已验收', bg: '#dcfce7', color: '#166534' },
-  rejected: { label: '不合格', bg: '#fee2e2', color: '#991b1b' },
-  idle: { label: '空闲', bg: '#dcfce7', color: '#166534' },
-  in_use: { label: '使用中', bg: '#dbeafe', color: '#1e40af' },
-  maintenance: { label: '维修中', bg: '#fef3c7', color: '#92400e' },
-}
+import { PageHeader, StatusBadge } from '../../../components/PMSComponents'
+import { useResources, STATUS_MAP as SM } from '../hooks/useResources'
 
 const CAT_MAP = {
   equipment: { label: '设备', icon: <ToolOutlined />, bg: '#dbeafe', color: '#1e40af' },
@@ -47,57 +31,36 @@ const CAT_MAP = {
   other: { label: '其他', bg: '#f3f4f6', color: '#6b7280' },
 }
 
-export default function Resources() {
-  const [data, setData] = useState([])
-  const [loading, setLoading] = useState(false)
+export default function ResourcesPage() {
+  const { data, loading, load, create } = useResources()
   const [filters, setFilters] = useState({})
   const [form] = Form.useForm()
   const [modalVisible, setModalVisible] = useState(false)
-  const [_tab, _setTab] = useState('all')
-
-  const load = useCallback(async () => {
-    setLoading(true)
-    try {
-      const params = {}
-      if (filters.status) params.status = filters.status
-      if (filters.category) params.category = filters.category
-      const res = await api.get('/resources', { params })
-      setData(res?.items || [])
-    } catch {
-      setData([])
-    } finally {
-      setLoading(false)
-    }
-  }, [filters])
 
   useEffect(() => {
-    load()
-  }, [load])
+    load(filters)
+  }, [filters, load])
 
   const handleCreate = async () => {
     try {
       const vals = await form.validateFields()
-      await api.post('/resources', vals)
+      await create(vals)
       message.success('资源登记成功')
       form.resetFields()
       setModalVisible(false)
-      load()
+      load(filters)
     } catch {
       message.error('登记失败')
     }
   }
 
-  // 统计数据
   const stats = {
     total: data.length,
     available: data.filter(d => d.status === 'available' || d.status === 'idle').length,
-    inUse: data.filter(
-      d => d.status === 'in_use' || d.status === 'ordered' || d.status === 'delivered'
-    ).length,
-    maintenance: data.filter(d => d.status === 'maintenance' || d.status === 'testing').length,
+    inUse: data.filter(d => ['in_use', 'ordered', 'delivered'].includes(d.status)).length,
+    maintenance: data.filter(d => ['maintenance', 'testing'].includes(d.status)).length,
   }
 
-  // 分类统计
   const catStats = Object.entries(CAT_MAP).map(([k, v]) => ({
     key: k,
     ...v,
@@ -183,35 +146,32 @@ export default function Resources() {
         icon={<AppstoreOutlined style={{ color: 'var(--color-primary)' }} />}
       />
 
-      {/* 统计卡片 */}
       <Row gutter={[12, 12]} style={{ marginBottom: 20 }}>
-        <Col xs={12} sm={6}>
-          <div style={styles.statCard}>
-            <div style={styles.statLabel}>资源总数</div>
-            <div style={styles.statValue}>{stats.total}</div>
-          </div>
-        </Col>
-        <Col xs={12} sm={6}>
-          <div style={{ ...styles.statCard, borderLeft: '3px solid #dcfce7' }}>
-            <div style={styles.statLabel}>可用</div>
-            <div style={{ ...styles.statValue, color: '#166534' }}>{stats.available}</div>
-          </div>
-        </Col>
-        <Col xs={12} sm={6}>
-          <div style={{ ...styles.statCard, borderLeft: '3px solid #dbeafe' }}>
-            <div style={styles.statLabel}>使用中</div>
-            <div style={{ ...styles.statValue, color: '#1e40af' }}>{stats.inUse}</div>
-          </div>
-        </Col>
-        <Col xs={12} sm={6}>
-          <div style={{ ...styles.statCard, borderLeft: '3px solid #fef3c7' }}>
-            <div style={styles.statLabel}>维修/检测</div>
-            <div style={{ ...styles.statValue, color: '#92400e' }}>{stats.maintenance}</div>
-          </div>
-        </Col>
+        {[
+          {
+            label: '资源总数',
+            value: stats.total,
+            color: 'var(--color-primary)',
+            borderColor: '#115cb9',
+          },
+          { label: '可用', value: stats.available, color: '#166534', borderColor: '#dcfce7' },
+          { label: '使用中', value: stats.inUse, color: '#1e40af', borderColor: '#dbeafe' },
+          {
+            label: '维修/检测',
+            value: stats.maintenance,
+            color: '#92400e',
+            borderColor: '#fef3c7',
+          },
+        ].map(s => (
+          <Col xs={12} sm={6} key={s.label}>
+            <div style={{ ...styles.statCard, borderLeft: `3px solid ${s.borderColor}` }}>
+              <div style={styles.statLabel}>{s.label}</div>
+              <div style={{ ...styles.statValue, color: s.color }}>{s.value}</div>
+            </div>
+          </Col>
+        ))}
       </Row>
 
-      {/* 分类标签 */}
       <div style={styles.catTags}>
         {catStats.map(cat => (
           <div
@@ -243,7 +203,6 @@ export default function Resources() {
         ))}
       </div>
 
-      {/* 筛选栏 */}
       <div style={styles.filterBar}>
         <div style={styles.filterLeft}>
           <Select
@@ -251,11 +210,11 @@ export default function Resources() {
             placeholder="状态"
             style={{ width: 120 }}
             onChange={v => setFilters(f => ({ ...f, status: v }))}
-            options={Object.entries(STATUS_MAP).map(([k, v]) => ({ value: k, label: v.label }))}
+            options={Object.entries(SM).map(([k, v]) => ({ value: k, label: v.label }))}
           />
         </div>
         <div style={styles.filterRight}>
-          <Button onClick={load}>刷新</Button>
+          <Button onClick={() => load(filters)}>刷新</Button>
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -270,7 +229,6 @@ export default function Resources() {
         </div>
       </div>
 
-      {/* 资源列表 */}
       <div style={styles.tableCard}>
         <Table
           dataSource={data}
@@ -278,11 +236,9 @@ export default function Resources() {
           rowKey="id"
           loading={loading}
           pagination={{ pageSize: 10 }}
-          rowClassName={() => 'animate-fade-in-up'}
         />
       </div>
 
-      {/* 新增弹窗 */}
       <Modal
         title={<span style={styles.modalTitle}>登记资源</span>}
         open={modalVisible}
@@ -347,7 +303,6 @@ const styles = {
     borderRadius: 'var(--radius-lg)',
     padding: 16,
     boxShadow: 'var(--shadow-soft)',
-    borderLeft: '3px solid var(--color-primary)',
   },
   statLabel: {
     fontSize: 13,
@@ -375,19 +330,9 @@ const styles = {
     boxShadow: 'var(--shadow-soft)',
     transition: 'all 0.2s',
   },
-  catIcon: {
-    fontSize: 16,
-  },
-  catLabel: {
-    fontSize: 14,
-    fontWeight: 500,
-  },
-  catCount: {
-    fontSize: 14,
-    fontWeight: 700,
-    minWidth: 20,
-    textAlign: 'center',
-  },
+  catIcon: { fontSize: 16 },
+  catLabel: { fontSize: 14, fontWeight: 500 },
+  catCount: { fontSize: 14, fontWeight: 700, minWidth: 20, textAlign: 'center' },
   filterBar: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -395,73 +340,25 @@ const styles = {
     marginBottom: 16,
     gap: 12,
   },
-  filterLeft: {
-    display: 'flex',
-    gap: 8,
-  },
-  filterRight: {
-    display: 'flex',
-    gap: 8,
-  },
-  addBtn: {
-    background: 'var(--color-primary)',
-    borderColor: 'var(--color-primary)',
-  },
+  filterLeft: { display: 'flex', gap: 8 },
+  filterRight: { display: 'flex', gap: 8 },
+  addBtn: { background: 'var(--color-primary)', borderColor: 'var(--color-primary)' },
   tableCard: {
     background: 'var(--color-surface-container-lowest)',
     borderRadius: 'var(--radius-lg)',
     padding: 16,
     boxShadow: 'var(--shadow-soft)',
   },
-  resourceInfo: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 2,
-  },
-  resourceHeader: {
-    marginBottom: 4,
-  },
-  catTag: {
-    border: 'none',
-    fontSize: 12,
-    padding: '2px 8px',
-  },
-  resourceName: {
-    fontWeight: 600,
-    color: 'var(--color-on-surface)',
-  },
-  resourceSpec: {
-    fontSize: 12,
-    color: 'var(--color-on-surface-variant)',
-  },
-  quantityCell: {
-    display: 'flex',
-    alignItems: 'baseline',
-    gap: 4,
-  },
-  quantityValue: {
-    fontSize: 18,
-    fontWeight: 700,
-    color: 'var(--color-on-surface)',
-  },
-  quantityUnit: {
-    fontSize: 12,
-    color: 'var(--color-on-surface-variant)',
-  },
-  supplierText: {
-    fontSize: 13,
-    color: 'var(--color-on-surface-variant)',
-  },
-  noneText: {
-    color: 'var(--color-on-surface-variant)',
-  },
-  dateText: {
-    fontSize: 12,
-    color: 'var(--color-on-surface-variant)',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 600,
-    color: 'var(--color-on-surface)',
-  },
+  resourceInfo: { display: 'flex', flexDirection: 'column', gap: 2 },
+  resourceHeader: { marginBottom: 4 },
+  catTag: { border: 'none', fontSize: 12, padding: '2px 8px' },
+  resourceName: { fontWeight: 600, color: 'var(--color-on-surface)' },
+  resourceSpec: { fontSize: 12, color: 'var(--color-on-surface-variant)' },
+  quantityCell: { display: 'flex', alignItems: 'baseline', gap: 4 },
+  quantityValue: { fontSize: 18, fontWeight: 700, color: 'var(--color-on-surface)' },
+  quantityUnit: { fontSize: 12, color: 'var(--color-on-surface-variant)' },
+  supplierText: { fontSize: 13, color: 'var(--color-on-surface-variant)' },
+  noneText: { color: 'var(--color-on-surface-variant)' },
+  dateText: { fontSize: 12, color: 'var(--color-on-surface-variant)' },
+  modalTitle: { fontSize: 18, fontWeight: 600, color: 'var(--color-on-surface)' },
 }

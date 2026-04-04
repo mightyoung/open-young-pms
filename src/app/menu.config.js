@@ -89,4 +89,10 @@ export const MENU_ITEMS = [
     path: ROUTE_META.approvalCenter.path,
     iconKey: 'CheckSquareOutlined',
   },
+  {
+    key: ROUTE_META.resources.key,
+    label: ROUTE_META.resources.label,
+    path: ROUTE_META.resources.path,
+    iconKey: 'AppstoreOutlined',
+  },
 ]

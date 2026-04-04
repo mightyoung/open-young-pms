@@ -24,6 +24,7 @@ const ContractsPage = lazy(() => import('../features/contracts/pages/ContractsPa
 const ApprovalCenterPage = lazy(
   () => import('../features/approval-center/pages/ApprovalCenterPage')
 )
+const ResourcesPage = lazy(() => import('../features/resources/pages/ResourcesPage'))
 
 function NotFoundPage() {
   return <Navigate to={DEFAULT_AUTH_ROUTE} replace />
@@ -161,6 +162,14 @@ export function AppRoutes() {
           element: (
             <Suspense fallback={<PageLoader />}>
               <ApprovalCenterPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'resources',
+          element: (
+            <Suspense fallback={<PageLoader />}>
+              <ResourcesPage />
             </Suspense>
           ),
         },

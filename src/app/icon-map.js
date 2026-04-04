@@ -23,6 +23,7 @@ import {
   RobotOutlined,
   AuditOutlined,
   CheckSquareOutlined,
+  AppstoreOutlined,
 } from '@ant-design/icons'
 
 export const ICON_MAP = {
@@ -46,6 +47,7 @@ export const ICON_MAP = {
   RobotOutlined,
   AuditOutlined,
   CheckSquareOutlined,
+  AppstoreOutlined,
 }
 
 export function resolveIcon(iconKey) {

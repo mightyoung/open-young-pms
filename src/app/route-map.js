@@ -69,6 +69,11 @@ export const ROUTE_META = {
     path: '/approval-center',
     label: '审批中心',
   },
+  resources: {
+    key: 'resources',
+    path: '/resources',
+    label: '资源调度',
+  },
 }
 
 export const DEFAULT_AUTH_ROUTE = ROUTE_META.dashboard.path
