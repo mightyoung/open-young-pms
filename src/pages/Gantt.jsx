@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import {
   Card,
   Table,
@@ -17,7 +17,7 @@ import {
   Tooltip,
   Tree,
 } from 'antd'
-import { PlusOutlined, ClockCircleOutlined, FolderOutlined, EditOutlined, SyncOutlined } from '@ant-design/icons'
+import { PlusOutlined, ClockCircleOutlined, FolderOutlined, EditOutlined } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 import { useWebSocket } from '../hooks/useWebSocket'
 
@@ -418,7 +418,7 @@ export default function Gantt() {
 
   const token = localStorage.getItem('token') || 'demo_token'
   const wsUrl = `ws://localhost:8000/ws/notifications?token=${token}`
-  const { ws } = useWebSocket(wsUrl, handlers)
+  const { ws: _ws } = useWebSocket(wsUrl, handlers)
 
   const STATUS_MAP = {
     done: { label: '已完成', bg: '#dcfce7', color: '#166534' },
