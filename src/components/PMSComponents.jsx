@@ -3,6 +3,7 @@
  * 更新时间: 2026-03-30
  */
 import React from 'react'
+import SkeletonContent from './SkeletonContent'
 
 // 角色徽章
 export function RoleBadge({ role }) {
@@ -330,3 +331,6 @@ const searchStyles = {
     fontFamily: 'var(--font-body)',
   },
 }
+
+// Re-export skeleton for convenience
+export { SkeletonContent }

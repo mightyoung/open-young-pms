@@ -1,5 +1,5 @@
 import React from 'react'
-import { Row, Col, Empty, Button, Space } from 'antd'
+import { Row, Col, Button, Space } from 'antd'
 import {
   SafetyOutlined,
   CheckCircleOutlined,
@@ -12,7 +12,12 @@ import {
   AuditOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
-import { PageHeader, ProgressBar } from '../../../components/PMSComponents'
+import {
+  PageHeader,
+  ProgressBar,
+  EmptyState,
+  SkeletonContent,
+} from '../../../components/PMSComponents'
 import { useDashboardData } from '../hooks/useDashboardData'
 
 export default function DashboardPage() {
@@ -22,7 +27,11 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div style={styles.page}>
-        <div style={styles.loading}>加载中...</div>
+        <PageHeader
+          title="监测驾驶舱"
+          icon={<DashboardOutlined style={{ color: 'var(--color-primary)' }} />}
+        />
+        <SkeletonContent type="dashboard" />
       </div>
     )
   }
@@ -30,7 +39,11 @@ export default function DashboardPage() {
   if (!summary) {
     return (
       <div style={styles.page}>
-        <Empty description="暂无数据" />
+        <PageHeader
+          title="监测驾驶舱"
+          icon={<DashboardOutlined style={{ color: 'var(--color-primary)' }} />}
+        />
+        <EmptyState type="list" title="暂无数据" description="暂无仪表盘数据" />
       </div>
     )
   }
@@ -185,7 +198,7 @@ export default function DashboardPage() {
             <div style={styles.chartTitle}>随手拍类型分布</div>
             <div style={styles.typeList}>
               {hazardByType.length === 0 ? (
-                <div style={styles.emptyText}>暂无数据</div>
+                <EmptyState type="list" />
               ) : (
                 hazardByType.map((item, index) => (
                   <div key={index} style={styles.typeItem}>
@@ -211,7 +224,7 @@ export default function DashboardPage() {
             <div style={styles.chartTitle}>随手拍状态分布</div>
             <div style={styles.statusGrid}>
               {hazardByStatus.length === 0 ? (
-                <div style={styles.emptyText}>暂无数据</div>
+                <EmptyState type="list" />
               ) : (
                 hazardByStatus.map((item, index) => {
                   const statusColor = statusColors[item.key] || { bg: '#f3f4f6', color: '#6b7280' }
@@ -237,7 +250,6 @@ export default function DashboardPage() {
 
 const styles = {
   page: { padding: 24, background: 'var(--color-background)', minHeight: '100vh' },
-  loading: { textAlign: 'center', padding: 48, color: 'var(--color-on-surface-variant)' },
   kpiCard: {
     background: 'var(--color-surface-container-lowest)',
     borderRadius: 'var(--radius-lg)',
@@ -279,7 +291,6 @@ const styles = {
   statusCard: { borderRadius: 16, padding: 16, textAlign: 'center' },
   statusValue: { fontSize: 28, fontWeight: 700 },
   statusLabel: { fontSize: 13 },
-  emptyText: { color: 'var(--color-on-surface-variant)' },
   actionCard: {
     background: 'var(--color-surface-container-lowest)',
     borderRadius: 'var(--radius-lg)',
