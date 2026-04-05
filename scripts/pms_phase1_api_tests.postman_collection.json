@@ -1,0 +1,290 @@
+{
+  "info": {
+    "name": "PMS Phase 1 API Tests",
+    "description": "PMS 项目阶段一集成测试集合",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "0. 认证",
+      "item": [
+        {
+          "name": "登录",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('token', jsonData.data.access_token);",
+                  "    pm.test('登录成功', function() {",
+                  "        pm.expect(jsonData.data.access_token).to.not.be.empty;",
+                  "    });",
+                  "} else {",
+                  "    pm.test('登录失败', function() {",
+                  "        pm.expect(pm.response.code).to.equal(200);",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. 用户管理",
+      "item": [
+        {
+          "name": "获取当前用户",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/users/me",
+            "auth": "inherit"
+          }
+        },
+        {
+          "name": "列出用户",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/users",
+            "auth": "inherit"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. 角色权限",
+      "item": [
+        {
+          "name": "列出角色",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/roles",
+            "auth": "inherit"
+          }
+        },
+        {
+          "name": "创建角色",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/roles",
+            "auth": "inherit",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"test_role\",\n    \"label\": \"测试角色\",\n    \"permissions\": {}\n}"
+            }
+          }
+        },
+        {
+          "name": "更新角色 (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/roles/{{role_id}}",
+            "auth": "inherit",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"label\": \"测试角色-已更新\"\n}"
+            }
+          }
+        },
+        {
+          "name": "删除角色",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/roles/{{role_id}}",
+            "auth": "inherit"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. 组织架构",
+      "item": [
+        {
+          "name": "列出公司",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/companies",
+            "auth": "inherit"
+          }
+        },
+        {
+          "name": "列出部门",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/departments",
+            "auth": "inherit"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. 隐患管理",
+      "item": [
+        {
+          "name": "列出隐患",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/hazards",
+            "auth": "inherit"
+          }
+        },
+        {
+          "name": "隐患详情",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/hazards/{{hazard_id}}",
+            "auth": "inherit"
+          }
+        },
+        {
+          "name": "创建隐患",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/hazards",
+            "auth": "inherit",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"测试隐患\",\n    \"description\": \"集成测试创建的隐患\",\n    \"severity\": \"medium\",\n    \"location\": \"测试位置\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. 通知设置",
+      "item": [
+        {
+          "name": "获取通知设置",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/notification-settings",
+            "auth": "inherit"
+          }
+        },
+        {
+          "name": "更新通知设置",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/notification-settings",
+            "auth": "inherit",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"channel\": \"in_app\",\n    \"hazard_enabled\": true,\n    \"report_enabled\": true,\n    \"approval_enabled\": true,\n    \"task_enabled\": true,\n    \"frequency\": \"realtime\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. 论坛",
+      "item": [
+        {
+          "name": "列出帖子",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/posts",
+            "auth": "inherit"
+          }
+        },
+        {
+          "name": "创建帖子",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/posts",
+            "auth": "inherit",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"测试帖子\",\n    \"content\": \"集成测试创建的帖子内容\"\n}"
+            }
+          }
+        },
+        {
+          "name": "删除帖子",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/posts/{{post_id}}",
+            "auth": "inherit"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. 报告中心",
+      "item": [
+        {
+          "name": "列出报告",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/reports",
+            "auth": "inherit"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. 项目管理",
+      "item": [
+        {
+          "name": "列出项目",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/projects",
+            "auth": "inherit"
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. 任务管理",
+      "item": [
+        {
+          "name": "我的任务",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/tasks/my",
+            "auth": "inherit"
+          }
+        }
+      ]
+    }
+  ]
+}
