@@ -13,6 +13,8 @@ from schemas.ai import (
     AISummarizeReportRequest,
     AIGenerateReportRequest,
     AIIntentResponse,
+    AIIntentRequest,
+    AIAnalyzeImageRequest,
 )
 from services.ai_service import ai_service
 from api.services.fastapi_code_generator.models import Task, HazardReport, Project, Phase
@@ -231,9 +233,19 @@ async def summarize_report(
 
 @router.post("/parse-intent")
 async def parse_intent(
-    text: str,
+    req: AIIntentRequest,
     current_user=Depends(get_current_user),
 ):
     """解析自然语言意图（用于移动端语音录入）"""
-    result = await ai_service.parse_intent(text)
+    result = await ai_service.parse_intent(req.text)
+    return ApiResponse.ok(result)
+
+
+@router.post("/analyze-image")
+async def analyze_image(
+    req: AIAnalyzeImageRequest,
+    current_user=Depends(get_current_user),
+):
+    """AI 隐患图片识别 (Qwen-VL)"""
+    result = await ai_service.analyze_image(req.image_url)
     return ApiResponse.ok(result)

@@ -1,0 +1,12 @@
+{
+  "run_id": "R20260405171455",
+  "session_id": "s20260405171455",
+  "created_at": "2026-04-05T17:14:55.056550",
+  "prompt": "执行第2、3项任务：2. 系统集成与回归测试；3. 移动端资源与路由优化（基于此前调研报告及 TODO.md 状态）。",
+  "trigger_type": "STAGE",
+  "current_phase": "REFINING",
+  "phases": [],
+  "final_state": "running",
+  "failure_reason": null,
+  "completed_at": null
+}

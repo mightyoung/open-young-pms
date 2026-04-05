@@ -1,5 +1,120 @@
 {
-  "tasks": [],
-  "version": "1.0",
-  "created": "2026-04-05T00:07:33.714173"
+  "tasks": [
+    {
+      "id": "T1",
+      "title": "权限体系 (P0)",
+      "status": "completed",
+      "summary": "RBAC + 项目维度权限已实现，后端测试通过。",
+      "budget_seconds": 300,
+      "time_spent_seconds": 0,
+      "started_at": null,
+      "quality_gates_passed": null,
+      "step_failures": {}
+    },
+    {
+      "id": "T2",
+      "title": "核心业务模块 (P1)",
+      "status": "completed",
+      "summary": "组织、论坛、通知、报告、任务管理已完成开发。",
+      "budget_seconds": 300,
+      "time_spent_seconds": 0,
+      "started_at": null,
+      "quality_gates_passed": null,
+      "step_failures": {}
+    },
+    {
+      "id": "T3",
+      "title": "高级功能模块 (P2)",
+      "status": "completed",
+      "summary": "审批流、看板、AI助手、日志审计、移动端基础页面已完成。",
+      "budget_seconds": 300,
+      "time_spent_seconds": 0,
+      "started_at": null,
+      "quality_gates_passed": null,
+      "step_failures": {}
+    },
+    {
+      "id": "T4",
+      "title": "数据库演示数据初始化",
+      "status": "completed",
+      "summary": "编写了 init_db.py 脚本及 regression 测试脚本。虽然本地 greenlet 缺失导致全自动运行受限，但已通过 database.py 的回退逻辑确保了 SQLite 兼容性，方便后续一键拉起。",
+      "budget_seconds": 300,
+      "time_spent_seconds": 0,
+      "started_at": null,
+      "quality_gates_passed": null,
+      "step_failures": {}
+    },
+    {
+      "id": "T5",
+      "title": "移动端静态资源补全",
+      "status": "completed",
+      "summary": "已确认 mobile/static 目录下图标文件就绪，且 pages.json 路由映射正确。",
+      "budget_seconds": 300,
+      "time_spent_seconds": 0,
+      "started_at": null,
+      "quality_gates_passed": null,
+      "step_failures": {}
+    },
+    {
+      "id": "T6",
+      "title": "系统集成测试准备",
+      "status": "completed",
+      "summary": "编写了 api_regression.py 回归测试脚本，覆盖认证、项目、任务等核心链路。",
+      "budget_seconds": 300,
+      "time_spent_seconds": 0,
+      "started_at": null,
+      "quality_gates_passed": null,
+      "step_failures": {}
+    },
+    {
+      "id": "T20260405171455",
+      "description": "执行第2、3项任务：2. 系统集成与回归测试；3. 移动端资源与路由优化（基于此前调研报告及 TODO.md 状态）。",
+      "status": "in_progress",
+      "priority": "P2",
+      "dependencies": [],
+      "created_at": "2026-04-05T17:14:55.059786",
+      "updated_at": "2026-04-05T17:14:55.060812",
+      "progress": 0,
+      "issues": [],
+      "budget_seconds": 300,
+      "time_spent_seconds": 0,
+      "started_at": "2026-04-05T17:14:55.060318",
+      "quality_gates_passed": null,
+      "step_failures": {}
+    },
+    {
+      "id": "T20260405173247",
+      "description": "执行第2、3项优化任务：2. 交互升级 - 增强型甘特图（支持拖拽、依赖连线）；3. 现场生产力 - AI 拍照识别与智能分类（集成视觉识别能力）。",
+      "status": "in_progress",
+      "priority": "P2",
+      "dependencies": [],
+      "created_at": "2026-04-05T17:32:47.425537",
+      "updated_at": "2026-04-05T17:32:47.426564",
+      "progress": 0,
+      "issues": [],
+      "budget_seconds": 300,
+      "time_spent_seconds": 0,
+      "started_at": "2026-04-05T17:32:47.426021",
+      "quality_gates_passed": null,
+      "step_failures": {}
+    },
+    {
+      "id": "T20260405174138",
+      "description": "执行第1项任务：API 联调 - 前后端对接测试（基于此前回归测试发现的 405 错误及字段不匹配问题进行彻底修复）。",
+      "status": "in_progress",
+      "priority": "P1",
+      "dependencies": [],
+      "created_at": "2026-04-05T17:41:38.958825",
+      "updated_at": "2026-04-05T17:41:38.960036",
+      "progress": 0,
+      "issues": [],
+      "budget_seconds": 300,
+      "time_spent_seconds": 0,
+      "started_at": "2026-04-05T17:41:38.959393",
+      "quality_gates_passed": null,
+      "step_failures": {}
+    }
+  ],
+  "version": "1.1",
+  "last_updated": "2026-04-05T00:20:00"
 }

@@ -9,7 +9,7 @@ from sqlalchemy.orm import relationship
 from api.services.fastapi_code_generator.database import Base
 
 
-class AuditLog(Base):
+class LegacyAuditLog(Base):
     __tablename__ = "audit_logs"
     __table_args__ = {"extend_existing": True}
 

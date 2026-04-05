@@ -100,6 +100,44 @@ class AIService:
             print(f"Parse intent failed: {e}")
             return {"action": "unknown", "data": {}, "summary": text, "confidence": 0}
 
+    async def analyze_image(self, image_url: str) -> dict:
+        """多模态分析隐患图片 (Qwen-VL)"""
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(
+                "https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation",
+                headers={
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": "qwen-vl-max",
+                    "input": {
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": [
+                                    {"image": image_url},
+                                    {"text": "你是安全生产专家。请识别图中是否存在工程隐患？如果有，请给出隐患名称、风险等级（高/中/低）及简要描述。请以 JSON 格式返回：{'has_hazard': bool, 'title': str, 'level': str, 'desc': str}"}
+                                ]
+                            }
+                        ]
+                    }
+                },
+            )
+        result = resp.json()
+        try:
+            content = result["output"]["choices"][0]["message"]["content"][0]["text"]
+            # 清理 JSON 标记并解析
+            import json
+            import re
+            match = re.search(r'\{.*\}', content, re.DOTALL)
+            if match:
+                return json.loads(match.group())
+            return {"has_hazard": False, "title": "未识别到明显隐患", "level": "低", "desc": content}
+        except Exception as e:
+            print(f"Vision analysis failed: {e}")
+            return {"has_hazard": False, "error": str(e)}
+
     def _build_context(self, docs: list) -> str:
         if not docs:
             return ""

@@ -60,7 +60,7 @@ async def get_log_detail(
     current_user: User = Depends(get_current_user),
 ):
     from sqlalchemy import select
-    from models.audit import AuditLog
+    from models.audit import LegacyAuditLog
 
     row = (await db.execute(select(AuditLog).where(AuditLog.id == log_id))).scalar_one_or_none()
     if not row:

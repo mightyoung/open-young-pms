@@ -7,7 +7,7 @@ from datetime import date, datetime, timedelta, timezone
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.report import Report, ReportSubmit
+from models.report import LegacyReport as ReportModel, ReportSubmit
 from schemas.report import ReportStats
 
 
@@ -20,8 +20,8 @@ class ReportService:
         content: dict,
         report_type: str,
         project_id: str,
-    ) -> Report:
-        report = Report(
+    ) -> ReportModel:
+        report = ReportModel(
             id=str(uuid.uuid4()),
             title=title,
             content=json.dumps(content, ensure_ascii=False),
@@ -41,8 +41,8 @@ class ReportService:
         report_id: str,
         author_id: str,
         **kwargs,
-    ) -> Report:
-        result = await db.execute(select(Report).where(Report.id == report_id))
+    ) -> ReportModel:
+        result = await db.execute(select(ReportModel).where(ReportModel.id == report_id))
         report = result.scalar_one_or_none()
         if not report:
             return None
@@ -64,8 +64,8 @@ class ReportService:
         db: AsyncSession,
         report_id: str,
         author_id: str,
-    ) -> Report:
-        result = await db.execute(select(Report).where(Report.id == report_id))
+    ) -> ReportModel:
+        result = await db.execute(select(ReportModel).where(ReportModel.id == report_id))
         report = result.scalar_one_or_none()
         if not report:
             return None
@@ -93,8 +93,8 @@ class ReportService:
         report_id: str,
         approver_id: str,
         comment: str = None,
-    ) -> Report:
-        result = await db.execute(select(Report).where(Report.id == report_id))
+    ) -> ReportModel:
+        result = await db.execute(select(ReportModel).where(ReportModel.id == report_id))
         report = result.scalar_one_or_none()
         if not report:
             return None
@@ -114,8 +114,8 @@ class ReportService:
         report_id: str,
         approver_id: str,
         comment: str,
-    ) -> Report:
-        result = await db.execute(select(Report).where(Report.id == report_id))
+    ) -> ReportModel:
+        result = await db.execute(select(ReportModel).where(ReportModel.id == report_id))
         report = result.scalar_one_or_none()
         if not report:
             return None
@@ -139,19 +139,19 @@ class ReportService:
     ):
         query = select(Report)
         if project_id:
-            query = query.where(Report.project_id == project_id)
+            query = query.where(ReportModel.project_id == project_id)
         if report_type:
-            query = query.where(Report.type == report_type)
+            query = query.where(ReportModel.type == report_type)
         if status:
-            query = query.where(Report.status == status)
+            query = query.where(ReportModel.status == status)
 
         count_q = select(func.count()).select_from(Report)
         if project_id:
-            count_q = count_q.where(Report.project_id == project_id)
+            count_q = count_q.where(ReportModel.project_id == project_id)
         if report_type:
-            count_q = count_q.where(Report.type == report_type)
+            count_q = count_q.where(ReportModel.type == report_type)
         if status:
-            count_q = count_q.where(Report.status == status)
+            count_q = count_q.where(ReportModel.status == status)
         total = (await db.execute(count_q)).scalar() or 0
 
         query = query.order_by(Report.created_at.desc())
@@ -176,8 +176,8 @@ class ReportService:
         start_dt = datetime.combine(start_date, datetime.min.time())
         end_dt = datetime.combine(end_date, datetime.max.time())
 
-        query = select(Report).where(
-            Report.project_id == project_id,
+        query = select(ReportModel).where(
+            ReportModel.project_id == project_id,
             Report.created_at >= start_dt,
             Report.created_at <= end_dt,
         )
@@ -210,7 +210,7 @@ class ReportService:
         project_id: str,
         author_id: str,
         target_date: date,
-    ) -> Report:
+    ) -> ReportModel:
         date_str = target_date.strftime("%Y-%m-%d")
         title = f"日报 - {date_str}"
         content = {
@@ -238,7 +238,7 @@ class ReportService:
         project_id: str,
         author_id: str,
         week_start: date,
-    ) -> Report:
+    ) -> ReportModel:
         week_end = week_start + timedelta(days=6)
         title = f"周报 - {week_start.strftime('%Y-%m-%d')} ~ {week_end.strftime('%Y-%m-%d')}"
         content = {

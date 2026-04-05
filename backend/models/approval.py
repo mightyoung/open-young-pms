@@ -8,7 +8,7 @@ from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, T
 from api.services.fastapi_code_generator.database import Base
 
 
-class ApprovalFlow(Base):
+class CustomApprovalFlow(Base):
     """审批流程模板"""
 
     __tablename__ = "approval_flows"
@@ -27,7 +27,7 @@ class ApprovalFlow(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
-class ApprovalInstance(Base):
+class CustomApprovalInstance(Base):
     """审批流程实例"""
 
     __tablename__ = "approval_instances"
@@ -49,7 +49,7 @@ class ApprovalInstance(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
-class ApprovalRecord(Base):
+class CustomApprovalRecord(Base):
     """审批记录"""
 
     __tablename__ = "approval_records"

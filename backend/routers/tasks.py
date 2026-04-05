@@ -10,7 +10,8 @@ from sqlalchemy.orm import selectinload
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import User
-from models.task import Task as WBSTask, TaskComment as WBSTaskComment
+from api.response import ApiResponse
+from models.task import WBSTask, WBSTaskComment
 from schemas.task import (
     TaskCreate,
     TaskUpdate,
@@ -45,6 +46,20 @@ def _task_to_response(task: WBSTask, children: list = None) -> TaskResponse:
         children=children or [],
         created_at=task.created_at,
     )
+
+
+@router.get("/tasks")
+async def get_tasks(
+    project_id: str = None,
+    db: AsyncSession = Depends(get_db),
+):
+    query = select(WBSTask).options(selectinload(WBSTask.assignee))
+    if project_id:
+        query = query.where(WBSTask.project_id == project_id)
+    
+    result = await db.execute(query.order_by(WBSTask.created_at.desc()))
+    tasks = result.scalars().all()
+    return ApiResponse.ok([_task_to_response(t) for t in tasks])
 
 
 @router.post("/tasks", response_model=TaskResponse, status_code=201)

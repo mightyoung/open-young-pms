@@ -33,7 +33,11 @@ class Base(DeclarativeBase):
     pass
 
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/pms")
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite+aiosqlite:///./pms.db")
+
+if DATABASE_URL.startswith("postgresql"):
+    # Ensure pgvector or other postgres specific setup is handled if needed
+    pass
 
 _async_engine = None
 _async_session_factory = None

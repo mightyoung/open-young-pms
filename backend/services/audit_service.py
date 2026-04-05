@@ -9,7 +9,7 @@ from typing import Optional
 from sqlalchemy import select, desc, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.audit import AuditLog
+from models.audit import LegacyAuditLog
 from schemas.audit import AuditLogResponse, UserActivityItem, ResourceHistoryItem
 from schemas.response import PageResult
 

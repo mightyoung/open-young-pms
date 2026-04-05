@@ -31,6 +31,7 @@ class Company(Base):
     id: Mapped[str] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     code: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -47,6 +48,8 @@ class Department(Base):
     code: Mapped[str] = mapped_column(String(50), nullable=False)
     parent_id: Mapped[Optional[uuid.UUID]] = mapped_column(GUID, ForeignKey("departments.id"), nullable=True)
     leader_id: Mapped[Optional[uuid.UUID]] = mapped_column(GUID, nullable=True)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     company: Mapped["Company"] = relationship(back_populates="departments")
@@ -114,7 +117,6 @@ class Project(Base):
     phases: Mapped[list["Phase"]] = relationship(back_populates="project", cascade="all, delete-orphan")
     milestones: Mapped[list["Milestone"]] = relationship(back_populates="project", cascade="all, delete-orphan")
     hazard_reports: Mapped[list["HazardReport"]] = relationship(back_populates="project")
-    wbs_tasks: Mapped[list["Task"]] = relationship(back_populates="project")
     inspections: Mapped[list["Inspection"]] = relationship(back_populates="project")
 
 

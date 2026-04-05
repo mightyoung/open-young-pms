@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from models.approval import ApprovalFlow, ApprovalInstance, ApprovalRecord
+from models.approval import CustomApprovalFlow, CustomApprovalInstance, CustomApprovalRecord
 
 
 class ApprovalService:
@@ -17,8 +17,8 @@ class ApprovalService:
 
     async def create_flow(
         self, name: str, code: str, entity_type: str, nodes: list, description: str = None
-    ) -> ApprovalFlow:
-        flow = ApprovalFlow(
+    ) -> CustomApprovalFlow:
+        flow = CustomApprovalFlow(
             id=str(uuid.uuid4()),
             name=name,
             code=code,
@@ -33,8 +33,8 @@ class ApprovalService:
         await self.db.refresh(flow)
         return flow
 
-    async def update_flow(self, flow_id: str, nodes: list) -> ApprovalFlow:
-        result = await self.db.execute(select(ApprovalFlow).where(ApprovalFlow.id == flow_id))
+    async def update_flow(self, flow_id: str, nodes: list) -> CustomApprovalFlow:
+        result = await self.db.execute(select(CustomApprovalFlow).where(CustomApprovalFlow.id == flow_id))
         flow = result.scalar_one_or_none()
         if not flow:
             raise ValueError("审批流程不存在")
@@ -44,18 +44,18 @@ class ApprovalService:
         await self.db.refresh(flow)
         return flow
 
-    async def get_flow(self, flow_id: str) -> ApprovalFlow:
-        result = await self.db.execute(select(ApprovalFlow).where(ApprovalFlow.id == flow_id))
+    async def get_flow(self, flow_id: str) -> CustomApprovalFlow:
+        result = await self.db.execute(select(CustomApprovalFlow).where(CustomApprovalFlow.id == flow_id))
         flow = result.scalar_one_or_none()
         if not flow:
             raise ValueError("审批流程不存在")
         return flow
 
-    async def list_flows(self, entity_type: str = None) -> list[ApprovalFlow]:
-        query = select(ApprovalFlow).where(ApprovalFlow.is_active == True)
+    async def list_flows(self, entity_type: str = None) -> list[CustomApprovalFlow]:
+        query = select(CustomApprovalFlow).where(CustomApprovalFlow.is_active == True)
         if entity_type:
-            query = query.where(ApprovalFlow.entity_type == entity_type)
-        query = query.order_by(ApprovalFlow.created_at.desc())
+            query = query.where(CustomApprovalFlow.entity_type == entity_type)
+        query = query.order_by(CustomApprovalFlow.created_at.desc())
         result = await self.db.execute(query)
         return list(result.scalars().all())
 
@@ -66,14 +66,14 @@ class ApprovalService:
         entity_id: str,
         initiator_id: str,
         init_data: dict = None,
-    ) -> ApprovalInstance:
+    ) -> CustomApprovalInstance:
         flow = await self.get_flow(flow_id)
         nodes = flow.nodes or []
         first_approval_node = next((n for n in nodes if n.get("type") == "approval"), None)
         if not first_approval_node:
             raise ValueError("流程未定义审批节点")
 
-        instance = ApprovalInstance(
+        instance = CustomApprovalInstance(
             id=str(uuid.uuid4()),
             flow_id=flow_id,
             entity_type=entity_type,
@@ -90,7 +90,7 @@ class ApprovalService:
             approver_ids = [initiator_id]
 
         for uid in approver_ids:
-            record = ApprovalRecord(
+            record = CustomApprovalRecord(
                 id=str(uuid.uuid4()),
                 instance_id=instance.id,
                 node_id=first_approval_node.get("id"),
@@ -104,7 +104,7 @@ class ApprovalService:
         await self.db.refresh(instance)
         return instance
 
-    async def approve(self, instance_id: str, approver_id: str, comment: str = None) -> ApprovalInstance:
+    async def approve(self, instance_id: str, approver_id: str, comment: str = None) -> CustomApprovalInstance:
         instance = await self._get_instance(instance_id)
         if instance.status != "pending":
             raise ValueError("当前流程状态不允许审批")
@@ -128,7 +128,7 @@ class ApprovalService:
             if next_node:
                 instance.current_node_id = next_node.get("id")
                 for uid in self._get_node_approvers(next_node):
-                    r = ApprovalRecord(
+                    r = CustomApprovalRecord(
                         id=str(uuid.uuid4()),
                         instance_id=instance.id,
                         node_id=next_node.get("id"),
@@ -142,7 +142,7 @@ class ApprovalService:
         await self.db.refresh(instance)
         return instance
 
-    async def reject(self, instance_id: str, approver_id: str, comment: str) -> ApprovalInstance:
+    async def reject(self, instance_id: str, approver_id: str, comment: str) -> CustomApprovalInstance:
         instance = await self._get_instance(instance_id)
         if instance.status != "pending":
             raise ValueError("当前流程状态不允许驳回")
@@ -162,7 +162,7 @@ class ApprovalService:
         await self.db.refresh(instance)
         return instance
 
-    async def cancel(self, instance_id: str, user_id: str) -> ApprovalInstance:
+    async def cancel(self, instance_id: str, user_id: str) -> CustomApprovalInstance:
         instance = await self._get_instance(instance_id)
         if instance.initiator_id != user_id:
             raise ValueError("只有发起人可以取消")
@@ -181,7 +181,7 @@ class ApprovalService:
         current_approver_id: str,
         assignee_id: str,
         comment: str = None,
-    ) -> ApprovalInstance:
+    ) -> CustomApprovalInstance:
         instance = await self._get_instance(instance_id)
         if instance.status != "pending":
             raise ValueError("当前状态不允许转交")
@@ -193,7 +193,7 @@ class ApprovalService:
         record.action = "assign"
         record.comment = f"转交给 {assignee_id}" + (f": {comment}" if comment else "")
 
-        new_record = ApprovalRecord(
+        new_record = CustomApprovalRecord(
             id=str(uuid.uuid4()),
             instance_id=instance_id,
             node_id=instance.current_node_id,
@@ -212,7 +212,7 @@ class ApprovalService:
         current_approver_id: str,
         add_user_id: str,
         comment: str = None,
-    ) -> ApprovalInstance:
+    ) -> CustomApprovalInstance:
         instance = await self._get_instance(instance_id)
         if instance.status != "pending":
             raise ValueError("当前状态不允许加签")
@@ -221,7 +221,7 @@ class ApprovalService:
         if not record:
             raise ValueError("无待审批记录或无权加签")
 
-        new_record = ApprovalRecord(
+        new_record = CustomApprovalRecord(
             id=str(uuid.uuid4()),
             instance_id=instance_id,
             node_id=instance.current_node_id,
@@ -236,19 +236,19 @@ class ApprovalService:
 
     async def get_instance_detail(self, instance_id: str) -> dict:
         result = await self.db.execute(
-            select(ApprovalInstance)
-            .options(selectinload(ApprovalInstance.flow))
-            .where(ApprovalInstance.id == instance_id)
+            select(CustomApprovalInstance)
+            .options(selectinload(CustomApprovalInstance.flow))
+            .where(CustomApprovalInstance.id == instance_id)
         )
         instance = result.scalar_one_or_none()
         if not instance:
             raise ValueError("审批实例不存在")
 
         records_result = await self.db.execute(
-            select(ApprovalRecord)
-            .options(selectinload(ApprovalRecord.approver))
-            .where(ApprovalRecord.instance_id == instance_id)
-            .order_by(ApprovalRecord.created_at)
+            select(CustomApprovalRecord)
+            .options(selectinload(CustomApprovalRecord.approver))
+            .where(CustomApprovalRecord.instance_id == instance_id)
+            .order_by(CustomApprovalRecord.created_at)
         )
         records = list(records_result.scalars().all())
 
@@ -269,11 +269,11 @@ class ApprovalService:
 
     async def get_pending_tasks(self, user_id: str) -> list[dict]:
         result = await self.db.execute(
-            select(ApprovalRecord)
-            .options(selectinload(ApprovalRecord.instance).selectinload(ApprovalInstance.flow))
+            select(CustomApprovalRecord)
+            .options(selectinload(CustomApprovalRecord.instance).selectinload(CustomApprovalInstance.flow))
             .where(
-                ApprovalRecord.approver_id == user_id,
-                ApprovalRecord.action == "pending",
+                CustomApprovalRecord.approver_id == user_id,
+                CustomApprovalRecord.action == "pending",
             )
         )
         records = list(result.scalars().all())
@@ -296,21 +296,21 @@ class ApprovalService:
             )
         return tasks
 
-    async def get_my_initiated(self, user_id: str) -> list[ApprovalInstance]:
+    async def get_my_initiated(self, user_id: str) -> list[CustomApprovalInstance]:
         result = await self.db.execute(
-            select(ApprovalInstance)
-            .options(selectinload(ApprovalInstance.flow))
-            .where(ApprovalInstance.initiator_id == user_id)
-            .order_by(ApprovalInstance.created_at.desc())
+            select(CustomApprovalInstance)
+            .options(selectinload(CustomApprovalInstance.flow))
+            .where(CustomApprovalInstance.initiator_id == user_id)
+            .order_by(CustomApprovalInstance.created_at.desc())
         )
         return list(result.scalars().all())
 
-    async def get_instance_history(self, instance_id: str) -> list[ApprovalRecord]:
+    async def get_instance_history(self, instance_id: str) -> list[CustomApprovalRecord]:
         result = await self.db.execute(
-            select(ApprovalRecord)
-            .options(selectinload(ApprovalRecord.approver))
-            .where(ApprovalRecord.instance_id == instance_id)
-            .order_by(ApprovalRecord.created_at)
+            select(CustomApprovalRecord)
+            .options(selectinload(CustomApprovalRecord.approver))
+            .where(CustomApprovalRecord.instance_id == instance_id)
+            .order_by(CustomApprovalRecord.created_at)
         )
         return list(result.scalars().all())
 
@@ -321,11 +321,11 @@ class ApprovalService:
                 approvers.append(a["user_id"])
         return approvers
 
-    def _get_next_node(self, instance: ApprovalInstance, current_node: dict) -> dict:
+    def _get_next_node(self, instance: CustomApprovalInstance, current_node: dict) -> dict:
         next_id = current_node.get("next_node_id")
         if not next_id:
             return None
-        flow = self.db.query(ApprovalFlow).filter(ApprovalFlow.id == instance.flow_id).first()
+        flow = self.db.query(CustomApprovalFlow).filter(CustomApprovalFlow.id == instance.flow_id).first()
         if not flow:
             return None
         for n in flow.nodes or []:
@@ -336,8 +336,8 @@ class ApprovalService:
     def _is_last_node(self, node: dict) -> bool:
         return node.get("type") in ("end",) or not node.get("next_node_id")
 
-    def _get_node_by_id(self, instance: ApprovalInstance) -> Optional[dict]:
-        flow = self.db.query(ApprovalFlow).filter(ApprovalFlow.id == instance.flow_id).first()
+    def _get_node_by_id(self, instance: CustomApprovalInstance) -> Optional[dict]:
+        flow = self.db.query(CustomApprovalFlow).filter(CustomApprovalFlow.id == instance.flow_id).first()
         if not flow:
             return None
         for n in flow.nodes or []:
@@ -345,19 +345,19 @@ class ApprovalService:
                 return n
         return None
 
-    async def _get_instance(self, instance_id: str) -> ApprovalInstance:
-        result = await self.db.execute(select(ApprovalInstance).where(ApprovalInstance.id == instance_id))
+    async def _get_instance(self, instance_id: str) -> CustomApprovalInstance:
+        result = await self.db.execute(select(CustomApprovalInstance).where(CustomApprovalInstance.id == instance_id))
         inst = result.scalar_one_or_none()
         if not inst:
             raise ValueError("审批实例不存在")
         return inst
 
-    async def _find_pending_record(self, instance_id: str, approver_id: str) -> Optional[ApprovalRecord]:
+    async def _find_pending_record(self, instance_id: str, approver_id: str) -> Optional[CustomApprovalRecord]:
         result = await self.db.execute(
-            select(ApprovalRecord).where(
-                ApprovalRecord.instance_id == instance_id,
-                ApprovalRecord.approver_id == approver_id,
-                ApprovalRecord.action == "pending",
+            select(CustomApprovalRecord).where(
+                CustomApprovalRecord.instance_id == instance_id,
+                CustomApprovalRecord.approver_id == approver_id,
+                CustomApprovalRecord.action == "pending",
             )
         )
         return result.scalar_one_or_none()

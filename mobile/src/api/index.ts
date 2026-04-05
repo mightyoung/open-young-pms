@@ -60,6 +60,7 @@ export const api = {
   },
   ai: {
     parseIntent: (text: string) => request({ url: '/ai/parse-intent', method: 'POST', data: { text } }),
+    analyzeImage: (imageUrl: string) => request({ url: '/ai/analyze-image', method: 'POST', data: { image_url: imageUrl } }),
   },
   tasks: {
     list: (params: any) => request({ url: '/tasks/my', data: params }),

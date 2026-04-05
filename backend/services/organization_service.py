@@ -7,14 +7,14 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from models.organization import Department, UserOrganization
+from models.organization import OrgDepartment, UserOrganization
 from api.services.fastapi_code_generator.models import User
 
 
 class OrganizationService:
     async def get_department_tree(self, db: AsyncSession) -> list[dict]:
         result = await db.execute(
-            select(Department).where(Department.is_active == True).order_by(Department.sort_order)
+            select(OrgDepartment).where(OrgDepartment.is_active == True).order_by(OrgDepartment.sort_order)
         )
         departments = result.scalars().all()
 
@@ -27,7 +27,7 @@ class OrganizationService:
 
         root_depts = [d for d in departments if d.parent_id is None]
 
-        def build_node(dept: Department) -> dict:
+        def build_node(dept: OrgDepartment) -> dict:
             children = [d for d in departments if d.parent_id == dept.id]
             return {
                 "id": dept.id,
@@ -63,7 +63,7 @@ class OrganizationService:
         return list(result.scalars().all())
 
     async def _get_descendant_ids(self, db: AsyncSession, department_id: str) -> list[str]:
-        result = await db.execute(select(Department).where(Department.is_active == True))
+        result = await db.execute(select(OrgDepartment).where(OrgDepartment.is_active == True))
         all_depts = {d.id: d for d in result.scalars().all()}
 
         descendants = []
@@ -93,8 +93,8 @@ class OrganizationService:
         user_orgs = await self.get_user_departments(db, str(user.id))
         return any(str(org.department_id) == department_id and org.is_default for org in user_orgs)
 
-    async def create_department(self, db: AsyncSession, data: dict) -> Department:
-        dept = Department(
+    async def create_department(self, db: AsyncSession, data: dict) -> OrgDepartment:
+        dept = OrgDepartment(
             id=str(uuid.uuid4()),
             name=data["name"],
             code=data["code"],
@@ -108,8 +108,8 @@ class OrganizationService:
         await db.refresh(dept)
         return dept
 
-    async def update_department(self, db: AsyncSession, department_id: str, data: dict) -> Optional[Department]:
-        result = await db.execute(select(Department).where(Department.id == department_id))
+    async def update_department(self, db: AsyncSession, department_id: str, data: dict) -> Optional[OrgDepartment]:
+        result = await db.execute(select(OrgDepartment).where(OrgDepartment.id == department_id))
         dept = result.scalar_one_or_none()
         if not dept:
             return None
@@ -121,15 +121,15 @@ class OrganizationService:
         return dept
 
     async def delete_department(self, db: AsyncSession, department_id: str) -> tuple[bool, str]:
-        result = await db.execute(select(Department).where(Department.id == department_id))
+        result = await db.execute(select(OrgDepartment).where(OrgDepartment.id == department_id))
         dept = result.scalar_one_or_none()
         if not dept:
             return False, "部门不存在"
 
         child_result = await db.execute(
-            select(Department).where(
-                Department.parent_id == department_id,
-                Department.is_active == True,
+            select(OrgDepartment).where(
+                OrgDepartment.parent_id == department_id,
+                OrgDepartment.is_active == True,
             )
         )
         if child_result.scalars().first():

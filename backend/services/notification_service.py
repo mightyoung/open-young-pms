@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.services.fastapi_code_generator.models import Notification
-from models.notification import NotificationSetting
+from models.notification import UserNotificationSetting
 from services.websocket_manager import manager
 
 

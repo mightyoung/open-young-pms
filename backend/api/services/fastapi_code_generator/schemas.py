@@ -29,6 +29,9 @@ class UserResponse(BaseModel):
     full_name: str
     phone: Optional[str] = None
     is_active: bool
+    company_id: Optional[UUID] = None
+    department_id: Optional[UUID] = None
+    role_id: Optional[UUID] = None
 
 
 class RoleResponse(BaseModel):

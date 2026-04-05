@@ -20,7 +20,7 @@ def _patch_user_model():
 _patch_user_model()
 
 
-class Department(Base):
+class OrgDepartment(Base):
     __tablename__ = "departments_org"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
@@ -33,10 +33,10 @@ class Department(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-    parent: Mapped[Optional["Department"]] = relationship(
-        "Department", remote_side=[id], back_populates="children", foreign_keys=[parent_id]
+    parent: Mapped[Optional["OrgDepartment"]] = relationship(
+        "OrgDepartment", remote_side=[id], back_populates="children", foreign_keys=[parent_id]
     )
-    children: Mapped[list["Department"]] = relationship("Department", back_populates="parent", foreign_keys=[parent_id])
+    children: Mapped[list["OrgDepartment"]] = relationship("OrgDepartment", back_populates="parent", foreign_keys=[parent_id])
     manager: Mapped[Optional["User"]] = relationship("User", foreign_keys=[manager_id])
     user_orgs: Mapped[list["UserOrganization"]] = relationship("UserOrganization", back_populates="department")
 
@@ -50,5 +50,5 @@ class UserOrganization(Base):
     position: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     is_default: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    department: Mapped["Department"] = relationship("Department", back_populates="user_orgs")
+    department: Mapped["OrgDepartment"] = relationship("OrgDepartment", back_populates="user_orgs")
     user: Mapped["User"] = relationship("User", back_populates="organizations")

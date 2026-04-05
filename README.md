@@ -45,6 +45,25 @@ npm install
 npm run dev            # http://localhost:5173，API 代理到 localhost:8001
 ```
 
+### 方式三：本地演示模式 (SQLite + 一键初始化)
+
+为了方便快速预览，系统支持在没有 PostgreSQL 的情况下回退到 SQLite。
+
+```bash
+# 1. 后端初始化（注入演示数据：admin/admin123）
+cd backend
+export PYTHONPATH=$PYTHONPATH:.
+export JWT_SECRET=dev-secret-key-12345
+python3 scripts/init_db.py
+
+# 2. 启动后端
+uvicorn main:app --reload --port 8001
+
+# 3. 运行 API 回归测试（可选）
+cd ..
+python3 scripts/api_regression.py
+```
+
 ---
 
 ## 📁 项目结构

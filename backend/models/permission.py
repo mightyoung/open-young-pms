@@ -20,7 +20,7 @@ def _patch_user_model():
 _patch_user_model()
 
 
-class Role(Base):
+class PermissionRole(Base):
     __tablename__ = "roles_ext"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
@@ -31,7 +31,7 @@ class Role(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 
-class UserRole(Base):
+class PermissionUserRole(Base):
     __tablename__ = "user_roles"
     __table_args__ = {"extend_existing": True}
 

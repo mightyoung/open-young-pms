@@ -54,9 +54,9 @@ async def get_department(
         raise HTTPException(status_code=403, detail="无权限访问该部门")
 
     from sqlalchemy import select
-    from models.organization import Department
+    from models.organization import OrgDepartment
 
-    result = await db.execute(select(Department).where(Department.id == department_id, Department.is_active == True))
+    result = await db.execute(select(OrgDepartment).where(OrgDepartment.id == department_id, OrgDepartment.is_active == True))
     dept = result.scalar_one_or_none()
     if not dept:
         raise HTTPException(status_code=404, detail="部门不存在")

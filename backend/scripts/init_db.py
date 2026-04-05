@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from api.services.fastapi_code_generator.database import init_db, get_async_session_factory
+from api.services.fastapi_code_generator.database import init_db, _get_async_session_factory
 from api.services.fastapi_code_generator.models import (
     Company, Department, Role, User, Project, Phase, Task
 )
@@ -11,7 +11,7 @@ from api.services.fastapi_code_generator.auth import hash_password
 
 async def seed_data():
     """初始化基础演示数据"""
-    async_session = get_async_session_factory()
+    async_session = _get_async_session_factory()
     
     async with async_session() as session:
         # 1. 创建公司

@@ -9,7 +9,7 @@ from api.services.fastapi_code_generator.database import get_sync_db
 from api.services.fastapi_code_generator.models import User
 from api.services.fastapi_code_generator.auth import get_current_user
 from services.permission_service import get_user_permissions
-from models.permission import Role
+from models.permission import PermissionRole
 from api.response import ApiResponse
 from schemas import ErrorCode, PageResult
 from middleware.exception import ApiException
@@ -74,10 +74,10 @@ async def create_role(
     db=Depends(get_sync_db),
 ):
     """Create a new role (super_admin only)."""
-    existing = db.query(Role).filter(Role.code == data.code).first()
+    existing = db.query(PermissionRole).filter(PermissionRole.code == data.code).first()
     if existing:
         raise ApiException(code=ErrorCode.INVALID_PARAMS.code, message="Role code already exists")
-    role = Role(
+    role = PermissionRole(
         id=str(uuid.uuid4()),
         code=data.code,
         name=data.name,
@@ -105,7 +105,7 @@ async def list_roles(
     db=Depends(get_sync_db),
 ):
     """List all roles (super_admin only)."""
-    roles = db.query(Role).all()
+    roles = db.query(PermissionRole).all()
     return PageResult(
         items=[
             RoleResponse(
@@ -137,7 +137,7 @@ async def assign_roles(
     user = db.query(DBUser).filter(DBUser.id == user_id).first()
     if not user:
         raise ApiException.from_error_code(ErrorCode.USER_NOT_FOUND)
-    valid_roles = db.query(Role).filter(Role.code.in_(role_codes)).all()
+    valid_roles = db.query(PermissionRole).filter(PermissionRole.code.in_(role_codes)).all()
     if len(valid_roles) != len(role_codes):
         raise ApiException.from_error_code(ErrorCode.ROLE_NOT_FOUND)
     if valid_roles:

@@ -1,0 +1,87 @@
+{
+  "artifacts": [
+    {
+      "id": "progress_1",
+      "type": "progress",
+      "path": "progress.md",
+      "phase": "REFINING",
+      "generated_by": "system",
+      "created_at": "2026-04-05T17:14:55.059328",
+      "metadata": {}
+    },
+    {
+      "id": "session_2",
+      "type": "session",
+      "path": "SESSION-STATE.md",
+      "phase": "REFINING",
+      "generated_by": "system",
+      "created_at": "2026-04-05T17:14:55.061233",
+      "metadata": {}
+    },
+    {
+      "id": "tracker_3",
+      "type": "tracker",
+      "path": ".task_tracker.json",
+      "phase": "REFINING",
+      "generated_by": "system",
+      "created_at": "2026-04-05T17:14:55.061614",
+      "metadata": {}
+    },
+    {
+      "id": "progress_4",
+      "type": "progress",
+      "path": "progress.md",
+      "phase": "REFINING",
+      "generated_by": "system",
+      "created_at": "2026-04-05T17:32:47.425047",
+      "metadata": {}
+    },
+    {
+      "id": "session_5",
+      "type": "session",
+      "path": "SESSION-STATE.md",
+      "phase": "REFINING",
+      "generated_by": "system",
+      "created_at": "2026-04-05T17:32:47.427119",
+      "metadata": {}
+    },
+    {
+      "id": "tracker_6",
+      "type": "tracker",
+      "path": ".task_tracker.json",
+      "phase": "REFINING",
+      "generated_by": "system",
+      "created_at": "2026-04-05T17:32:47.427579",
+      "metadata": {}
+    },
+    {
+      "id": "progress_7",
+      "type": "progress",
+      "path": "progress.md",
+      "phase": "DEBUGGING",
+      "generated_by": "system",
+      "created_at": "2026-04-05T17:41:38.958286",
+      "metadata": {}
+    },
+    {
+      "id": "session_8",
+      "type": "session",
+      "path": "SESSION-STATE.md",
+      "phase": "DEBUGGING",
+      "generated_by": "system",
+      "created_at": "2026-04-05T17:41:38.960527",
+      "metadata": {}
+    },
+    {
+      "id": "tracker_9",
+      "type": "tracker",
+      "path": ".task_tracker.json",
+      "phase": "DEBUGGING",
+      "generated_by": "system",
+      "created_at": "2026-04-05T17:41:38.960904",
+      "metadata": {}
+    }
+  ],
+  "created_at": "2026-04-05T17:14:55.059325",
+  "updated_at": "2026-04-05T17:41:38.960906"
+}

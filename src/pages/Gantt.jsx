@@ -297,80 +297,62 @@ function GanttBar({ task, color }) {
   )
 }
 
-function GanttChart({ data }) {
+function GanttChart({ data, onTaskUpdate }) {
+  const [draggingTask, setDraggingTask] = useState(null)
+  const [startX, setStartX] = useState(0)
+
+  const handleMouseDown = (e, task) => {
+    setDraggingTask(task)
+    setStartX(e.clientX)
+  }
+
+  const handleMouseMove = useCallback((e) => {
+    if (!draggingTask) return
+    const deltaX = e.clientX - startX
+    const daysShift = Math.round((deltaX / 900) * TOTAL_DAYS)
+    
+    if (daysShift !== 0) {
+      const newStart = new Date(new Date(draggingTask.start).getTime() + daysShift * 86400000)
+      const newEnd = new Date(new Date(draggingTask.end).getTime() + daysShift * 86400000)
+      onTaskUpdate(draggingTask.id, { 
+        start: newStart.toISOString().split('T')[0],
+        end: newEnd.toISOString().split('T')[0]
+      })
+      setStartX(e.clientX)
+    }
+  }, [draggingTask, startX, onTaskUpdate])
+
+  const handleMouseUp = () => setDraggingTask(null)
+
+  useEffect(() => {
+    if (draggingTask) {
+      window.addEventListener('mousemove', handleMouseMove)
+      window.addEventListener('mouseup', handleMouseUp)
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [draggingTask, handleMouseMove])
+
   const months = []
   let cur = new Date(GANTT_START)
-  while (cur < GANTT_END) {
-    months.push({
-      label: `${cur.getMonth() + 1}月`,
-      left: ((cur - GANTT_START) / 86400000 / TOTAL_DAYS) * 100,
-      width: (30 / TOTAL_DAYS) * 100,
-    })
-    cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1)
-  }
-  const allTasks = []
-  const flatten = (nodes, _path = '') => {
-    nodes.forEach(n => {
-      if (n.children) {
-        flatten(n.children, n.name)
-      } else {
-        allTasks.push(n)
-      }
-    })
-  }
-  flatten(data)
-  return (
-    <div style={{ overflowX: 'auto' }}>
-      <div style={{ minWidth: 900 }}>
-        <div
-          style={{
-            display: 'flex',
-            borderBottom: `1px solid ${D.border}`,
-            paddingLeft: 200,
-            position: 'relative',
-          }}
-        >
-          {months.map((m, i) => (
-            <div
-              key={i}
-              style={{
-                position: 'absolute',
-                left: `${m.left}%`,
-                width: `${m.width}%`,
-                textAlign: 'center',
-                padding: '8px 0',
-                borderLeft: `1px solid ${D.border}`,
-              }}
-            >
-              <Text style={{ fontSize: 11, color: D.textMuted, fontWeight: 600 }}>{m.label}</Text>
-            </div>
-          ))}
-        </div>
+...
         {allTasks.map((task, i) => (
           <motion.div
             key={task.id}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: i * 0.03 }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              padding: '4px 0',
-              borderBottom: `1px solid ${D.border}20`,
-              gap: 8,
-            }}
-          >
-            <div style={{ width: 200, flexShrink: 0, paddingRight: 12 }}>
-              <Text style={{ fontSize: 12, color: D.textSec, fontFamily: 'monospace' }}>
-                {task.id}
-              </Text>
-              <Text style={{ fontSize: 12, color: D.text, marginLeft: 6 }}>{task.name}</Text>
-            </div>
+...
             <div style={{ flex: 1, paddingRight: 8 }}>
-              <GanttBar task={task} color={task.progress === 100 ? D.success : D.primary} />
+              <div onMouseDown={(e) => handleMouseDown(e, task)}>
+                <GanttBar task={task} color={task.progress === 100 ? D.success : D.primary} />
+              </div>
             </div>
           </motion.div>
         ))}
+        {/* 依赖线层 */}
+        <svg style={{ position: 'absolute', top: 40, left: 200, width: '100%', height: '100%', pointerEvents: 'none' }}>
+          {/* 这里可以扩展具体的依赖连线算法 */}
+        </svg>
       </div>
     </div>
   )
@@ -415,6 +397,10 @@ export default function Gantt() {
   const handlers = useMemo(() => ({
     task_update: handleTaskUpdate
   }), [handleTaskUpdate])
+
+  const updateTaskLocally = useCallback((taskId, updates) => {
+    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, ...updates } : t))
+  }, [])
 
   const token = localStorage.getItem('token') || 'demo_token'
   const wsUrl = `ws://localhost:8000/ws/notifications?token=${token}`
@@ -540,7 +526,7 @@ export default function Gantt() {
                 2026-03-01 ~ 2026-07-01
               </Text>
             </div>
-            <GanttChart data={MOCK_WBS} />
+            <GanttChart data={MOCK_WBS} onTaskUpdate={updateTaskLocally} />
           </Card>
         </motion.div>
       )}

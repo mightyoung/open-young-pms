@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.services.fastapi_code_generator.auth import get_current_user
 from api.services.fastapi_code_generator.database import get_db
 from api.services.fastapi_code_generator.models import User
-from models.report import Report as ReportModel
+from models.report import LegacyReport as ReportModel
 from schemas.forum import UserBrief
 from schemas.report import (
     ReportCreate,

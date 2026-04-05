@@ -132,13 +132,27 @@ function getTypeLabel(type: string) {
   return issueTypes.find(t => t.value === type)?.label || ''
 }
 
-async function takePhoto() {
+async def takePhoto() {
   uni.chooseImage({
     count: 1,
     sourceType: ['camera'],
-    success: (res) => {
+    success: async (res) => {
       formData.photos = res.tempFilePaths
       getLocation()
+      
+      // 触发 AI 图片识别
+      uni.showLoading({ title: 'AI 识别中...' })
+      try {
+        const aiRes = await api.ai.analyzeImage(res.tempFilePaths[0])
+        if (aiRes.has_hazard) {
+          formData.description = aiRes.desc
+          uni.showToast({ title: 'AI 已识别隐患', icon: 'success' })
+        }
+      } catch (e) {
+        console.error('AI Vision error:', e)
+      } finally {
+        uni.hideLoading()
+      }
     }
   })
 }

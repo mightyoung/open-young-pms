@@ -1,1 +1,1 @@
-from models.audit import AuditLog
+from models.audit import LegacyAuditLog

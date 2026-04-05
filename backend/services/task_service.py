@@ -8,7 +8,7 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from models.task import Task as WBSTask
+from models.task import WBSTask
 from services.websocket_manager import manager
 
 

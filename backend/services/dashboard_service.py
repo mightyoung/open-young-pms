@@ -6,8 +6,8 @@ from datetime import datetime, timezone
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.task import Task as WBSTask
-from models.report import Report as ReportModel
+from models.task import WBSTask
+from models.report import LegacyReport as ReportModel
 from api.services.fastapi_code_generator.models import HazardReport
 from schemas.dashboard import TrafficLight, EarlyWarning, ProjectCockpit
 

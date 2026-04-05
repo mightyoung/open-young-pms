@@ -8,7 +8,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, String, Text, Index
 from api.services.fastapi_code_generator.database import Base, GUID
 
 
-class Report(Base):
+class LegacyReport(Base):
     __tablename__ = "reports"
     __table_args__ = (
         Index("ix_report_project_author", "project_id", "author_id"),

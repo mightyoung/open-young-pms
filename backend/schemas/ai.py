@@ -57,3 +57,11 @@ class AIIntentResponse(BaseModel):
     data: dict
     confidence: float
     summary: str
+
+
+class AIIntentRequest(BaseModel):
+    text: str
+
+
+class AIAnalyzeImageRequest(BaseModel):
+    image_url: str

@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship
 from api.services.fastapi_code_generator.database import Base, GUID
 
 
-class Task(Base):
+class WBSTask(Base):
     __tablename__ = "wbs_tasks"
 
     id = Column(GUID, primary_key=True, default=uuid.uuid4)
@@ -35,14 +35,13 @@ class Task(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    project = relationship("Project", back_populates="wbs_tasks")
     assignee = relationship("User")
-    parent = relationship("Task", remote_side=[id], back_populates="children")
-    children = relationship("Task", back_populates="parent", cascade="all, delete-orphan")
-    comments = relationship("TaskComment", back_populates="task", cascade="all, delete-orphan")
+    parent = relationship("WBSTask", remote_side=[id], back_populates="children")
+    children = relationship("WBSTask", back_populates="parent", cascade="all, delete-orphan")
+    comments = relationship("WBSTaskComment", back_populates="task", cascade="all, delete-orphan")
 
 
-class TaskComment(Base):
+class WBSTaskComment(Base):
     __tablename__ = "wbs_task_comments"
 
     id = Column(GUID, primary_key=True, default=uuid.uuid4)
@@ -51,4 +50,4 @@ class TaskComment(Base):
     content = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    task = relationship("Task", back_populates="comments")
+    task = relationship("WBSTask", back_populates="comments")

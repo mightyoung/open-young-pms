@@ -19,32 +19,32 @@
     "name": "列出角色",
     "method": "GET",
     "path": "/roles",
-    "status": 500,
-    "success": false,
+    "status": 200,
+    "success": true,
     "error": ""
   },
   {
     "name": "列出公司",
     "method": "GET",
     "path": "/companies",
-    "status": 500,
-    "success": false,
+    "status": 200,
+    "success": true,
     "error": ""
   },
   {
     "name": "列出部门",
     "method": "GET",
     "path": "/departments",
-    "status": 500,
-    "success": false,
+    "status": 200,
+    "success": true,
     "error": ""
   },
   {
     "name": "部门树",
     "method": "GET",
     "path": "/departments/tree",
-    "status": 500,
-    "success": false,
+    "status": 200,
+    "success": true,
     "error": ""
   },
   {
@@ -75,6 +75,14 @@
     "name": "获取通知设置",
     "method": "GET",
     "path": "/notification-settings",
+    "status": 200,
+    "success": true,
+    "error": ""
+  },
+  {
+    "name": "更新通知设置",
+    "method": "PUT",
+    "path": "/notification-settings",
     "status": 500,
     "success": false,
     "error": ""
@@ -99,8 +107,8 @@
     "name": "列出报告",
     "method": "GET",
     "path": "/reports",
-    "status": 405,
-    "success": false,
+    "status": 200,
+    "success": true,
     "error": ""
   },
   {
@@ -123,24 +131,24 @@
     "name": "列出任务",
     "method": "GET",
     "path": "/tasks",
-    "status": 405,
-    "success": false,
+    "status": 200,
+    "success": true,
     "error": ""
   },
   {
     "name": "我的审批任务",
     "method": "GET",
     "path": "/approval/my-tasks",
-    "status": 200,
-    "success": true,
+    "status": 404,
+    "success": false,
     "error": ""
   },
   {
     "name": "汇总",
     "method": "GET",
     "path": "/dashboard/summary",
-    "status": 200,
-    "success": true,
+    "status": 404,
+    "success": false,
     "error": ""
   }
 ]

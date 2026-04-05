@@ -5,12 +5,12 @@ from sqlalchemy import Boolean, Column, ForeignKey, String, UniqueConstraint
 from api.services.fastapi_code_generator.database import Base
 
 
-class Notification(Base):
+class UserNotification(Base):
     __tablename__ = "notifications"
     __table_args__ = {"extend_existing": True}
 
 
-class NotificationSetting(Base):
+class UserNotificationSetting(Base):
     __tablename__ = "notification_settings"
     __table_args__ = (UniqueConstraint("user_id", name="uq_notification_settings_user_id"), {"extend_existing": True})
 
