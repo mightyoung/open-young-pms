@@ -13,10 +13,11 @@ import {
   Checkbox,
   Row,
   Col,
+  message,
 } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
 import { useRoles } from '../hooks/useRoles'
-import { ROLES, ROLE_LABELS, ROLE_COLORS, PERMISSION_MATRIX } from '../../../constants/permissions'
+import { ROLES, ROLE_LABELS, ROLE_COLORS } from '../../../constants/permissions'
 import SkeletonContent from '../../../components/SkeletonContent'
 
 const ALL_PERMISSIONS = [
@@ -65,12 +66,15 @@ export default function RolesPage() {
 
   const handleEdit = (role) => {
     setEditingRole(role)
-    form.setFieldsValue({ name: role.name, description: role.description })
+    form.setFieldsValue({ name: role.name, label: role.label })
     setModalOpen(true)
   }
 
   const handleDelete = async (id) => {
-    await deleteRole(id)
+    const success = await deleteRole(id)
+    if (success) {
+      message.success('删除成功')
+    }
   }
 
   const handleSubmit = async () => {
@@ -89,45 +93,49 @@ export default function RolesPage() {
 
   const handleEditPermissions = (role) => {
     setSelectedRole(role)
-    setRolePermissions(PERMISSION_MATRIX[role.code] || [])
+    // Backend returns permissions as object, frontend uses array
+    const perms = role.permissions ? Object.keys(role.permissions) : []
+    setRolePermissions(perms)
     setDrawerOpen(true)
   }
 
   const handleSavePermissions = async () => {
     if (selectedRole) {
-      await updateRolePermissions(selectedRole.id, rolePermissions)
-      setDrawerOpen(false)
+      const success = await updateRolePermissions(selectedRole.id, rolePermissions)
+      if (success) {
+        setDrawerOpen(false)
+      }
     }
   }
 
   const columns = [
     {
-      title: '角色编码',
-      dataIndex: 'code',
-      key: 'code',
-      render: code => (
-        <Tag color={ROLE_COLORS[code] || 'default'}>
-          {code}
+      title: '角色代码',
+      dataIndex: 'name',
+      key: 'name',
+      render: name => (
+        <Tag color={ROLE_COLORS[name] || 'default'}>
+          {name}
         </Tag>
       ),
     },
     {
       title: '角色名称',
-      dataIndex: 'name',
-      key: 'name',
-      render: name => <span style={{ fontWeight: 600 }}>{name}</span>,
+      dataIndex: 'label',
+      key: 'label',
+      render: label => <span style={{ fontWeight: 600 }}>{label}</span>,
     },
     {
-      title: '描述',
-      dataIndex: 'description',
-      key: 'description',
-      render: desc => desc || '-',
+      title: '系统角色',
+      dataIndex: 'is_system',
+      key: 'is_system',
+      render: isSystem => isSystem ? '是' : '否',
     },
     {
       title: '权限数量',
       key: 'permissionCount',
       render: (_, record) => {
-        const perms = PERMISSION_MATRIX[record.code] || []
+        const perms = record.permissions ? Object.keys(record.permissions) : []
         return <span>{perms.length} 项</span>
       },
     },
@@ -153,7 +161,7 @@ export default function RolesPage() {
           >
             编辑
           </Button>
-          {record.code !== ROLES.SUPER_ADMIN && (
+          {record.name !== ROLES.SUPER_ADMIN && (
             <Popconfirm
               title="确定删除此角色？"
               onConfirm={() => handleDelete(record.id)}
@@ -201,28 +209,28 @@ export default function RolesPage() {
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item
-            name="code"
-            label="角色编码"
-            rules={[{ required: true, message: '请输入角色编码' }]}
+            name="name"
+            label="角色代码"
+            rules={[{ required: true, message: '请输入角色代码' }]}
           >
             <Input placeholder="如: project_manager" disabled={!!editingRole} />
           </Form.Item>
           <Form.Item
-            name="name"
+            name="label"
             label="角色名称"
             rules={[{ required: true, message: '请输入角色名称' }]}
           >
             <Input placeholder="如: 项目经理" />
           </Form.Item>
-          <Form.Item name="description" label="描述">
-            <Input.TextArea placeholder="角色描述..." rows={3} />
+          <Form.Item name="permissions" label="权限">
+            <Input.TextArea placeholder="权限 JSON" rows={3} />
           </Form.Item>
         </Form>
       </Modal>
 
       {/* 权限配置 Drawer */}
       <Drawer
-        title={`配置角色权限 - ${selectedRole?.name || ''}`}
+        title={`配置角色权限 - ${selectedRole?.label || ''}`}
         placement="right"
         width={480}
         open={drawerOpen}
@@ -236,7 +244,7 @@ export default function RolesPage() {
         {selectedRole && (
           <div>
             <div style={{ marginBottom: 16, color: '#666' }}>
-              当前角色：{ROLE_LABELS[selectedRole.code] || selectedRole.name}
+              当前角色：{ROLE_LABELS[selectedRole.name] || selectedRole.label}
             </div>
             <Checkbox.Group
               value={rolePermissions}

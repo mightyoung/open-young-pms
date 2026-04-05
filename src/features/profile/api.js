@@ -1,28 +1,31 @@
 // 个人中心 API
-import { get, put, post } from '../../api'
+import { api } from '../../api'
 
 export const profileApi = {
   // 获取当前用户信息
-  getProfile: () => get('/users/me'),
+  getProfile: () => api.get('/users/me'),
   
   // 更新个人信息
-  updateProfile: (data) => put('/users/me', data),
+  updateProfile: (data) => api.put('/users/me', data),
   
-  // 修改密码
-  changePassword: (oldPassword, newPassword) => 
-    post('/users/me/password', { old_password: oldPassword, new_password: newPassword }),
+  // 修改密码 (如果后端支持)
+  changePassword: (_oldPassword, _newPassword) => {
+    // TODO: 后端需要实现 /users/me/password 接口
+    console.warn('changePassword API not implemented in backend')
+    return Promise.reject(new Error('API not implemented'))
+  },
   
-  // 上传头像
-  uploadAvatar: (file) => {
-    const formData = new FormData()
-    formData.append('file', file)
-    return post('/users/me/avatar', formData)
+  // 上传头像 (如果后端支持)
+  uploadAvatar: (_file) => {
+    // TODO: 后端需要实现 /users/me/avatar 接口
+    console.warn('uploadAvatar API not implemented in backend')
+    return Promise.reject(new Error('API not implemented'))
   },
   
   // 获取通知设置
-  getNotificationSettings: () => get('/users/me/notification-settings'),
+  getNotificationSettings: () => api.get('/notification-settings'),
   
   // 更新通知设置
   updateNotificationSettings: (settings) => 
-    put('/users/me/notification-settings', settings),
+    api.put('/notification-settings', settings),
 }

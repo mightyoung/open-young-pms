@@ -74,6 +74,16 @@ export const ROUTE_META = {
     path: '/resources',
     label: '资源调度',
   },
+  roles: {
+    key: 'roles',
+    path: '/roles',
+    label: '角色管理',
+  },
+  profile: {
+    key: 'profile',
+    path: '/profile',
+    label: '个人中心',
+  },
 }
 
 export const DEFAULT_AUTH_ROUTE = ROUTE_META.dashboard.path

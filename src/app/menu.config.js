@@ -95,4 +95,16 @@ export const MENU_ITEMS = [
     path: ROUTE_META.resources.path,
     iconKey: 'AppstoreOutlined',
   },
+  {
+    key: ROUTE_META.roles.key,
+    label: ROUTE_META.roles.label,
+    path: ROUTE_META.roles.path,
+    iconKey: 'SafetyCertificateOutlined',
+  },
+  {
+    key: ROUTE_META.profile.key,
+    label: ROUTE_META.profile.label,
+    path: ROUTE_META.profile.path,
+    iconKey: 'UserOutlined',
+  },
 ]

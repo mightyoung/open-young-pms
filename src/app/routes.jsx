@@ -28,6 +28,8 @@ const ApprovalCenterPage = lazy(
   () => import('../features/approval-center/pages/ApprovalCenterPage')
 )
 const ResourcesPage = lazy(() => import('../features/resources/pages/ResourcesPage'))
+const RolesPage = lazy(() => import('../features/roles/pages/RolesPage'))
+const ProfilePage = lazy(() => import('../features/profile/pages/ProfilePage'))
 
 function NotFoundPage() {
   return <Navigate to={DEFAULT_AUTH_ROUTE} replace />
@@ -181,6 +183,22 @@ export function AppRoutes() {
           element: (
             <Suspense fallback={<PageLoader />}>
               <ResourcesPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'roles',
+          element: (
+            <Suspense fallback={<PageLoader />}>
+              <RolesPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'profile',
+          element: (
+            <Suspense fallback={<PageLoader />}>
+              <ProfilePage />
             </Suspense>
           ),
         },

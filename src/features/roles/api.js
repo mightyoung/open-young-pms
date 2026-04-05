@@ -1,27 +1,24 @@
 // 角色管理 API
-import { get, post, put, del } from '../../api'
+import { api } from '../../api'
 
 const BASE = '/roles'
 
 export const rolesApi = {
   // 获取角色列表
-  list: () => get(BASE),
+  list: () => api.get(BASE),
   
   // 获取角色详情
-  get: (id) => get(`${BASE}/${id}`),
+  get: (id) => api.get(`${BASE}/${id}`),
   
   // 创建角色
-  create: (data) => post(BASE, data),
+  create: (data) => api.post(BASE, data),
   
   // 更新角色
-  update: (id, data) => put(`${BASE}/${id}`, data),
+  update: (id, data) => api.put(`${BASE}/${id}`, data),
   
   // 删除角色
-  delete: (id) => del(`${BASE}/${id}`),
+  delete: (id) => api.delete(`${BASE}/${id}`),
   
-  // 获取权限矩阵
-  getPermissions: () => get(`${BASE}/permissions`),
-  
-  // 更新角色权限
-  updatePermissions: (id, permissions) => put(`${BASE}/${id}/permissions`, { permissions }),
+  // 更新角色权限 (PATCH /roles/{id})
+  updatePermissions: (id, permissions) => api.patch(`${BASE}/${id}`, { permissions }),
 }
