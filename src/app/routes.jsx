@@ -19,6 +19,7 @@ const NotificationSettingsPage = lazy(
 const ReportsPage = lazy(() => import('../features/reports/pages/ReportsPage'))
 const ForumPage = lazy(() => import('../features/forum/pages/ForumPage'))
 const HazardsPage = lazy(() => import('../features/hazards/pages/HazardsPage'))
+const DraftBoxPage = lazy(() => import('../pages/DraftBox'))
 const RisksPage = lazy(() => import('../features/risks/pages/RisksPage'))
 const QualityPage = lazy(() => import('../features/quality/pages/QualityPage'))
 const OrganizationPage = lazy(() => import('../features/organization/pages/OrganizationPage'))
@@ -127,6 +128,14 @@ export function AppRoutes() {
           element: (
             <Suspense fallback={<PageLoader />}>
               <HazardsPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'drafts',
+          element: (
+            <Suspense fallback={<PageLoader />}>
+              <DraftBoxPage />
             </Suspense>
           ),
         },

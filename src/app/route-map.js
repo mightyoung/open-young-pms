@@ -39,6 +39,11 @@ export const ROUTE_META = {
     path: '/hazards',
     label: '隐患管理',
   },
+  drafts: {
+    key: 'drafts',
+    path: '/drafts',
+    label: '草稿箱',
+  },
   risks: {
     key: 'risks',
     path: '/risks',

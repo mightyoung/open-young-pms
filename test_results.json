@@ -1,0 +1,146 @@
+[
+  {
+    "name": "获取当前用户",
+    "method": "GET",
+    "path": "/users/me",
+    "status": 200,
+    "success": true,
+    "error": ""
+  },
+  {
+    "name": "列出用户",
+    "method": "GET",
+    "path": "/users",
+    "status": 200,
+    "success": true,
+    "error": ""
+  },
+  {
+    "name": "列出角色",
+    "method": "GET",
+    "path": "/roles",
+    "status": 500,
+    "success": false,
+    "error": ""
+  },
+  {
+    "name": "列出公司",
+    "method": "GET",
+    "path": "/companies",
+    "status": 500,
+    "success": false,
+    "error": ""
+  },
+  {
+    "name": "列出部门",
+    "method": "GET",
+    "path": "/departments",
+    "status": 500,
+    "success": false,
+    "error": ""
+  },
+  {
+    "name": "部门树",
+    "method": "GET",
+    "path": "/departments/tree",
+    "status": 500,
+    "success": false,
+    "error": ""
+  },
+  {
+    "name": "列出隐患",
+    "method": "GET",
+    "path": "/hazards",
+    "status": 200,
+    "success": true,
+    "error": ""
+  },
+  {
+    "name": "隐患统计",
+    "method": "GET",
+    "path": "/hazards/stats/summary",
+    "status": 200,
+    "success": true,
+    "error": ""
+  },
+  {
+    "name": "草稿箱",
+    "method": "GET",
+    "path": "/hazards/drafts",
+    "status": 422,
+    "success": false,
+    "error": ""
+  },
+  {
+    "name": "获取通知设置",
+    "method": "GET",
+    "path": "/notification-settings",
+    "status": 500,
+    "success": false,
+    "error": ""
+  },
+  {
+    "name": "列出帖子",
+    "method": "GET",
+    "path": "/forum/posts",
+    "status": 500,
+    "success": false,
+    "error": ""
+  },
+  {
+    "name": "创建帖子",
+    "method": "POST",
+    "path": "/forum/posts",
+    "status": 500,
+    "success": false,
+    "error": ""
+  },
+  {
+    "name": "列出报告",
+    "method": "GET",
+    "path": "/reports",
+    "status": 405,
+    "success": false,
+    "error": ""
+  },
+  {
+    "name": "报告统计",
+    "method": "GET",
+    "path": "/reports/summary",
+    "status": 200,
+    "success": true,
+    "error": ""
+  },
+  {
+    "name": "列出项目",
+    "method": "GET",
+    "path": "/projects",
+    "status": 200,
+    "success": true,
+    "error": ""
+  },
+  {
+    "name": "列出任务",
+    "method": "GET",
+    "path": "/tasks",
+    "status": 405,
+    "success": false,
+    "error": ""
+  },
+  {
+    "name": "我的审批任务",
+    "method": "GET",
+    "path": "/approval/my-tasks",
+    "status": 200,
+    "success": true,
+    "error": ""
+  },
+  {
+    "name": "汇总",
+    "method": "GET",
+    "path": "/dashboard/summary",
+    "status": 200,
+    "success": true,
+    "error": ""
+  }
+]

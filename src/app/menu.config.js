@@ -54,6 +54,12 @@ export const MENU_ITEMS = [
     iconKey: 'SafetyOutlined',
   },
   {
+    key: ROUTE_META.drafts.key,
+    label: ROUTE_META.drafts.label,
+    path: ROUTE_META.drafts.path,
+    iconKey: 'EditOutlined',
+  },
+  {
     key: ROUTE_META.risks.key,
     label: ROUTE_META.risks.label,
     path: ROUTE_META.risks.path,
