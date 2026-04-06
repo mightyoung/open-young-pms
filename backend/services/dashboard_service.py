@@ -115,7 +115,7 @@ class DashboardService:
         return "red"
 
     async def _calc_budget_light(self, project_id: str) -> str:
-        from models import Project
+        from api.services.fastapi_code_generator.models import Project
 
         result = await self.db.execute(select(Project).where(Project.id == project_id))
         project = result.scalar_one_or_none()
@@ -204,7 +204,7 @@ class DashboardService:
         }
 
     async def get_project_cockpit(self, project_id: str) -> ProjectCockpit:
-        from models import Project
+        from api.services.fastapi_code_generator.models import Project
 
         result = await self.db.execute(select(Project).where(Project.id == project_id))
         project = result.scalar_one_or_none()
@@ -310,7 +310,7 @@ class DashboardService:
         return sorted(warnings, key=lambda w: (w.level == "warning", w.created_at), reverse=True)[:20]
 
     async def get_department_overview(self, department_id: str) -> dict:
-        from models import Department, Project, User
+        from api.services.fastapi_code_generator.models import Department, Project, User
 
         dept_result = await self.db.execute(select(Department).where(Department.id == department_id))
         dept = dept_result.scalar_one_or_none()
@@ -353,7 +353,7 @@ class DashboardService:
         }
 
     async def get_company_overview(self) -> dict:
-        from models import Company, Project, Department, User
+        from api.services.fastapi_code_generator.models import Company, Project, Department, User
 
         result = await self.db.execute(select(Company))
         companies = result.scalars().all()

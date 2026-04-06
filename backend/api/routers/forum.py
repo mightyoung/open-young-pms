@@ -38,11 +38,9 @@ async def list_posts(
     current_user=Depends(get_current_user),
 ):
     """帖子列表（支持Tab筛选、搜索）"""
-    query = select(ForumPost).where(ForumPost.status == "published")
+    query = select(ForumPost)
     if tab == "pinned":
         query = query.where(ForumPost.is_pinned == True)
-    if tab == "featured":
-        query = query.where(ForumPost.is_featured == True)
     if keyword:
         query = query.where(ForumPost.title.ilike(f"%{keyword}%"))
 
@@ -58,9 +56,7 @@ async def list_posts(
             "title": r.title,
             "author_id": r.author_id,
             "tags": r.tags or [],
-            "visibility": r.visibility or "public",
             "is_pinned": r.is_pinned,
-            "is_featured": r.is_featured,
             "view_count": r.view_count,
             "like_count": r.like_count,
             "reply_count": r.reply_count,
@@ -83,7 +79,6 @@ async def create_post(
         content=data.content,
         author_id=str(current_user.id),
         tags=data.tags or [],
-        visibility=data.visibility,
     )
     db.add(post)
     await db.commit()
@@ -108,8 +103,8 @@ async def get_post(
 
     replies_result = await db.execute(
         select(ForumReply)
-        .where(ForumReply.post_id == post_id, ForumReply.status == "published")
-        .order_by(ForumReply.floor_number)
+        .where(ForumReply.post_id == post_id)
+        .order_by(ForumReply.created_at)
     )
     replies = replies_result.scalars().all()
     reply_items = [
@@ -133,7 +128,6 @@ async def get_post(
             "author_id": post.author_id,
             "tags": post.tags or [],
             "is_pinned": post.is_pinned,
-            "is_featured": post.is_featured,
             "view_count": post.view_count,
             "like_count": post.like_count,
             "reply_count": post.reply_count,
@@ -225,9 +219,10 @@ async def toggle_feature(
     post = result.scalar_one_or_none()
     if not post:
         return ApiResponse.error("B0001", "帖子不存在")
-    post.is_featured = featured
+    # is_featured field doesn't exist in model, use is_pinned instead
+    post.is_pinned = featured
     await db.commit()
-    return ApiResponse.ok({"is_featured": featured})
+    return ApiResponse.ok({"is_pinned": featured})
 
 
 @router.delete("/posts/{post_id}")

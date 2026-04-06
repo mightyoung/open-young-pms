@@ -105,6 +105,31 @@ async def list_hazard_reports(
     return PaginatedResponse.ok(items, total, page, page_size)
 
 
+@router.get("/drafts", response_model=PaginatedResponse)
+async def list_hazard_drafts(
+    page: int = 1,
+    page_size: int = 20,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """查询草稿箱（仅返回当前用户的草稿）。GET /api/v1/hazards/drafts"""
+    query = (
+        select(HazardReport).options(selectinload(HazardReport.rectifications))
+        .where(HazardReport.is_draft == True)
+        .where(HazardReport.reporter_id == str(current_user.id))
+    )
+
+    count_q = select(func.count()).select_from(query.subquery())
+    total = (await db.execute(count_q)).scalar() or 0
+
+    query = query.order_by(HazardReport.created_at.desc())
+    query = query.offset((page - 1) * page_size).limit(page_size)
+    rows = (await db.execute(query)).scalars().all()
+    items = [HazardReportResponse.model_validate(r) for r in rows]
+
+    return PaginatedResponse.ok(items, total, page, page_size)
+
+
 @router.get("/{report_id}", response_model=HazardReportResponse)
 async def get_hazard_report(
     report_id: UUID,

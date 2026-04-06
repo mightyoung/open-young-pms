@@ -153,24 +153,39 @@ async def get_history(session_id: str, current_user=Depends(get_current_user)):
     return ApiResponse.ok({"session_id": session_id, "messages": history})
 
 
-@router.post("/knowledge/add")
-async def add_knowledge(
-    content: str,
-    source: str,
-    project_id: Optional[str] = None,
+from fastapi import APIRouter, Depends, Query, UploadFile, File
+import aiofiles
+import os
+
+...
+@router.post("/knowledge/upload")
+async def upload_document(
+    files: list[UploadFile] = File(...),
+    project_id: Optional[str] = Query(None),
     current_user=Depends(get_current_user),
 ):
-    from services.knowledge_service import knowledge_service
-
-    doc_id = await knowledge_service.add_document(
-        content=content,
-        metadata={
-            "user_id": str(current_user.id),
-            "project_id": project_id,
-            "source": source,
-        },
-    )
-    return ApiResponse.ok({"doc_id": doc_id})
+    """上传文档并存入向量知识库"""
+    upload_results = []
+    for file in files:
+        # 这里简单读取文本，真实环境可接入 Marker 或 PyPDF2
+        content = await file.read()
+        try:
+            text_content = content.decode("utf-8")
+        except:
+            text_content = str(content) # Fallback
+            
+        doc_id = await knowledge_service.add_document(
+            content=text_content,
+            metadata={
+                "user_id": str(current_user.id),
+                "project_id": project_id,
+                "source": file.filename,
+                "file_type": file.content_type,
+            },
+        )
+        upload_results.append({"filename": file.filename, "doc_id": doc_id})
+        
+    return ApiResponse.ok({"results": upload_results})
 
 
 @router.get("/knowledge/search")

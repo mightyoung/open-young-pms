@@ -67,8 +67,8 @@
     "name": "草稿箱",
     "method": "GET",
     "path": "/hazards/drafts",
-    "status": 422,
-    "success": false,
+    "status": 200,
+    "success": true,
     "error": ""
   },
   {
@@ -83,24 +83,32 @@
     "name": "更新通知设置",
     "method": "PUT",
     "path": "/notification-settings",
-    "status": 500,
-    "success": false,
+    "status": 200,
+    "success": true,
     "error": ""
   },
   {
     "name": "列出帖子",
     "method": "GET",
     "path": "/forum/posts",
-    "status": 500,
-    "success": false,
+    "status": 200,
+    "success": true,
     "error": ""
   },
   {
     "name": "创建帖子",
     "method": "POST",
     "path": "/forum/posts",
-    "status": 500,
-    "success": false,
+    "status": 200,
+    "success": true,
+    "error": ""
+  },
+  {
+    "name": "删除帖子",
+    "method": "DELETE",
+    "path": "/forum/posts/10251cd4-be30-4e83-b23a-1f41483a7359",
+    "status": 200,
+    "success": true,
     "error": ""
   },
   {
@@ -136,19 +144,19 @@
     "error": ""
   },
   {
-    "name": "我的审批任务",
+    "name": "我的待审批",
     "method": "GET",
-    "path": "/approval/my-tasks",
-    "status": 404,
-    "success": false,
+    "path": "/approval/my-pending",
+    "status": 200,
+    "success": true,
     "error": ""
   },
   {
-    "name": "汇总",
+    "name": "公司概览",
     "method": "GET",
-    "path": "/dashboard/summary",
-    "status": 404,
-    "success": false,
+    "path": "/dashboard/company/overview",
+    "status": 200,
+    "success": true,
     "error": ""
   }
 ]

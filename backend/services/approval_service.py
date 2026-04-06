@@ -270,7 +270,6 @@ class ApprovalService:
     async def get_pending_tasks(self, user_id: str) -> list[dict]:
         result = await self.db.execute(
             select(CustomApprovalRecord)
-            .options(selectinload(CustomApprovalRecord.instance).selectinload(CustomApprovalInstance.flow))
             .where(
                 CustomApprovalRecord.approver_id == user_id,
                 CustomApprovalRecord.action == "pending",
@@ -280,18 +279,13 @@ class ApprovalService:
 
         tasks = []
         for record in records:
-            inst = record.instance
             tasks.append(
                 {
                     "id": record.id,
-                    "instance_id": inst.id,
+                    "instance_id": record.instance_id,
                     "node_name": record.node_name,
-                    "status": inst.status,
-                    "flow_name": inst.flow.name if inst.flow else "",
-                    "entity_type": inst.entity_type,
-                    "entity_id": inst.entity_id,
-                    "initiator_id": inst.initiator_id,
-                    "created_at": inst.created_at,
+                    "action": record.action,
+                    "created_at": record.created_at.isoformat() if record.created_at else None,
                 }
             )
         return tasks

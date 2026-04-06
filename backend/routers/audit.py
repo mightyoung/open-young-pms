@@ -53,6 +53,35 @@ async def search_logs(
     return ApiResponse.ok(result)
 
 
+@router.get("/stats")
+async def get_audit_stats(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """审计日志可视化统计"""
+    from sqlalchemy import func, select
+    from api.services.fastapi_code_generator.models import AuditLog # 假设模型已生成或在此位置
+
+    # 按资源类型统计
+    stmt = select(AuditLog.resource_type, func.count(AuditLog.id)).group_by(AuditLog.resource_type)
+    res = await db.execute(stmt)
+    by_resource = {row[0]: row[1] for row in res.fetchall()}
+
+    # 按行为统计
+    stmt_action = select(AuditLog.action, func.count(AuditLog.id)).group_by(AuditLog.action)
+    res_action = await db.execute(stmt_action)
+    by_action = {row[0]: row[1] for row in res_action.fetchall()}
+
+    return ApiResponse.ok({
+        "by_resource": by_resource,
+        "by_action": by_action,
+        "summary": {
+            "total_logs": sum(by_resource.values()),
+            "distinct_resources": len(by_resource)
+        }
+    })
+
+
 @router.get("/logs/{log_id}", response_model=ApiResponse[AuditLogDetail])
 async def get_log_detail(
     log_id: str,

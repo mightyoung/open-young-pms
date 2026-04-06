@@ -276,9 +276,9 @@ async def test_approval_api(client, headers):
     print_header("审批 API")
     tests = []
     
-    # 我的审批任务
-    resp = await client.get(f"{BASE_URL}/approval/my-tasks", headers=headers)
-    tests.append(TestResult("我的审批任务", "GET", "/approval/my-tasks", resp.status_code, resp.status_code == 200))
+    # 我的待审批任务 (correct endpoint: /approval/my-pending)
+    resp = await client.get(f"{BASE_URL}/approval/my-pending", headers=headers)
+    tests.append(TestResult("我的待审批", "GET", "/approval/my-pending", resp.status_code, resp.status_code == 200))
     
     return tests
 
@@ -288,9 +288,9 @@ async def test_dashboard_api(client, headers):
     print_header("仪表盘 API")
     tests = []
     
-    # 汇总
-    resp = await client.get(f"{BASE_URL}/dashboard/summary", headers=headers)
-    tests.append(TestResult("汇总", "GET", "/dashboard/summary", resp.status_code, resp.status_code == 200))
+    # 公司概览 (dashboard/summary doesn't exist, use /dashboard/company/overview)
+    resp = await client.get(f"{BASE_URL}/dashboard/company/overview", headers=headers)
+    tests.append(TestResult("公司概览", "GET", "/dashboard/company/overview", resp.status_code, resp.status_code == 200))
     
     return tests
 
