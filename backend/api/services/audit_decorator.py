@@ -1,6 +1,9 @@
 """审计日志装饰器 — 自动记录关键操作"""
 
+import logging
 from functools import wraps
+
+logger = logging.getLogger(__name__)
 
 
 def audit_log(action: str, entity_type: str, entity_name_field: str = None):
@@ -38,7 +41,7 @@ def audit_log(action: str, entity_type: str, entity_name_field: str = None):
                     user_agent=ua,
                 )
             except Exception as e:
-                print(f"[Audit] Failed to write log: {e}")
+                logger.warning("Failed to write audit log: %s", e)
             return result
 
         return wrapper

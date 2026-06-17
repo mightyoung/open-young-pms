@@ -59,6 +59,7 @@ from api.routers.export import router as export_router
 from api.routers.forum import router as forum_api_router
 from api.routers.companies import router as companies_router
 from api.routers.departments import router as departments_router
+from api.routers.project_lifecycle import router as project_lifecycle_router
 from api.routers.risks import router as risks_router, RESOURCE_ROUTER
 
 
@@ -90,7 +91,15 @@ app.add_middleware(RequestIDMiddleware)
 
 _cors_origins = os.getenv("CORS_ORIGINS", "").split(",") if os.getenv("CORS_ORIGINS") else []
 if not _cors_origins:
-    _cors_origins = ["http://localhost:5173", "http://localhost:3000"]
+    _cors_origins = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
+        "http://localhost:3000",
+        "http://localhost:8080",
+        "http://localhost:8001",
+    ]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_cors_origins,
@@ -150,15 +159,10 @@ app.include_router(export_router, prefix="/api/v1", tags=["导出"])
 app.include_router(forum_api_router, prefix="/api/v1", tags=["论坛"])
 app.include_router(companies_router, prefix="/api/v1", tags=["公司管理"])
 app.include_router(departments_router, prefix="/api/v1", tags=["部门管理"])
+app.include_router(project_lifecycle_router, prefix="/api/v1", tags=["项目生命周期"])
 app.include_router(risks_router, prefix="/api/v1", tags=["风险管理"])
 app.include_router(RESOURCE_ROUTER, prefix="/api/v1", tags=["资源调度"])
 app.include_router(reports_custom_router, prefix="/api/v1", tags=["报告管理(自定义)"])
-app.include_router(export_router, prefix="/api/v1", tags=["导出"])
-app.include_router(forum_api_router, prefix="/api/v1", tags=["论坛"])
-app.include_router(companies_router, prefix="/api/v1", tags=["公司管理"])
-app.include_router(departments_router, prefix="/api/v1", tags=["部门管理"])
-app.include_router(risks_router, prefix="/api/v1", tags=["风险管理"])
-app.include_router(RESOURCE_ROUTER, prefix="/api/v1", tags=["资源调度"])
 # =============================================================================
 # Root
 # =============================================================================

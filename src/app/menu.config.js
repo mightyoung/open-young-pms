@@ -24,6 +24,12 @@ export const MENU_ITEMS = [
     iconKey: 'ProjectOutlined',
   },
   {
+    key: ROUTE_META.projectLifecycle.key,
+    label: ROUTE_META.projectLifecycle.label,
+    path: ROUTE_META.projectLifecycle.path,
+    iconKey: 'ProjectOutlined',
+  },
+  {
     key: ROUTE_META.tasks.key,
     label: ROUTE_META.tasks.label,
     path: ROUTE_META.tasks.path,

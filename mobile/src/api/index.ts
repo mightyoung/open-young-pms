@@ -1,8 +1,7 @@
 import { offlineQueue } from '@/utils/offline'
+import { API_BASE_URL } from '@/config/api'
 
-const BASE_URL = process.env.NODE_ENV === 'development' 
-  ? 'http://localhost:8000/api/v1' 
-  : '/api/v1'
+const BASE_URL = API_BASE_URL
 
 interface RequestOptions {
   url: string

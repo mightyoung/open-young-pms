@@ -19,6 +19,7 @@ import EmptyState from '@/components/EmptyState.vue'
 import TaskCard from '@/components/TaskCard.vue'
 import { useWebSocket } from '@/hooks/useWebSocket'
 import { api } from '@/api'
+import { WS_BASE_URL } from '@/config/api'
 
 const tabs = [
   { label: '全部', value: 'all' },
@@ -48,7 +49,7 @@ const handlers = {
 }
 
 const token = uni.getStorageSync('token') || 'demo_token'
-const wsUrl = `ws://localhost:8000/ws/notifications?token=${token}`
+const wsUrl = `${WS_BASE_URL}/notifications?token=${token}`
 const { connect } = useWebSocket(wsUrl, handlers)
 
 onMounted(() => {

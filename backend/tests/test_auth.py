@@ -2,7 +2,7 @@
 
 import pytest
 from datetime import timedelta
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
 import sys
@@ -114,3 +114,24 @@ class TestCreateAccessToken:
         token = create_access_token({"sub": str(uuid4())}, expires_delta=timedelta(hours=1))
         payload = decode_token(token)
         assert "exp" in payload
+
+
+class TestLoginEndpoint:
+    """Tests for /auth/login behavior."""
+
+    @pytest.mark.asyncio
+    async def test_demo_credentials_are_not_special_cased(self):
+        from api.services.fastapi_code_generator.routers.auth import login
+        from api.services.fastapi_code_generator.schemas import LoginRequest
+        from fastapi import HTTPException
+
+        result = MagicMock()
+        result.scalar_one_or_none.return_value = None
+        db = MagicMock()
+        db.execute = AsyncMock(return_value=result)
+
+        with pytest.raises(HTTPException) as exc_info:
+            await login(LoginRequest(username="admin", password="admin123"), db)
+
+        assert exc_info.value.status_code == 401
+        db.execute.assert_awaited_once()

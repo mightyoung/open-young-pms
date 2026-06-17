@@ -97,7 +97,7 @@ backend/
 ### Authentication
 - Token stored via `src/app/auth-session.js` (localStorage).
 - `AuthContext` (`src/contexts/AuthContext.jsx`) provides `login`, `logout`, `user`, `token`, `isAuthenticated`.
-- Demo login: `admin` / `admin123` (frontend-only mock, only works when backend is unreachable).
+- Local demo login uses the seeded backend user from `backend/scripts/init_db.py`; the frontend no longer accepts offline mock credentials.
 - 401 responses automatically trigger logout via `setUnauthorizedHandler` in `client.js`.
 - Backend `get_current_user()` requires valid JWT + user exists in DB — **no demo/fallback users**.
 - `auth.py` is the single source of truth for `decode_token`; both `PermissionMiddleware` and the `get_current_user` dependency reuse it via ContextVar caching.

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import {
   Card,
   Table,
@@ -337,11 +337,42 @@ function GanttChart({ data, onTaskUpdate }) {
 
   const months = []
   let cur = new Date(GANTT_START)
-...
+  while (cur < GANTT_END) {
+    months.push(`${cur.getMonth() + 1}月`)
+    cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1)
+  }
+
+  const flattenTasks = nodes =>
+    nodes.flatMap(node => [node, ...(node.children ? flattenTasks(node.children) : [])])
+
+  const allTasks = flattenTasks(data)
+
+  return (
+    <div style={{ overflowX: 'auto' }}>
+      <div style={{ minWidth: 980, position: 'relative' }}>
+        <div style={{ display: 'flex', marginBottom: 8, paddingLeft: 200 }}>
+          {months.map(month => (
+            <div key={month} style={{ flex: 1, color: D.textSec, fontSize: 12 }}>
+              {month}
+            </div>
+          ))}
+        </div>
         {allTasks.map((task, i) => (
           <motion.div
             key={task.id}
-...
+            variants={va(i)}
+            initial="hidden"
+            animate="visible"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              minHeight: 42,
+              borderBottom: `1px solid ${D.border}`,
+            }}
+          >
+            <div style={{ width: 190, paddingRight: 10 }}>
+              <Text strong={Boolean(task.children)}>{task.name}</Text>
+            </div>
             <div style={{ flex: 1, paddingRight: 8 }}>
               <div onMouseDown={(e) => handleMouseDown(e, task)}>
                 <GanttBar task={task} color={task.progress === 100 ? D.success : D.primary} />
@@ -349,10 +380,16 @@ function GanttChart({ data, onTaskUpdate }) {
             </div>
           </motion.div>
         ))}
-        {/* 依赖线层 */}
-        <svg style={{ position: 'absolute', top: 40, left: 200, width: '100%', height: '100%', pointerEvents: 'none' }}>
-          {/* 这里可以扩展具体的依赖连线算法 */}
-        </svg>
+        <svg
+          style={{
+            position: 'absolute',
+            top: 40,
+            left: 200,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+          }}
+        />
       </div>
     </div>
   )
@@ -403,7 +440,7 @@ export default function Gantt() {
   }, [])
 
   const token = localStorage.getItem('token') || 'demo_token'
-  const wsUrl = `ws://localhost:8000/ws/notifications?token=${token}`
+  const wsUrl = `ws://localhost:8001/ws/notifications?token=${token}`
   const { ws: _ws } = useWebSocket(wsUrl, handlers)
 
   const STATUS_MAP = {

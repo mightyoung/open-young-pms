@@ -11,6 +11,7 @@ import { DEFAULT_AUTH_ROUTE } from './route-map'
 const DashboardPage = lazy(() => import('../features/dashboard/pages/DashboardPage'))
 const UsersPage = lazy(() => import('../features/users/pages/UsersPage'))
 const ProjectsPage = lazy(() => import('../features/projects/pages/ProjectsPage'))
+const ProjectLifecyclePage = lazy(() => import('../features/projects/pages/ProjectLifecyclePage'))
 const TasksPage = lazy(() => import('../features/tasks/pages/TasksPage'))
 const NotificationsPage = lazy(() => import('../features/notifications/pages/NotificationsPage'))
 const NotificationSettingsPage = lazy(
@@ -80,6 +81,14 @@ export function AppRoutes() {
           element: (
             <Suspense fallback={<PageLoader />}>
               <ProjectsPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'projects/lifecycle',
+          element: (
+            <Suspense fallback={<PageLoader />}>
+              <ProjectLifecyclePage />
             </Suspense>
           ),
         },

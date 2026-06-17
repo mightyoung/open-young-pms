@@ -14,6 +14,11 @@ export const ROUTE_META = {
     path: '/projects',
     label: '项目管理',
   },
+  projectLifecycle: {
+    key: 'projectLifecycle',
+    path: '/projects/lifecycle',
+    label: '项目流程模板',
+  },
   tasks: {
     key: 'tasks',
     path: '/tasks',
@@ -94,8 +99,8 @@ export const ROUTE_META = {
 export const DEFAULT_AUTH_ROUTE = ROUTE_META.dashboard.path
 
 export function getMenuKeyByPath(pathname) {
-  const item = Object.values(ROUTE_META).find(
-    route => pathname === route.path || pathname.startsWith(`${route.path}/`)
-  )
+  const item = Object.values(ROUTE_META)
+    .sort((left, right) => right.path.length - left.path.length)
+    .find(route => pathname === route.path || pathname.startsWith(`${route.path}/`))
   return item?.key || 'dashboard'
 }

@@ -1,6 +1,7 @@
 """文件上传服务 — 支持本地存储和 MinIO"""
 
 import io
+import logging
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -10,6 +11,7 @@ from PIL import Image
 
 UPLOAD_DIR = Path("./uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
+logger = logging.getLogger(__name__)
 
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10MB
@@ -66,5 +68,5 @@ async def save_multiple(files: list[UploadFile], subfolder: str = "photos") -> l
             r = await save_upload(f, subfolder)
             results.append(r)
         except Exception as e:
-            print(f"Upload failed for {f.filename}: {e}")
+            logger.warning("Upload failed for %s: %s", f.filename, e)
     return results

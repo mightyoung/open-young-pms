@@ -132,7 +132,7 @@ function getTypeLabel(type: string) {
   return issueTypes.find(t => t.value === type)?.label || ''
 }
 
-async def takePhoto() {
+async function takePhoto() {
   uni.chooseImage({
     count: 1,
     sourceType: ['camera'],
@@ -168,15 +168,11 @@ function getLocation() {
 async function submit() {
   uni.showLoading({ title: '提交中...' })
   try {
-    await uni.request({
-      url: 'http://localhost:8000/api/v1/issues',
-      method: 'POST',
-      data: {
-        type: formData.type,
-        photos: formData.photos,
-        description: formData.description,
-        location: location.value
-      }
+    await api.capture.create({
+      type: formData.type,
+      photos: formData.photos,
+      description: formData.description,
+      location: location.value
     })
     uni.showToast({ title: '提交成功', icon: 'success' })
     setTimeout(() => uni.switchTab({ url: '/pages/index/index' }), 1500)

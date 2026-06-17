@@ -1,5 +1,6 @@
 """全局异常处理器 + 请求 ID 中间件"""
 
+import logging
 import uuid
 import traceback
 
@@ -11,6 +12,8 @@ from api.exceptions import (
     ERR_INTERNAL,
 )
 from api.response import ApiResponse, BusinessException
+
+logger = logging.getLogger(__name__)
 
 
 class RequestIDMiddleware(BaseHTTPMiddleware):
@@ -28,8 +31,8 @@ async def exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """全局异常处理器"""
     req_id = getattr(request.state, "request_id", "unknown")
     tb = traceback.format_exc()
-    print(f"[ERROR] {req_id} {exc}")
-    print(f"[TRACE] {tb}")
+    logger.error("Unhandled request error request_id=%s error=%s", req_id, exc)
+    logger.debug("Unhandled request traceback request_id=%s\n%s", req_id, tb)
 
     if isinstance(exc, BusinessException):
         return JSONResponse(

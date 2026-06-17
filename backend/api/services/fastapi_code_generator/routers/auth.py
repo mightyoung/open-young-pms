@@ -22,20 +22,6 @@ async def login(
     data: LoginRequest,
     db: AsyncSession = Depends(get_db),
 ):
-    # Demo fallback for empty database
-    if data.username == "admin" and data.password == "admin123":
-        from uuid import UUID
-
-        mock_id = UUID("00000000-0000-0000-0000-000000000001")
-        token = create_access_token(data={"sub": str(mock_id), "username": "admin"})
-        return TokenResponse(
-            access_token=token,
-            expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-            user=UserResponse(
-                id=mock_id, username="admin", email="admin@example.com", full_name="管理员", is_active=True
-            ),
-        )
-
     try:
         result = await db.execute(select(User).where(User.username == data.username))
         user = result.scalar_one_or_none()

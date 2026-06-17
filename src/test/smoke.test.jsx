@@ -88,12 +88,14 @@ describe('Route config', () => {
     const routeMap = await import('../app/route-map')
     expect(routeMap.ROUTE_META).toBeDefined()
     expect(routeMap.ROUTE_META.dashboard.path).toBe('/dashboard')
+    expect(routeMap.ROUTE_META.projectLifecycle.path).toBe('/projects/lifecycle')
     expect(routeMap.DEFAULT_AUTH_ROUTE).toBe('/dashboard')
     expect(typeof routeMap.getMenuKeyByPath).toBe('function')
 
     // Exact matches
     expect(routeMap.getMenuKeyByPath('/dashboard')).toBe('dashboard')
     expect(routeMap.getMenuKeyByPath('/users')).toBe('users')
+    expect(routeMap.getMenuKeyByPath('/projects/lifecycle')).toBe('projectLifecycle')
 
     // Nested routes
     expect(routeMap.getMenuKeyByPath('/dashboard/settings')).toBe('dashboard')
@@ -176,6 +178,30 @@ describe('Auth session', () => {
     expect(getRememberedUser()).toBe('admin')
     clearRememberedUser()
     expect(getRememberedUser()).toBe('')
+  })
+
+  it('AuthProvider does not remain initializing with a stored session', async () => {
+    const React = await import('react')
+    const { render, screen, cleanup } = await import('@testing-library/react')
+    const { AuthProvider } = await import('../contexts/AuthContext')
+    const { useAuth } = await import('../hooks/useAuth')
+
+    localStorage.setItem('token', 'tok_existing')
+    localStorage.setItem('user', JSON.stringify({ id: '1', username: 'admin' }))
+
+    function Probe() {
+      const auth = useAuth()
+      return React.createElement(
+        'div',
+        { 'data-testid': 'auth-state' },
+        `${auth.isInitializing}:${auth.isAuthenticated}:${auth.user?.username}`
+      )
+    }
+
+    render(React.createElement(AuthProvider, null, React.createElement(Probe)))
+
+    expect(screen.getByTestId('auth-state').textContent).toBe('false:true:admin')
+    cleanup()
   })
 })
 
@@ -261,5 +287,24 @@ describe('API client', () => {
     expect(typeof api.notifications.remove).toBe('function')
     expect(typeof api.notifications.settings.get).toBe('function')
     expect(typeof api.notifications.settings.update).toBe('function')
+  })
+
+  it('projectLifecycleApi covers lifecycle backend endpoints', async () => {
+    const { projectLifecycleApi } = await import('../features/projects/api/projectLifecycleApi')
+    expect(typeof projectLifecycleApi.listProjectTypes).toBe('function')
+    expect(typeof projectLifecycleApi.listTemplates).toBe('function')
+    expect(typeof projectLifecycleApi.previewFromTemplate).toBe('function')
+    expect(typeof projectLifecycleApi.getLifecycle).toBe('function')
+    expect(typeof projectLifecycleApi.listStageGates).toBe('function')
+    expect(typeof projectLifecycleApi.listWorkItems).toBe('function')
+    expect(typeof projectLifecycleApi.createWorkItem).toBe('function')
+    expect(typeof projectLifecycleApi.transitionWorkItem).toBe('function')
+  })
+
+  it('project lifecycle hook and page modules import', async () => {
+    const hook = await import('../features/projects/hooks/useProjectLifecycle')
+    const page = await import('../features/projects/pages/ProjectLifecyclePage')
+    expect(typeof hook.useProjectLifecycle).toBe('function')
+    expect(page.default).toBeDefined()
   })
 })

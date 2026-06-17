@@ -42,10 +42,8 @@ export function AuthProvider({ children }) {
     ...anonymousState,
     ...initialSession,
     isAuthenticated: Boolean(initialSession.token),
-    isInitializing: true,
+    isInitializing: false,
   }))
-
-  // Initial state is already set from loadSession() above — no redundant useEffect needed
 
   const logout = useCallback(() => {
     clearSession()
@@ -68,15 +66,8 @@ export function AuthProvider({ children }) {
   const login = useCallback(async ({ username, password, rememberMe }) => {
     let session
 
-    if (username === 'admin' && password === 'admin123') {
-      session = {
-        token: `demo_token_${Date.now()}`,
-        user: { id: 1, username: 'admin', name: '管理员', full_name: '管理员', role: 'admin' },
-      }
-    } else {
-      const payload = await api.login(username, password)
-      session = normalizeLoginResult(payload, username)
-    }
+    const payload = await api.login(username, password)
+    session = normalizeLoginResult(payload, username)
 
     if (!session?.token) {
       throw new Error('登录成功但未返回有效令牌')

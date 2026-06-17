@@ -16,10 +16,10 @@ psycopg2-binary==2.9.9  # sync driver for alembic
 # Auth
 python-jose[cryptography]==3.3.0  # JWT
 passlib[bcrypt]==1.7.4  # password hashing
+bcrypt==4.2.0  # direct password verification dependency
 python-multipart==0.0.12  # form data parsing
 
 # File handling & image processing
-python-multipart==0.0.12
 aiofiles==24.1.0  # async file I/O
 pillow>=10.0  # image processing for thumbnails
 

@@ -2,7 +2,7 @@
  * 登录页 - 蓝白主题
  * 更新时间: 2026-03-30
  */
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
@@ -15,8 +15,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [rememberMe, setRememberMe] = useState(Boolean(rememberedUser))
-
-  const hint = useMemo(() => '演示账号: admin | 密码: admin123', [])
 
   const handleLogin = async e => {
     e.preventDefault()
@@ -111,7 +109,7 @@ export default function Login() {
         </form>
 
         <div style={styles.footer}>
-          <span style={styles.hint}>{hint}</span>
+          <span style={styles.hint}>请使用已初始化的系统账号登录</span>
         </div>
       </div>
     </div>

@@ -50,7 +50,7 @@ class PermissionMiddleware(BaseHTTPMiddleware):
                     set_cached_user(user)
                 finally:
                     await db.close()
-                    break
+                break
         except HTTPException:
             if request.url.path.startswith("/api/"):
                 raise
