@@ -1,7 +1,7 @@
 """报告管理路由 — generated from PRD 第十五章."""
 
 from fastapi import APIRouter, Depends, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.services.fastapi_code_generator.auth import get_current_user
@@ -11,6 +11,54 @@ from api.services.fastapi_code_generator.models import Report, User
 from api.services.fastapi_code_generator.schemas import ReportCreate
 
 router = APIRouter()
+
+
+@router.get("")
+async def list_reports(
+    project_id: str | None = None,
+    report_type: str | None = None,
+    status: str | None = None,
+    page: int = 1,
+    page_size: int = 20,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    query = select(Report)
+    count_query = select(func.count()).select_from(Report)
+    if project_id:
+        query = query.where(Report.project_id == project_id)
+        count_query = count_query.where(Report.project_id == project_id)
+    if report_type:
+        query = query.where(Report.type == report_type)
+        count_query = count_query.where(Report.type == report_type)
+    if status:
+        query = query.where(Report.status == status)
+        count_query = count_query.where(Report.status == status)
+
+    total = (await db.execute(count_query)).scalar() or 0
+    rows = (
+        await db.execute(
+            query.order_by(Report.created_at.desc())
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+        )
+    ).scalars().all()
+
+    return {
+        "items": [
+            {
+                "id": str(r.id),
+                "project_id": str(r.project_id) if r.project_id else None,
+                "type": r.type,
+                "status": r.status,
+                "created_at": r.created_at.isoformat() if r.created_at else None,
+            }
+            for r in rows
+        ],
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+    }
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

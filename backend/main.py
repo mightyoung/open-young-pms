@@ -137,7 +137,6 @@ app.include_router(dashboard_router, prefix="/api/v1", tags=["监测看板"])
 app.include_router(approval_router, prefix="/api/v1", tags=["审批流"])
 app.include_router(audit_router, prefix="/api/v1", tags=["审计日志"])
 app.include_router(tasks_router, prefix="/api/v1", tags=["任务管理"])
-app.include_router(files_router, prefix="/api/v1", tags=["文件管理"])
 # DEPRECATED: forum_router is replaced by forum_api_router (Layer 3)
 # app.include_router(forum_router, prefix="/api/v1", tags=["论坛增强"])
 # DEPRECATED: notifications_rest_router is replaced by notification_settings_router (Layer 3)
@@ -163,6 +162,10 @@ app.include_router(project_lifecycle_router, prefix="/api/v1", tags=["项目生�
 app.include_router(risks_router, prefix="/api/v1", tags=["风险管理"])
 app.include_router(RESOURCE_ROUTER, prefix="/api/v1", tags=["资源调度"])
 app.include_router(reports_custom_router, prefix="/api/v1", tags=["报告管理(自定义)"])
+app.include_router(files_router, prefix="/api/v1/files", tags=["文件管理"])
+# Compatibility routes include broad /api/v1/{file_id}; keep them last so they
+# cannot shadow feature routers such as /roles, /contracts, /risks, /resources.
+app.include_router(files_router, prefix="/api/v1", tags=["文件管理(兼容)"])
 # =============================================================================
 # Root
 # =============================================================================

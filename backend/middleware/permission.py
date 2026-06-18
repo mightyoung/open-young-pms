@@ -5,6 +5,7 @@ from typing import Callable
 from fastapi import HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import JSONResponse
 
 from api.services.fastapi_code_generator.auth import resolve_user, set_cached_user
 
@@ -44,16 +45,18 @@ class PermissionMiddleware(BaseHTTPMiddleware):
 
             # Use the single canonical resolve_user() — no duplicate JWT decode + DB lookup
             async for db in get_db():
-                try:
-                    user = await resolve_user(credentials.credentials, db)
-                    request.state.user = user
-                    set_cached_user(user)
-                finally:
-                    await db.close()
+                user = await resolve_user(credentials.credentials, db)
+                request.state.user = user
+                set_cached_user(user)
+                await db.close()
                 break
-        except HTTPException:
+        except HTTPException as exc:
             if request.url.path.startswith("/api/"):
-                raise
-            return await call_next(request)
+                return JSONResponse(
+                    status_code=exc.status_code,
+                    content={"detail": exc.detail},
+                )
+
+        return await call_next(request)
 
         return await call_next(request)

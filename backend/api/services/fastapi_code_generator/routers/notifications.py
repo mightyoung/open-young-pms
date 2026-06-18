@@ -2,7 +2,7 @@
 
 from uuid import UUID
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select, update
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.services.fastapi_code_generator.auth import get_current_user
@@ -27,6 +27,20 @@ async def list_notifications(
     result = await db.execute(query)
     rows = result.scalars().all()
     return [NotificationResponse.model_validate(r) for r in rows]
+
+
+@router.get("/unread-count")
+async def get_unread_count(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(func.count()).select_from(Notification).where(
+            Notification.user_id == str(current_user.id),
+            Notification.is_read == False,  # noqa: E712
+        )
+    )
+    return {"unread_count": result.scalar() or 0}
 
 
 @router.post("/{notification_id}/read")
