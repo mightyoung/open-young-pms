@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import {
+  Alert,
   Card,
+  Empty,
   Table,
   Tag,
   Button,
@@ -42,22 +44,35 @@ function va(i = 0) {
 }
 
 export default function ReportsPage() {
-  const { reports, stats } = useReports()
+  const { reports, stats, loading, error, submitReport } = useReports()
   const [tab, setTab] = useState('all')
   const [writeOpen, setWriteOpen] = useState(false)
   const [detailOpen, setDetailOpen] = useState(false)
   const [selected, setSelected] = useState(null)
+  const [submitting, setSubmitting] = useState(false)
   const [form] = Form.useForm()
 
   const filtered = tab === 'all' ? reports : reports.filter(r => r.type === tab)
 
   const handleSubmit = async () => {
     try {
-      await form.validateFields()
+      const values = await form.validateFields()
+      setSubmitting(true)
+      await submitReport({
+        title: values.title,
+        type: values.type,
+        project_id: values.project_id,
+        content: { text: values.content, attach: values.attach || '' },
+      })
       message.success('报告已提交，等待审批')
       setWriteOpen(false)
       form.resetFields()
-    } catch {}
+    } catch (err) {
+      if (err?.errorFields) return
+      message.error(err?.message || '报告提交失败')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const columns = [
@@ -182,6 +197,15 @@ export default function ReportsPage() {
         headStyle={{ borderBottom: `1px solid ${D.border}`, padding: '12px 20px' }}
         bodyStyle={{ padding: 0 }}
       >
+        {error && (
+          <Alert
+            type="error"
+            showIcon
+            message="报告列表加载失败"
+            description={error}
+            style={{ margin: '16px 20px 0' }}
+          />
+        )}
         <div
           style={{
             padding: '16px 20px',
@@ -227,7 +251,9 @@ export default function ReportsPage() {
           columns={columns}
           dataSource={filtered}
           rowKey="id"
+          loading={loading}
           pagination={{ pageSize: 8, showSizeChanger: false }}
+          locale={{ emptyText: <Empty description={error ? '加载失败' : '暂无报告数据'} /> }}
         />
       </Card>
 
@@ -251,6 +277,7 @@ export default function ReportsPage() {
               {Object.entries(REPORT_TYPES).map(([k, v]) => (
                 <Button
                   key={k}
+                  onClick={() => form.setFieldValue('type', k)}
                   style={
                     form.getFieldValue('type') === k
                       ? { background: v.bg, border: `1px solid ${v.color}`, color: v.color }
@@ -262,8 +289,11 @@ export default function ReportsPage() {
               ))}
             </Space>
           </Form.Item>
-          <Form.Item name="project" label="所属项目" rules={[{ required: true }]}>
-            <Input placeholder="请输入项目名称" />
+          <Form.Item name="title" label="报告标题" rules={[{ required: true }]}>
+            <Input placeholder="请输入报告标题" />
+          </Form.Item>
+          <Form.Item name="project_id" label="所属项目ID" rules={[{ required: true }]}>
+            <Input placeholder="请输入项目ID" />
           </Form.Item>
           <Form.Item name="content" label="报告内容" rules={[{ required: true }]}>
             <TextArea rows={4} placeholder="请输入报告内容..." />
@@ -273,6 +303,7 @@ export default function ReportsPage() {
           </Form.Item>
           <Button
             type="primary"
+            loading={submitting}
             style={{ background: D.primary, borderRadius: 10 }}
             onClick={handleSubmit}
           >

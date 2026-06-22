@@ -1,4 +1,5 @@
 import React from 'react'
+import { CheckCircleOutlined, CloseCircleOutlined, InboxOutlined, SearchOutlined } from '@ant-design/icons'
 import { colors } from '../styles/theme'
 
 /**
@@ -7,16 +8,16 @@ import { colors } from '../styles/theme'
  * @param {string} title - 主标题
  * @param {string} description - 描述文案
  * @param {ReactNode} action - 操作按钮
- * @param {string} emoji - 自定义 emoji 覆盖
+ * @param {ReactNode} icon - 自定义图标
+ * @param {object} style - 容器样式
  */
-export default function EmptyState({ type = 'list', title, description, action, emoji }) {
+export default function EmptyState({ type = 'list', title, description, action, icon, emoji, style }) {
   const presets = {
-    list: { emoji: '📭', title: '暂无数据', description: '暂无相关记录' },
-    search: { emoji: '🔍', title: '未找到结果', description: '换个关键词试试' },
-    error: { emoji: '❌', title: '加载失败', description: '请稍后重试' },
-    success: { emoji: '✅', title: '操作成功', description: '' },
+    list: { icon: <InboxOutlined />, title: '暂无数据', description: '暂无相关记录' },
+    search: { icon: <SearchOutlined />, title: '未找到结果', description: '换个关键词试试' },
+    error: { icon: <CloseCircleOutlined />, title: '加载失败', description: '请稍后重试' },
+    success: { icon: <CheckCircleOutlined />, title: '操作成功', description: '' },
   }
-
   const config = presets[type] || presets.list
 
   return (
@@ -25,14 +26,17 @@ export default function EmptyState({ type = 'list', title, description, action, 
         textAlign: 'center',
         padding: '60px 20px',
         color: colors.text.muted,
+        ...style,
       }}
     >
-      <div style={{ fontSize: 48, marginBottom: 16 }}>{emoji || config.emoji}</div>
+      <div style={{ color: colors.accent, fontSize: 42, lineHeight: 1, marginBottom: 16 }}>
+        {icon || emoji || config.icon}
+      </div>
       <div
         style={{
           color: colors.text.secondary,
           fontSize: 15,
-          fontWeight: 500,
+          fontWeight: 600,
           marginBottom: 8,
         }}
       >

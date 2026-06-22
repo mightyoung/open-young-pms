@@ -717,7 +717,7 @@ function GovernanceView() {
     <div>
       <Card style={{ background: C.card, border: `1px solid ${C.border}`, marginBottom: 12 }}>
         <Title level={5} style={{ color: C.text, marginBottom: 16 }}>
-          🔍 数据质量校验
+          数据质量校验
         </Title>
         <Text style={{ color: C.muted, fontSize: 13 }}>
           选择实体并输入测试数据，系统将根据预置规则进行质量检查

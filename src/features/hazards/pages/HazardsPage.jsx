@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import {
+  Alert,
   Card,
   Tag,
   Button,
@@ -16,6 +17,7 @@ import {
   Avatar,
   Divider,
   Checkbox,
+  Empty,
   Popconfirm,
 } from 'antd'
 import {
@@ -123,7 +125,7 @@ function PhotoCard({ onRemove }) {
 }
 
 export default function HazardsPage() {
-  const { filtered, stats, tab, setTab } = useHazards()
+  const { filtered, stats, tab, setTab, loading, error, createHazard } = useHazards()
   const [reportOpen, setReportOpen] = useState(false)
   const [detailOpen, setDetailOpen] = useState(false)
   const [selected, setSelected] = useState(null)
@@ -150,20 +152,17 @@ export default function HazardsPage() {
 
   const batchAssign = () => {
     if (selectedIds.length === 0) return
-    message.success(`已将 ${selectedIds.length} 条隐患批量指派`)
-    setSelectedIds([])
+    message.warning('批量指派接口未接入，未提交变更')
   }
 
   const batchClose = () => {
     if (selectedIds.length === 0) return
-    message.success(`已关闭 ${selectedIds.length} 条隐患`)
-    setSelectedIds([])
+    message.warning('批量关闭接口未接入，未提交变更')
   }
 
   const batchDelete = () => {
     if (selectedIds.length === 0) return
-    message.success(`已删除 ${selectedIds.length} 条隐患`)
-    setSelectedIds([])
+    message.warning('批量删除接口未接入，未提交变更')
   }
 
   const getGps = () => {
@@ -180,9 +179,9 @@ export default function HazardsPage() {
         message.success('定位成功')
       },
       () => {
-        setGps('31.2304°N, 121.4737°E（默认）')
+        setGps(null)
         setGpsLoading(false)
-        message.warning('定位失败，使用默认位置')
+        message.error('定位失败，请手动补充位置描述')
       },
       { timeout: 8000, enableHighAccuracy: true }
     )
@@ -198,10 +197,18 @@ export default function HazardsPage() {
     try {
       const vals = await form.validateFields()
       setSubmitting(true)
-      await new Promise(r => setTimeout(r, 1200))
+      await createHazard({
+        project_id: vals.project_id,
+        hazard_type: vals.type,
+        urgency: vals.level,
+        title: vals.title,
+        description: vals.description || '',
+        location: vals.location,
+        photos: photos.map(String),
+      })
       const rule = autoDispatch(vals.type, vals.level)
       message.success(
-        `上报成功${rule ? `，已自动派发给 ${rule.assignee}（${rule.dept}），SLA ${rule.sla}` : '，请手动指派整改人'}`
+        `上报成功${rule ? `，建议派发给 ${rule.target}` : '，请手动指派整改人'}`
       )
       setReportOpen(false)
       setSubmitting(false)
@@ -209,7 +216,10 @@ export default function HazardsPage() {
       setPhotos([])
       setGps(null)
       setDispatchResult(null)
-    } catch {
+    } catch (err) {
+      if (!err?.errorFields) {
+        message.error(err?.message || '隐患上报失败')
+      }
       setSubmitting(false)
     }
   }
@@ -247,6 +257,15 @@ export default function HazardsPage() {
         headStyle={{ borderBottom: `1px solid ${D.border}`, padding: '12px 20px' }}
         bodyStyle={{ padding: '16px 20px' }}
       >
+        {error && (
+          <Alert
+            type="error"
+            showIcon
+            message="隐患列表加载失败"
+            description={error}
+            style={{ marginBottom: 16 }}
+          />
+        )}
         <div
           style={{
             display: 'flex',
@@ -339,7 +358,7 @@ export default function HazardsPage() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <AnimatePresence>
-            {filtered.map((item, i) => {
+            {!loading && filtered.map((item, i) => {
               const typeC = TYPE_MAP[item.type]
               const statusC = STATUS_MAP[item.status]
               const levelC = LEVEL_MAP[item.level]
@@ -481,8 +500,11 @@ export default function HazardsPage() {
               )
             })}
           </AnimatePresence>
-          {filtered.length === 0 && (
-            <div style={{ textAlign: 'center', padding: 60, color: D.textMuted }}>暂无数据</div>
+          {loading && (
+            <div style={{ textAlign: 'center', padding: 60, color: D.textMuted }}>加载中...</div>
+          )}
+          {!loading && filtered.length === 0 && (
+            <Empty description={error ? '加载失败' : '暂无隐患数据'} style={{ padding: 60 }} />
           )}
         </div>
       </Card>
@@ -511,6 +533,15 @@ export default function HazardsPage() {
           }}
         >
           <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item
+                name="project_id"
+                label={<Text style={{ fontSize: 13 }}>所属项目ID</Text>}
+                rules={[{ required: true, message: '请输入项目ID' }]}
+              >
+                <Input placeholder="请输入项目ID" style={{ borderRadius: 10 }} />
+              </Form.Item>
+            </Col>
             <Col span={12}>
               <Form.Item
                 name="type"
@@ -519,7 +550,9 @@ export default function HazardsPage() {
               >
                 <Select
                   placeholder="选择类型"
-                  options={Object.entries(TYPE_MAP).map(([k, v]) => ({ value: k, label: v.label }))}
+                  options={Object.entries(TYPE_MAP)
+                    .filter(([k]) => k !== 'other')
+                    .map(([k, v]) => ({ value: k, label: v.label }))}
                   style={{ borderRadius: 10 }}
                 />
               </Form.Item>
@@ -632,9 +665,8 @@ export default function HazardsPage() {
                 <Text style={{ fontWeight: 700, color: D.success }}>自动派发规则匹配成功</Text>
               </div>
               <Text style={{ color: D.textSec, fontSize: 13 }}>
-                派发给：
-                <Text style={{ fontWeight: 600, color: D.text }}>{dispatchResult.assignee}</Text>（
-                {dispatchResult.dept}），SLA：{dispatchResult.sla}
+                建议派发给：
+                <Text style={{ fontWeight: 600, color: D.text }}>{dispatchResult.target}</Text>
               </Text>
             </motion.div>
           )}

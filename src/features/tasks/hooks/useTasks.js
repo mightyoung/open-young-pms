@@ -1,205 +1,118 @@
-import { useState, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { calculateCriticalPath, findResourceConflicts, wbsToTree } from '../../../utils/wbs'
+import { tasksFeatureApi } from '../api'
 
-const MOCK_TASKS = [
-  {
-    id: 1,
-    wbs: '1.1',
-    title: '需求调研',
-    phase: '方案设计',
-    assignee: '张三',
-    startDate: '2026-01-15',
-    endDate: '2026-02-15',
-    progress: 100,
-    status: 'done',
-    priority: 'high',
-    duration: 4,
-    depends: [],
-    critical: false,
-  },
-  {
-    id: 2,
-    wbs: '1.2',
-    title: '技术方案编制',
-    phase: '方案设计',
-    assignee: '李四',
-    startDate: '2026-02-01',
-    endDate: '2026-03-15',
-    progress: 100,
-    status: 'done',
-    priority: 'high',
-    duration: 5,
-    depends: [1],
-    critical: true,
-  },
-  {
-    id: 3,
-    wbs: '1.3',
-    title: '方案评审',
-    phase: '方案设计',
-    assignee: '王五',
-    startDate: '2026-03-01',
-    endDate: '2026-04-15',
-    progress: 80,
-    status: 'inprogress',
-    priority: 'high',
-    duration: 3,
-    depends: [2],
-    critical: true,
-  },
-  {
-    id: 4,
-    wbs: '2.1',
-    title: '设备选型',
-    phase: '设备采购',
-    assignee: '赵六',
-    startDate: '2026-02-15',
-    endDate: '2026-03-31',
-    progress: 100,
-    status: 'done',
-    priority: 'medium',
-    duration: 4,
-    depends: [],
-    critical: false,
-  },
-  {
-    id: 5,
-    wbs: '2.2',
-    title: '招标',
-    phase: '设备采购',
-    assignee: '张三',
-    startDate: '2026-03-01',
-    endDate: '2026-04-30',
-    progress: 65,
-    status: 'inprogress',
-    priority: 'medium',
-    duration: 6,
-    depends: [4],
-    critical: false,
-  },
-  {
-    id: 6,
-    wbs: '2.3',
-    title: '合同签订',
-    phase: '设备采购',
-    assignee: '李四',
-    startDate: '2026-05-01',
-    endDate: '2026-05-15',
-    progress: 0,
-    status: 'pending',
-    priority: 'medium',
-    duration: 2,
-    depends: [5],
-    critical: true,
-  },
-  {
-    id: 7,
-    wbs: '3.1',
-    title: '基础施工',
-    phase: '安装施工',
-    assignee: '赵六',
-    startDate: '2026-04-01',
-    endDate: '2026-06-30',
-    progress: 30,
-    status: 'inprogress',
-    priority: 'high',
-    duration: 8,
-    depends: [5],
-    critical: true,
-  },
-  {
-    id: 8,
-    wbs: '3.2',
-    title: '设备就位',
-    phase: '安装施工',
-    assignee: '王五',
-    startDate: '2026-07-01',
-    endDate: '2026-07-15',
-    progress: 0,
-    status: 'pending',
-    priority: 'medium',
-    duration: 2,
-    depends: [7],
-    critical: false,
-  },
-  {
-    id: 9,
-    wbs: '4.1',
-    title: '单机调试',
-    phase: '调试验收',
-    assignee: '张三',
-    startDate: '2026-07-16',
-    endDate: '2026-08-15',
-    progress: 0,
-    status: 'pending',
-    priority: 'high',
-    duration: 4,
-    depends: [8],
-    critical: true,
-  },
-  {
-    id: 10,
-    wbs: '4.2',
-    title: '联调联试',
-    phase: '调试验收',
-    assignee: '李四',
-    startDate: '2026-08-16',
-    endDate: '2026-09-15',
-    progress: 0,
-    status: 'pending',
-    priority: 'high',
-    duration: 4,
-    depends: [9],
-    critical: true,
-  },
-]
+function unwrap(response) {
+  return response?.data?.data ?? response?.data ?? response
+}
 
-const WBS_ITEMS = [
-  { id: '0', title: '产线自动化改造项目', parentKey: null, wbs: '0' },
-  { id: '1', title: '1. 方案设计', parentKey: '0', wbs: '1' },
-  { id: '1-1', title: '1.1 需求调研', parentKey: '1', wbs: '1.1', progress: 100 },
-  { id: '1-2', title: '1.2 技术方案编制', parentKey: '1', wbs: '1.2', progress: 100 },
-  { id: '1-3', title: '1.3 方案评审', parentKey: '1', wbs: '1.3', progress: 80 },
-  { id: '2', title: '2. 设备采购', parentKey: '0', wbs: '2' },
-  { id: '2-1', title: '2.1 设备选型', parentKey: '2', wbs: '2.1', progress: 100 },
-  { id: '2-2', title: '2.2 招标', parentKey: '2', wbs: '2.2', progress: 65 },
-  { id: '2-3', title: '2.3 合同签订', parentKey: '2', wbs: '2.3', progress: 0 },
-  { id: '3', title: '3. 安装施工', parentKey: '0', wbs: '3' },
-  { id: '3-1', title: '3.1 基础施工', parentKey: '3', wbs: '3.1', progress: 30 },
-  { id: '3-2', title: '3.2 设备就位', parentKey: '3', wbs: '3.2', progress: 0 },
-  { id: '4', title: '4. 调试验收', parentKey: '0', wbs: '4' },
-  { id: '4-1', title: '4.1 单机调试', parentKey: '4', wbs: '4.1', progress: 0 },
-  { id: '4-2', title: '4.2 联调联试', parentKey: '4', wbs: '4.2', progress: 0 },
-]
+function normalizeRows(payload) {
+  if (Array.isArray(payload)) return payload
+  if (Array.isArray(payload?.items)) return payload.items
+  if (Array.isArray(payload?.data?.items)) return payload.data.items
+  return []
+}
 
-const TEAM_MEMBERS = ['张三', '李四', '王五', '赵六']
+function displayUser(value, fallback = '-') {
+  if (!value) return fallback
+  if (typeof value === 'string') return value
+  return value.full_name || value.username || value.name || fallback
+}
 
-export function useTasks() {
-  const [tasks] = useState(MOCK_TASKS)
+function normalizeStatus(status) {
+  const value = status || 'pending'
+  if (value === 'in_progress' || value === 'active') return 'inprogress'
+  if (value === 'completed') return 'done'
+  return value
+}
+
+function normalizeTask(raw, index) {
+  const depends = raw.depends ?? raw.dependencies ?? raw.predecessor_ids ?? []
+  return {
+    id: raw.id ?? index + 1,
+    wbs: raw.wbs ?? raw.wbs_code ?? raw.code ?? String(index + 1),
+    title: raw.title ?? raw.name ?? '未命名任务',
+    phase: raw.phase ?? raw.phase_name ?? '-',
+    assignee: displayUser(raw.assignee, raw.assignee_name ?? raw.owner_name ?? '-'),
+    startDate: raw.startDate ?? raw.planned_start ?? raw.start_date ?? '-',
+    endDate: raw.endDate ?? raw.planned_end ?? raw.end_date ?? raw.due_date ?? '-',
+    progress: Number(raw.progress ?? raw.progress_percent ?? 0),
+    status: normalizeStatus(raw.status),
+    priority: raw.priority ?? 'medium',
+    duration: Number(raw.duration ?? raw.estimated_days ?? 1),
+    depends: Array.isArray(depends) ? depends : [],
+    critical: Boolean(raw.critical),
+    parentKey: raw.parentKey ?? raw.parent_id ?? null,
+  }
+}
+
+function toWbsTreeRows(tasks) {
+  return tasks.map(task => ({
+    id: String(task.id),
+    title: `${task.wbs ? `${task.wbs} ` : ''}${task.title}`,
+    parentKey: task.parentKey ? String(task.parentKey) : null,
+    wbs: task.wbs,
+    progress: task.progress,
+  }))
+}
+
+export function useTasks(projectId) {
+  const [tasks, setTasks] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const loadTasks = useCallback(async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const response = projectId
+        ? await tasksFeatureApi.tree(projectId)
+        : await tasksFeatureApi.list({ page: 1, page_size: 200 })
+      const rows = normalizeRows(unwrap(response))
+      setTasks(rows.map(normalizeTask))
+    } catch (err) {
+      setTasks([])
+      setError(err?.message || '任务列表加载失败')
+    } finally {
+      setLoading(false)
+    }
+  }, [projectId])
+
+  useEffect(() => {
+    loadTasks()
+  }, [loadTasks])
 
   const criticalIds = useMemo(() => calculateCriticalPath(tasks), [tasks])
-  const criticalTasks = useMemo(() => tasks.filter(t => criticalIds.includes(t.id)), [tasks, criticalIds])
-  const conflicts = useMemo(() => findResourceConflicts(tasks, TEAM_MEMBERS), [tasks])
-  const wbsTreeData = useMemo(() => wbsToTree(WBS_ITEMS), [])
-
+  const criticalTasks = useMemo(() => tasks.filter(task => criticalIds.includes(task.id)), [tasks, criticalIds])
+  const teamMembers = useMemo(
+    () => Array.from(new Set(tasks.map(task => task.assignee).filter(Boolean))),
+    [tasks]
+  )
+  const conflicts = useMemo(() => findResourceConflicts(tasks, teamMembers), [tasks, teamMembers])
+  const wbsTreeData = useMemo(() => wbsToTree(toWbsTreeRows(tasks)), [tasks])
   const resourceData = useMemo(
     () =>
-      TEAM_MEMBERS.map(member => ({
+      teamMembers.map(member => ({
         name: member,
-        tasks: tasks.filter(t => t.assignee === member).length,
-        inProgress: tasks.filter(t => t.assignee === member && t.status === 'inprogress').length,
-        done: tasks.filter(t => t.assignee === member && t.status === 'done').length,
+        tasks: tasks.filter(task => task.assignee === member).length,
+        inProgress: tasks.filter(
+          task => task.assignee === member && task.status === 'inprogress'
+        ).length,
+        done: tasks.filter(task => task.assignee === member && task.status === 'done').length,
       })),
-    [tasks]
+    [tasks, teamMembers]
   )
 
   return {
     tasks,
+    loading,
+    error,
+    reload: loadTasks,
     criticalIds,
     criticalTasks,
     conflicts,
     wbsTreeData,
     resourceData,
-    teamMembers: TEAM_MEMBERS,
+    teamMembers,
   }
 }

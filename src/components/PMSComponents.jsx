@@ -3,6 +3,7 @@
  * 更新时间: 2026-03-30
  */
 import React from 'react'
+import { InboxOutlined, SearchOutlined } from '@ant-design/icons'
 import SkeletonContent from './SkeletonContent'
 
 // 角色徽章
@@ -256,7 +257,7 @@ const pageHeaderStyles = {
 export function EmptyState({ icon, title, description, action }) {
   return (
     <div style={emptyStyles.container}>
-      <div style={emptyStyles.icon}>{icon || '📭'}</div>
+      <div style={emptyStyles.icon}>{icon || <InboxOutlined />}</div>
       <h3 style={emptyStyles.title}>{title}</h3>
       <p style={emptyStyles.description}>{description}</p>
       {action && <div style={emptyStyles.action}>{action}</div>}
@@ -297,7 +298,7 @@ const emptyStyles = {
 export function SearchInput({ placeholder = '搜索...', value, onChange }) {
   return (
     <div style={searchStyles.wrapper}>
-      <span style={searchStyles.icon}>🔍</span>
+      <SearchOutlined style={searchStyles.icon} />
       <input
         type="text"
         placeholder={placeholder}

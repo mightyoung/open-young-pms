@@ -1,44 +1,38 @@
-// PMS 设计 Token — 国企标准蓝白风
-// 主题色: #115cb9 | 全中文排版 | 专业稳重高效
+// PMS 设计 Token - 冷静企业运营风
+// 主题色: #0f766e | 全中文排版 | 专业稳重高效
 
 export const colors = {
-  // 背景层级
   bg: {
-    base: '#f5f7fa', // 页面背景
-    page: '#f5f7fa', // 卡片容器背景
-    card: '#ffffff', // 卡片背景
-    elevated: '#ffffff', // 悬浮元素
-    border: '#e5e7eb', // 边框
+    base: '#f4f7f7',
+    page: '#f4f7f7',
+    card: '#ffffff',
+    elevated: '#ffffff',
+    border: '#dbe3e1',
   },
-  // 主色
-  accent: '#115cb9',
-  accentHover: '#3377cc',
-  accentLight: '#d7e2ff',
-  // 语义色
+  accent: '#0f766e',
+  accentHover: '#0f5f59',
+  accentLight: '#ccfbf1',
   success: '#52c41a',
   successBg: '#f6ffed',
   warning: '#faad14',
   warningBg: '#fffbe6',
   danger: '#ff4d4f',
   dangerBg: '#fff2f0',
-  // 文字
   text: {
-    primary: '#1a1a2e',
-    secondary: '#5f5f61',
-    muted: '#8c8c8c',
+    primary: '#10201f',
+    secondary: '#526361',
+    muted: '#7a8a87',
     disabled: '#bfbfbf',
   },
-  // 侧边栏
   sidebar: {
     bg: '#ffffff',
-    text: '#1a1a2e',
-    textMuted: '#8c8c8c',
-    active: '#eef3ff',
-    hover: '#f5f7fa',
-    activeText: '#115cb9',
+    text: '#10201f',
+    textMuted: '#7a8a87',
+    active: '#ecfdf5',
+    hover: '#f4f7f7',
+    activeText: '#0f766e',
   },
-  // 图表配色
-  chart: ['#115cb9', '#52c41a', '#faad14', '#ff4d4f', '#1890ff', '#722ed1', '#ec4899', '#14b8a6'],
+  chart: ['#0f766e', '#2563eb', '#d97706', '#dc2626', '#7c3aed', '#0891b2', '#15803d', '#be123c'],
 }
 
 export const spacing = {
@@ -58,22 +52,44 @@ export const radius = {
 }
 
 export const shadows = {
-  card: '0 1px 2px rgba(0,0,0,0.04)',
-  elevated: '0 4px 12px rgba(0,0,0,0.08)',
-  modal: '0 8px 32px rgba(0,0,0,0.12)',
+  card: '0 1px 2px rgba(15, 32, 31, 0.04)',
+  elevated: '0 8px 24px rgba(15, 32, 31, 0.08)',
+  modal: '0 18px 42px rgba(15, 32, 31, 0.12)',
 }
 
-// antd 组件蓝白主题覆盖
 export const antdTheme = {
   token: {
     colorPrimary: colors.accent,
     colorBgContainer: colors.bg.card,
     colorBgElevated: colors.bg.elevated,
+    colorBgLayout: colors.bg.base,
     colorBorder: colors.bg.border,
     colorText: colors.text.primary,
     colorTextSecondary: colors.text.secondary,
     borderRadius: radius.md,
-    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    fontFamily:
+      "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif",
+  },
+  components: {
+    Layout: {
+      headerBg: colors.bg.card,
+      siderBg: colors.sidebar.bg,
+      bodyBg: colors.bg.base,
+    },
+    Menu: {
+      itemBorderRadius: radius.md,
+      itemSelectedBg: colors.sidebar.active,
+      itemSelectedColor: colors.sidebar.activeText,
+      itemHoverBg: colors.sidebar.hover,
+      itemHoverColor: colors.sidebar.text,
+    },
+    Card: {
+      borderRadiusLG: radius.lg,
+    },
+    Button: {
+      borderRadius: radius.md,
+      controlHeight: 36,
+    },
   },
 }
 

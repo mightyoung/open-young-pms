@@ -46,7 +46,8 @@ const COLORS = {
 }
 
 export default function TasksPage() {
-  const { tasks, criticalIds, criticalTasks, conflicts, wbsTreeData, resourceData } = useTasks()
+  const { tasks, loading, error, criticalIds, criticalTasks, conflicts, wbsTreeData, resourceData } =
+    useTasks()
   const [activeTab, setActiveTab] = useState('wbs')
   const [showConflict, setShowConflict] = useState(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
@@ -58,19 +59,17 @@ export default function TasksPage() {
 
   const batchAssign = () => {
     if (selectedRowKeys.length === 0) return
-    message.success(`已将 ${selectedRowKeys.length} 个任务批量指派`)
-    setSelectedRowKeys([])
+    message.warning('批量指派接口未接入，未提交变更')
   }
 
   const batchDelete = () => {
     if (selectedRowKeys.length === 0) return
-    message.success(`已删除 ${selectedRowKeys.length} 个任务`)
-    setSelectedRowKeys([])
+    message.warning('批量删除接口未接入，未提交变更')
   }
 
   const batchExport = () => {
     if (selectedRowKeys.length === 0) return
-    message.success(`已导出 ${selectedRowKeys.length} 个任务`)
+    message.warning('批量导出接口未接入，未生成文件')
   }
 
   const columns = [
@@ -150,6 +149,15 @@ export default function TasksPage() {
         }
         style={{ borderRadius: 12 }}
       >
+        {error && (
+          <Alert
+            message="任务列表加载失败"
+            description={error}
+            type="error"
+            showIcon
+            style={{ marginBottom: 16 }}
+          />
+        )}
         <Tabs
           activeKey={activeTab}
           onChange={setActiveTab}
@@ -292,6 +300,7 @@ export default function TasksPage() {
               dataSource={criticalTasks}
               columns={columns}
               rowKey="id"
+              loading={loading}
               pagination={false}
               size="small"
             />
@@ -353,6 +362,7 @@ export default function TasksPage() {
               dataSource={tasks}
               columns={columns}
               rowKey="id"
+              loading={loading}
               pagination={false}
               size="small"
               rowSelection={rowSelection}

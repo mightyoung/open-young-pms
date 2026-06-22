@@ -3,7 +3,7 @@
  * These catch import/compile errors, not business logic.
  */
 
-import { describe, expect, it, beforeEach, afterEach } from 'vitest'
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
 
 // ---------------------------------------------------------------------------
 // API errors
@@ -94,8 +94,11 @@ describe('Route config', () => {
 
     // Exact matches
     expect(routeMap.getMenuKeyByPath('/dashboard')).toBe('dashboard')
-    expect(routeMap.getMenuKeyByPath('/users')).toBe('users')
-    expect(routeMap.getMenuKeyByPath('/projects/lifecycle')).toBe('projectLifecycle')
+    expect(routeMap.getMenuKeyByPath('/users')).toBe('system')
+    expect(routeMap.getMenuKeyByPath('/organization')).toBe('system')
+    expect(routeMap.getMenuKeyByPath('/roles')).toBe('system')
+    expect(routeMap.getMenuKeyByPath('/projects/lifecycle')).toBe('projects')
+    expect(routeMap.getMenuKeyByPath('/contracts')).toBe('projects')
 
     // Nested routes
     expect(routeMap.getMenuKeyByPath('/dashboard/settings')).toBe('dashboard')
@@ -106,9 +109,20 @@ describe('Route config', () => {
   })
 
   it('menu.config.js exports MENU_ITEMS as pure data', async () => {
-    const menu = await import('../app/menu.config')
+    const [menu, routeMap] = await Promise.all([
+      import('../app/menu.config'),
+      import('../app/route-map'),
+    ])
     expect(Array.isArray(menu.MENU_ITEMS)).toBe(true)
-    expect(menu.MENU_ITEMS.length).toBeGreaterThan(0)
+    expect(menu.MENU_ITEMS.map(item => item.key)).toEqual([
+      'dashboard',
+      'projects',
+      'tasks',
+      'hazards',
+      'reports',
+      'approvalCenter',
+      'system',
+    ])
 
     // iconKey is a string (not a component), confirming pure data design
     for (const item of menu.MENU_ITEMS) {
@@ -117,6 +131,81 @@ describe('Route config', () => {
       expect(typeof item.label).toBe('string')
       expect(typeof item.path).toBe('string')
     }
+
+    const mainKeys = Object.values(routeMap.ROUTE_META)
+      .filter(route => route.visibility === routeMap.ROUTE_VISIBILITY.MAIN)
+      .map(route => route.key)
+    const secondaryKeys = Object.values(routeMap.ROUTE_META)
+      .filter(route => route.visibility === routeMap.ROUTE_VISIBILITY.SECONDARY)
+      .map(route => route.key)
+    const menuKeys = menu.MENU_ITEMS.map(item => item.key)
+    expect(menuKeys).toEqual(mainKeys)
+    expect(menuKeys.some(key => secondaryKeys.includes(key))).toBe(false)
+  })
+
+  it('approval-center API follows the mounted backend contract', async () => {
+    const calls = []
+    vi.doMock('../api', () => ({
+      api: {
+        get: (path, options) => {
+          calls.push(['get', path, options])
+          return Promise.resolve({ data: [] })
+        },
+        post: (path, body, options) => {
+          calls.push(['post', path, body, options])
+          return Promise.resolve({ data: {} })
+        },
+      },
+    }))
+
+    const { approvalCenterFeatureApi } = await import('../features/approval-center/api')
+    await approvalCenterFeatureApi.listTasks()
+    await approvalCenterFeatureApi.approve('inst-1', { comment: 'ok' })
+    await approvalCenterFeatureApi.reject('inst-2', { comment: 'no' })
+
+    expect(calls).toEqual([
+      ['get', '/approval/my-pending', undefined],
+      ['post', '/approval/instances/inst-1/approve', null, { params: { comment: 'ok' } }],
+      ['post', '/approval/instances/inst-2/reject', null, { params: { comment: 'no' } }],
+    ])
+
+    vi.doUnmock('../api')
+    vi.resetModules()
+  })
+
+  it('normalizes backend-shaped report rows into renderable values', async () => {
+    const { normalizeReport } = await import('../features/reports/hooks/useReports')
+    const row = normalizeReport({
+      id: 'r1',
+      type: 'weekly',
+      title: '周报',
+      project_id: 'p1',
+      author: { username: 'zhangsan', full_name: '张三' },
+      content: { text: '本周完成主体施工', issues: 1 },
+      status: 'submitted',
+      created_at: '2026-06-22T10:00:00',
+    })
+
+    expect(row.author).toBe('张三')
+    expect(row.progress).toBe('本周完成主体施工')
+    expect(typeof row.author).toBe('string')
+    expect(typeof row.progress).toBe('string')
+  })
+
+  it('normalizes backend-shaped hazard rows into supported UI maps', async () => {
+    const { normalizeHazard, LEVEL_MAP, TYPE_MAP } = await import('../features/hazards/hooks/useHazards')
+    const row = normalizeHazard({
+      id: 'h1',
+      title: '默认等级隐患',
+      hazard_type: 'equipment',
+      urgency: 'normal',
+      location: '一号车间',
+    })
+
+    expect(row.type).toBe('other')
+    expect(row.level).toBe('general')
+    expect(TYPE_MAP[row.type]).toBeDefined()
+    expect(LEVEL_MAP[row.level]).toBeDefined()
   })
 
   it('icon-map.js resolves iconKey strings to components', async () => {

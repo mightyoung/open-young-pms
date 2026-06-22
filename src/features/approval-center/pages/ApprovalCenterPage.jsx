@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
+  Alert,
   Card,
+  Empty,
   Table,
   Tag,
   Space,
@@ -34,87 +36,15 @@ const COLORS = {
   textMuted: '#8c8c8c',
 }
 
-const MOCK_PENDING = [
-  {
-    id: 1,
-    title: '产线自动化改造项目 - 第12周周报',
-    type: 'report',
-    applicant: '张经理',
-    dept: '技术研发部',
-    submitTime: '2026-03-28 17:00',
-    priority: 'normal',
-  },
-  {
-    id: 2,
-    title: '设备采购合同变更申请',
-    type: 'contract',
-    applicant: '李经理',
-    dept: '采购部',
-    submitTime: '2026-03-29 09:30',
-    priority: 'high',
-  },
-  {
-    id: 3,
-    title: '项目预算调整申请 - 新厂房建设',
-    type: 'budget',
-    applicant: '王经理',
-    dept: '工程建设部',
-    submitTime: '2026-03-29 14:00',
-    priority: 'urgent',
-  },
-  {
-    id: 4,
-    title: 'XX集团设备安装工程 - 进度变更',
-    type: 'schedule',
-    applicant: '赵经理',
-    dept: '技术研发部',
-    submitTime: '2026-03-30 10:00',
-    priority: 'normal',
-  },
-]
-
-const MOCK_APPROVED = [
-  {
-    id: 5,
-    title: '研发中心升级项目 - 3月月报',
-    type: 'report',
-    applicant: '陈经理',
-    dept: '技术研发部',
-    approveTime: '2026-03-26 18:00',
-    approver: '公司领导',
-  },
-  {
-    id: 6,
-    title: '检测设备采购合同',
-    type: 'contract',
-    applicant: '刘经理',
-    dept: '采购部',
-    approveTime: '2026-03-25 16:00',
-    approver: '部门领导',
-  },
-]
-
-const MOCK_REJECTED = [
-  {
-    id: 7,
-    title: '检测设备采购项目 - 第12周周报',
-    type: 'report',
-    applicant: '刘经理',
-    dept: '采购部',
-    rejectTime: '2026-03-29 11:00',
-    rejector: '部门领导',
-    reason: '进度数据与实际不符',
-  },
-]
-
-const STATS = { pending: 12, approvedToday: 5, rejectedToday: 1, avgTime: '4.5h' }
-
 export default function ApprovalCenterPage() {
   const {
     pending,
     approved,
     rejected,
     loading,
+    error,
+    stats,
+    loadTasks,
     approve,
     reject,
     TYPE_MAP: TM,
@@ -124,12 +54,17 @@ export default function ApprovalCenterPage() {
   const [detailModal, setDetailModal] = useState(false)
   const [selected, setSelected] = useState(null)
 
+  useEffect(() => {
+    loadTasks()
+  }, [loadTasks])
+
   const handleApprove = async id => {
     try {
       await approve(id, '')
       message.success('审批通过')
-    } catch {
-      message.success('审批通过（模拟）')
+      setDetailModal(false)
+    } catch (err) {
+      message.error(err?.message || '审批通过失败')
     }
   }
 
@@ -137,8 +72,9 @@ export default function ApprovalCenterPage() {
     try {
       await reject(id, '')
       message.success('已驳回')
-    } catch {
-      message.success('已驳回（模拟）')
+      setDetailModal(false)
+    } catch (err) {
+      message.error(err?.message || '审批驳回失败')
     }
   }
 
@@ -242,16 +178,10 @@ export default function ApprovalCenterPage() {
 
   const activeData =
     activeTab === 'pending'
-      ? pending.length > 0
-        ? pending
-        : MOCK_PENDING
+      ? pending
       : activeTab === 'approved'
-        ? approved.length > 0
-          ? approved
-          : MOCK_APPROVED
-        : rejected.length > 0
-          ? rejected
-          : MOCK_REJECTED
+        ? approved
+        : rejected
 
   return (
     <div style={{ padding: 24, background: COLORS.bg, minHeight: '100vh' }}>
@@ -259,10 +189,10 @@ export default function ApprovalCenterPage() {
 
       <Row gutter={16} style={{ marginBottom: 16 }}>
         {[
-          { title: '待审批', value: STATS.pending, color: COLORS.warning, suffix: '项' },
-          { title: '今日通过', value: STATS.approvedToday, color: COLORS.success, suffix: '项' },
-          { title: '今日驳回', value: STATS.rejectedToday, color: COLORS.danger, suffix: '项' },
-          { title: '平均审批时长', value: STATS.avgTime, color: COLORS.primary },
+          { title: '待审批', value: stats.pending, color: COLORS.warning, suffix: '项' },
+          { title: '今日通过', value: stats.approvedToday, color: COLORS.success, suffix: '项' },
+          { title: '今日驳回', value: stats.rejectedToday, color: COLORS.danger, suffix: '项' },
+          { title: '平均审批时长', value: stats.avgTime, color: COLORS.primary },
         ].map(s => (
           <Col span={6} key={s.title}>
             <Card style={{ borderRadius: 12, textAlign: 'center' }}>
@@ -277,6 +207,16 @@ export default function ApprovalCenterPage() {
         ))}
       </Row>
 
+      {error && (
+        <Alert
+          type="error"
+          showIcon
+          message="审批任务加载失败"
+          description={error}
+          style={{ marginBottom: 16 }}
+        />
+      )}
+
       <Card style={{ borderRadius: 12 }}>
         <Tabs
           activeKey={activeTab}
@@ -287,7 +227,7 @@ export default function ApprovalCenterPage() {
               label: (
                 <span>
                   <Clock size={14} /> 待我审批 (
-                  {pending.length > 0 ? pending.length : MOCK_PENDING.length})
+                  {pending.length})
                 </span>
               ),
             },
@@ -296,7 +236,7 @@ export default function ApprovalCenterPage() {
               label: (
                 <span>
                   <CheckCircle2 size={14} /> 已通过 (
-                  {approved.length > 0 ? approved.length : MOCK_APPROVED.length})
+                  {approved.length})
                 </span>
               ),
             },
@@ -305,7 +245,7 @@ export default function ApprovalCenterPage() {
               label: (
                 <span>
                   <XCircle size={14} /> 已驳回 (
-                  {rejected.length > 0 ? rejected.length : MOCK_REJECTED.length})
+                  {rejected.length})
                 </span>
               ),
             },
@@ -323,6 +263,7 @@ export default function ApprovalCenterPage() {
           rowKey="id"
           loading={loading}
           pagination={{ pageSize: 10 }}
+          locale={{ emptyText: <Empty description={error ? '加载失败' : '暂无审批数据'} /> }}
         />
       </Card>
 

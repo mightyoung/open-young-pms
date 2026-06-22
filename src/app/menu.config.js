@@ -2,121 +2,43 @@
  * Menu configuration — pure data, no UI component imports.
  * Icon resolution happens at render time via icon-map.js.
  */
-import { ROUTE_META } from './route-map'
+import { ROUTE_META, ROUTE_VISIBILITY } from './route-map'
 
-export const MENU_ITEMS = [
-  {
-    key: ROUTE_META.dashboard.key,
-    label: ROUTE_META.dashboard.label,
-    path: ROUTE_META.dashboard.path,
-    iconKey: 'DashboardOutlined',
-  },
-  {
-    key: ROUTE_META.users.key,
-    label: ROUTE_META.users.label,
-    path: ROUTE_META.users.path,
-    iconKey: 'TeamOutlined',
-  },
-  {
-    key: ROUTE_META.projects.key,
-    label: ROUTE_META.projects.label,
-    path: ROUTE_META.projects.path,
-    iconKey: 'ProjectOutlined',
-  },
-  {
-    key: ROUTE_META.projectLifecycle.key,
-    label: ROUTE_META.projectLifecycle.label,
-    path: ROUTE_META.projectLifecycle.path,
-    iconKey: 'ProjectOutlined',
-  },
-  {
-    key: ROUTE_META.tasks.key,
-    label: ROUTE_META.tasks.label,
-    path: ROUTE_META.tasks.path,
-    iconKey: 'ToolOutlined',
-  },
-  {
-    key: ROUTE_META.notifications.key,
-    label: ROUTE_META.notifications.label,
-    path: ROUTE_META.notifications.path,
-    iconKey: 'BellOutlined',
-  },
-  {
-    key: ROUTE_META.reports.key,
-    label: ROUTE_META.reports.label,
-    path: ROUTE_META.reports.path,
-    iconKey: 'FileTextOutlined',
-  },
-  {
-    key: ROUTE_META.forum.key,
-    label: ROUTE_META.forum.label,
-    path: ROUTE_META.forum.path,
-    iconKey: 'MessageOutlined',
-  },
-  {
-    key: ROUTE_META.hazards.key,
-    label: ROUTE_META.hazards.label,
-    path: ROUTE_META.hazards.path,
-    iconKey: 'SafetyOutlined',
-  },
-  {
-    key: ROUTE_META.drafts.key,
-    label: ROUTE_META.drafts.label,
-    path: ROUTE_META.drafts.path,
-    iconKey: 'EditOutlined',
-  },
-  {
-    key: ROUTE_META.risks.key,
-    label: ROUTE_META.risks.label,
-    path: ROUTE_META.risks.path,
-    iconKey: 'AlertOutlined',
-  },
-  {
-    key: ROUTE_META.quality.key,
-    label: ROUTE_META.quality.label,
-    path: ROUTE_META.quality.path,
-    iconKey: 'CheckCircleOutlined',
-  },
-  {
-    key: ROUTE_META.organization.key,
-    label: ROUTE_META.organization.label,
-    path: ROUTE_META.organization.path,
-    iconKey: 'TeamOutlined',
-  },
-  {
-    key: ROUTE_META.aiChat.key,
-    label: ROUTE_META.aiChat.label,
-    path: ROUTE_META.aiChat.path,
-    iconKey: 'RobotOutlined',
-  },
-  {
-    key: ROUTE_META.contracts.key,
-    label: ROUTE_META.contracts.label,
-    path: ROUTE_META.contracts.path,
-    iconKey: 'AuditOutlined',
-  },
-  {
-    key: ROUTE_META.approvalCenter.key,
-    label: ROUTE_META.approvalCenter.label,
-    path: ROUTE_META.approvalCenter.path,
-    iconKey: 'CheckSquareOutlined',
-  },
-  {
-    key: ROUTE_META.resources.key,
-    label: ROUTE_META.resources.label,
-    path: ROUTE_META.resources.path,
-    iconKey: 'AppstoreOutlined',
-  },
-  {
-    key: ROUTE_META.roles.key,
-    label: ROUTE_META.roles.label,
-    path: ROUTE_META.roles.path,
-    iconKey: 'SafetyCertificateOutlined',
-  },
-  {
-    key: ROUTE_META.profile.key,
-    label: ROUTE_META.profile.label,
-    path: ROUTE_META.profile.path,
-    iconKey: 'UserOutlined',
-  },
+const MAIN_MENU_ORDER = [
+  'dashboard',
+  'projects',
+  'tasks',
+  'hazards',
+  'reports',
+  'approvalCenter',
+  'system',
 ]
+
+const ICON_BY_KEY = {
+  dashboard: 'DashboardOutlined',
+  projects: 'ProjectOutlined',
+  tasks: 'ToolOutlined',
+  hazards: 'SafetyOutlined',
+  reports: 'FileTextOutlined',
+  approvalCenter: 'AuditOutlined',
+  system: 'SettingOutlined',
+}
+
+export const MENU_ITEMS = Object.values(ROUTE_META)
+  .filter(route => route.visibility === ROUTE_VISIBILITY.MAIN)
+  .sort((left, right) => MAIN_MENU_ORDER.indexOf(left.key) - MAIN_MENU_ORDER.indexOf(right.key))
+  .map(route => ({
+    key: route.key,
+    label: route.label,
+    path: route.path,
+    iconKey: ICON_BY_KEY[route.key],
+  }))
+
+export const SECONDARY_MENU_ITEMS = Object.values(ROUTE_META)
+  .filter(route => route.visibility === ROUTE_VISIBILITY.SECONDARY)
+  .map(route => ({
+    key: route.key,
+    label: route.label,
+    path: route.path,
+    parent: route.menuParent,
+  }))

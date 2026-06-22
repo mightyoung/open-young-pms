@@ -75,7 +75,7 @@ pms-template/
 │   ├── app/                # AppRoot、路由配置、菜单、AuthSession
 │   ├── components/         # 共享组件
 │   ├── contexts/           # React Context（AuthContext）
-│   ├── features/           # 按领域组织的功能模块（dashboard, users, projects, tasks, notifications, reports, forum, hazards, risks, quality, organization, ai-chat, contracts, approval-center, resources）
+│   ├── features/           # 按领域组织的功能模块（主入口：dashboard, projects, tasks, hazards, reports, approval-center；二级/隐藏：users, risks, quality, resources, contracts 等）
 │   ├── hooks/              # 自定义 Hooks
 │   ├── pages/              # 页面组件（legacy，仍在使用）
 │   ├── styles/             # 主题和全局样式
@@ -146,25 +146,19 @@ CORS_ORIGINS=http://localhost:5173,http://localhost:3000
 
 ## 📊 功能模块
 
-| 模块 | 前端 | 后端 | 状态 |
-|------|------|------|------|
-| 用户权限体系 | ✅ | ✅ | P0 |
-| 随手拍·隐患管理 | ✅ | ✅ | P0 |
-| API 规范 | ✅ | ✅ | P0 |
-| 文件服务 | ✅ | ✅ | P0 |
-| Docker 环境 | ✅ | ✅ | P0 |
-| 项目管理 | ✅ | ✅ | P1 |
-| 任务管理 | ✅ | ✅ | P1 |
-| 论坛 | ✅ | ✅ | P1 |
-| 消息通知 | ✅ | ✅ | P1 |
-| 报告中心 | ✅ | ✅ | P1 |
-| 风险管理 | ✅ | ✅ | P1 |
-| 质量管理 | ✅ | ✅ | P1 |
-| 组织架构 | ✅ | ✅ | P1 |
-| 审批流引擎 | ⏳ | ✅ | P1 |
-| 监测看板 | ⏳ | ⏳ | P2 |
-| AI 助手 | ⏳ | ⏳ | P2 |
-| 移动端 | ✅ | ⏳ | P2 |
+当前版本按“项目交付闭环”收敛默认业务主线，默认主菜单为 7 项：
+
+| 默认入口 | 定位 | 状态 |
+|------|------|------|
+| 仪表盘 | 项目状态总览 | P0 |
+| 项目管理 | 项目入口与项目详情上下文 | P0 |
+| 任务管理 | WBS、任务、甘特与执行进度 | P0 |
+| 随手拍/隐患 | 现场问题上报、整改与验收 | P0 |
+| 报告中心 | 日/周/月报与过程沉淀 | P0 |
+| 审批中心 | 报告、隐患验收、阶段门等主线审批 | P0 |
+| 系统管理 | 用户、组织、角色等配置 | P1 |
+
+合同、风险、质量、资源、项目流程模板作为项目详情二级能力保留，不再作为默认顶级入口。论坛、AI 助手、数据治理、知识库等能力默认隐藏或实验化，避免稀释项目交付主线。
 
 ---
 
@@ -214,8 +208,8 @@ pytest tests/ -v -k health    # 仅健康检查测试
 
 1. 在 `src/features/<feature>/pages/` 创建 `.jsx` 页面文件
 2. 在 `src/features/<feature>/api.js` 添加领域 API 方法（如需要）
-3. 在 `src/app/route-map.js` 添加路由元信息
-4. 在 `src/app/menu.config.js` 添加菜单项
+3. 在 `src/app/route-map.js` 添加路由元信息，并设置 `visibility` 与 `section`
+4. 只有默认主流程入口才加入 `src/app/menu.config.js` 的 `MENU_ITEMS`
 5. 在 `src/app/routes.jsx` 添加路由路径（使用 `React.lazy` + `Suspense`）
 
 ---

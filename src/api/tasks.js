@@ -2,6 +2,7 @@ import { get, post, put, del } from './client'
 
 // Layer 2 — legacy WBS task router at /api/v1/tasks
 export const tasksApi = {
+  list: params => get('/tasks', { params }),
   // CRUD
   create: payload => post('/tasks', payload),
   get: taskId => get(`/tasks/${taskId}`),

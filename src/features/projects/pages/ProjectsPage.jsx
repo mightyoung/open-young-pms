@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import {
+  Alert,
   Card,
   Table,
   Tag,
@@ -8,6 +9,7 @@ import {
   Form,
   Input,
   InputNumber,
+  message,
   Modal,
   Space,
   Row,
@@ -25,8 +27,10 @@ import {
   TeamOutlined,
   BuildOutlined,
   SafetyOutlined,
+  EyeOutlined,
 } from '@ant-design/icons'
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import { useProjects, PROJ_STATUS } from '../hooks/useProjects'
 import { PageHeader } from '../../../components/PMSComponents'
 
@@ -104,16 +108,19 @@ function StatCard({ title, value, color, icon }) {
 }
 
 export default function ProjectsPage() {
+  const navigate = useNavigate()
   const {
     filtered,
     loading,
+    error,
     search,
     setSearch,
     setFilterStatus,
     stats,
     createProject,
+    updateProject,
     deleteProject,
-    mockMembers,
+    members,
   } = useProjects()
 
   const [modalOpen, setModalOpen] = useState(false)
@@ -125,18 +132,30 @@ export default function ProjectsPage() {
   const handleCreate = async () => {
     try {
       const vals = await form.validateFields()
-      createProject(vals)
+      if (selected?.id) {
+        await updateProject(selected.id, vals)
+      } else {
+        await createProject(vals)
+      }
       setModalOpen(false)
+      setSelected(null)
       form.resetFields()
-    } catch {}
+    } catch (err) {
+      if (err?.errorFields) return
+      message.error(err?.message || (selected ? '项目更新失败' : '项目创建失败'))
+    }
   }
 
   const handleDelete = id => {
     Modal.confirm({
       title: '确认删除',
       content: '删除后不可恢复，是否继续？',
-      onOk: () => {
-        deleteProject(id)
+      onOk: async () => {
+        try {
+          await deleteProject(id)
+        } catch (err) {
+          message.error(err?.message || '项目删除失败')
+        }
       },
     })
   }
@@ -223,6 +242,15 @@ export default function ProjectsPage() {
       width: 140,
       render: (_, r) => (
         <Space size={4}>
+          <Tooltip title="详情">
+            <Button
+              type="text"
+              size="small"
+              icon={<EyeOutlined />}
+              onClick={() => navigate(`/projects/${r.id}`)}
+              style={{ color: D.primary }}
+            />
+          </Tooltip>
           <Tooltip title="编辑">
             <Button
               type="text"
@@ -330,6 +358,15 @@ export default function ProjectsPage() {
             新建项目
           </Button>
         </div>
+        {error && (
+          <Alert
+            type="error"
+            showIcon
+            message="项目列表加载失败"
+            description={error}
+            style={{ margin: '0 20px 16px' }}
+          />
+        )}
         <Table
           columns={columns}
           dataSource={filtered}
@@ -349,6 +386,7 @@ export default function ProjectsPage() {
         open={modalOpen}
         onCancel={() => {
           setModalOpen(false)
+          setSelected(null)
           form.resetFields()
         }}
         onOk={handleCreate}
@@ -554,7 +592,7 @@ export default function ProjectsPage() {
         }}
       >
         <div style={{ padding: '16px 24px' }}>
-          {mockMembers.map((m, i) => (
+            {members.map((m, i) => (
             <motion.div
               key={m.id}
               initial={{ opacity: 0, x: -8 }}
@@ -565,7 +603,7 @@ export default function ProjectsPage() {
                 alignItems: 'center',
                 gap: 12,
                 padding: '10px 0',
-                borderBottom: i < mockMembers.length - 1 ? `1px solid ${D.border}` : 'none',
+                    borderBottom: i < members.length - 1 ? `1px solid ${D.border}` : 'none',
               }}
             >
               <AvatarChip name={m.name} size={38} />
